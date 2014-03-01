@@ -125,6 +125,9 @@ typedef void (^EvernoteErrorBlock) (NSError *error);
             if (parameter) {
                 [userInfo setValue:parameter forKey:@"parameter"];
             }
+        } else if ([exception isKindOfClass:[EDAMNotFoundException class]]) {
+            EDAMNotFoundException * notFound = (EDAMNotFoundException *)exception;
+            [userInfo setValue:notFound.identifier forKeyPath:@"parameter"];
         }
         return [NSError errorWithDomain:EvernoteSDKErrorDomain code:errorCode userInfo:userInfo];
     }

@@ -18,6 +18,7 @@ static NSString * ENSessionDefaultNotebookGuid = @"ENSessionDefaultNotebookGuid"
 @interface ENSessionUploadNoteContext : NSObject
 @property (nonatomic, strong) EDAMNote * note;
 @property (nonatomic, strong) NSString * guidToReplace;
+@property (nonatomic, assign) BOOL destinedForDefaultNotebook;
 @property (nonatomic, strong) NSString * defaultNotebookName;
 @property (nonatomic, strong) ENSessionUploadNoteCompletionHandler handler;
 @end
@@ -141,13 +142,15 @@ static NSString * DeveloperKey, * NoteStoreUrl;
     context.note = [note EDAMNote];
     context.guidToReplace = noteToReplace;
     context.handler = handler;
-    
+    context.defaultNotebookName = self.defaultNotebookName;
+
     if (noteToReplace) {
         [self uploadNote_updateWithContext:context];
     } else {
         if (!context.note.notebookGuid) {
             // Caller has not specified an explicit notebook. Is there a default notebook set?
             if (self.defaultNotebookName) {
+                context.destinedForDefaultNotebook = YES;
                 // Check to see if we already know about a notebook GUID.
                 NSString * notebookGuid = [self defaultNotebookGuid];
                 if (notebookGuid) {
@@ -155,7 +158,6 @@ static NSString * DeveloperKey, * NoteStoreUrl;
                 } else {
                     // We need to create/find the notebook that corresponds to this.
                     // Need to do a lookup.
-                    context.defaultNotebookName = self.defaultNotebookName;
                     [self uploadNote_findDefaultNotebookWithContext:context];
                     return;
                 }
@@ -212,6 +214,14 @@ static NSString * DeveloperKey, * NoteStoreUrl;
     [[EvernoteNoteStore noteStore] createNote:context.note success:^(EDAMNote * resultNote) {
         context.handler(resultNote.guid, nil);
     } failure:^(NSError * error) {
+        if ([error.userInfo[@"parameter"] isEqualToString:@"Note.notebookGuid"] &&
+            context.destinedForDefaultNotebook) {
+            // We tried to get the default notebook but we failed to get it. Remove our cached guid and
+            // try again.
+            [self setDefaultNotebookGuid:nil];
+            [self uploadNote_findDefaultNotebookWithContext:context];
+            return;
+        }
         context.handler(nil, error);
     }];
 }
@@ -232,11 +242,15 @@ static NSString * PreferencesPath()
 
 - (void)setPreferencesObject:(id)obj forKey:(NSString *)key
 {
-    NSMutableDictionary * prefs = [NSDictionary dictionaryWithContentsOfFile:PreferencesPath()];
+    NSMutableDictionary * prefs = [NSMutableDictionary dictionaryWithContentsOfFile:PreferencesPath()];
     if (!prefs) {
         prefs = [NSMutableDictionary dictionary];
     }
-    [prefs setObject:obj forKey:key];
+    if (obj) {
+        [prefs setObject:obj forKey:key];
+    } else {
+        [prefs removeObjectForKey:key];
+    }
     [prefs writeToFile:PreferencesPath() atomically:YES];
 }
 
