@@ -10,7 +10,12 @@
 #import <UIKit/UIKit.h>
 #import "ENNote.h"
 
+typedef void (^ENSessionUploadNoteCompletionHandler)(NSString * noteId, NSError * uploadNoteError);
+typedef void (^ENSessionListNotebooksCompletionHandler)(NSArray * notebooks, NSError * listNotebooksError);
+
 @interface ENSession : NSObject
+@property (nonatomic, copy) NSString * defaultNotebookName;
+
 @property (nonatomic, readonly) BOOL isAuthenticated;
 @property (nonatomic, readonly) NSString * userDisplayName;
 
@@ -19,10 +24,9 @@
 
 + (ENSession *)sharedSession;
 
-- (void)authenticateWithViewController:(UIViewController *)viewController complete:(void(^)(BOOL success, NSString * localizedError))complete;
+- (void)authenticateWithViewController:(UIViewController *)viewController handler:(void(^)(NSError * authenticateError))handler;
 - (void)logout;
 
-- (void)notebooks:(void(^)(NSArray * notebooks, NSString * localizedError))complete;
-
-- (void)uploadNote:(ENNote *)note replaceNoteID:(NSString *)noteToReplace complete:(void(^)(NSString * noteID, NSString * localizedError))complete;
+- (void)listNotebooksWithHandler:(ENSessionListNotebooksCompletionHandler)handler;
+- (void)uploadNote:(ENNote *)note replaceNoteId:(NSString *)noteToReplace handler:(ENSessionUploadNoteCompletionHandler)handler;
 @end

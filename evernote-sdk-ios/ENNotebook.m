@@ -7,19 +7,24 @@
 //
 
 #import "ENNotebook.h"
+#import "EvernoteSDK.h"
 
 @interface ENNotebook ()
 @property (nonatomic, strong) NSString * guid;
 @property (nonatomic, strong) NSString * name;
+@property (nonatomic, assign) BOOL isApplicationDefaultNotebook;
+@property (nonatomic, assign) BOOL isAccountDefaultNotebook;
 @end
 
 @implementation ENNotebook
-- (id)initWithGuid:(NSString *)guid name:(NSString *)name
+- (id)initWithEdamNotebook:(EDAMNotebook *)notebook isApplicationDefault:(BOOL)isDefault
 {
     self = [super init];
     if (self) {
-        self.guid = guid;
-        self.name = name;
+        self.guid = notebook.guid;
+        self.name = notebook.name;
+        self.isApplicationDefaultNotebook = isDefault;
+        self.isAccountDefaultNotebook = notebook.defaultNotebook;
     }
     return self;
 }
@@ -30,6 +35,8 @@
     if (self) {
         self.guid = [decoder decodeObjectForKey:@"guid"];
         self.name = [decoder decodeObjectForKey:@"name"];
+        self.isApplicationDefaultNotebook = [decoder decodeBoolForKey:@"isApplicationDefaultNotebook"];
+        self.isAccountDefaultNotebook = [decoder decodeBoolForKey:@"isAccountDefaultNotebook"];
         if (!self.guid || !self.name) {
             return nil;
         }
@@ -41,5 +48,7 @@
 {
     [encoder encodeObject:self.guid forKey:@"guid"];
     [encoder encodeObject:self.name forKey:@"name"];
+    [encoder encodeBool:self.isApplicationDefaultNotebook forKey:@"isApplicationDefaultNotebook"];
+    [encoder encodeBool:self.isAccountDefaultNotebook forKey:@"isAccountDefaultNotebook"];
 }
 @end

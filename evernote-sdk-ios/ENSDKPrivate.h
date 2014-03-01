@@ -14,7 +14,7 @@
 
 @interface ENNotebook (Private)
 @property (nonatomic, readonly) NSString * guid;
-- (id)initWithGuid:(NSString *)guid name:(NSString *)name;
+- (id)initWithEdamNotebook:(EDAMNotebook *)notebook isApplicationDefault:(BOOL)isDefault;
 @end
 
 @interface ENResource (Private)

@@ -32,22 +32,22 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    [[ENSession sharedSession] authenticateWithViewController:self complete:^(BOOL success, NSString * localizedError) {
-        if (success) {
+    [[ENSession sharedSession] setDefaultNotebookName:@"Biiger"];
+    [[ENSession sharedSession] authenticateWithViewController:self handler:^(NSError * authError) {
+        if (!authError) {
             NSLog(@"Auth succeeded, w/username '%@'", [[ENSession sharedSession] userDisplayName]);
             ENNote * note = [[ENNote alloc] initWithString:@"Hello World!\n\nThis is the simple SDK."];
-            note.title = @"My First Note";
+            note.title = @"My Fifth! Note";
             ENResource * image = [[ENResource alloc] initWithImage:[UIImage imageNamed:@"quantizetexture.png"]];
             [note addResource:image];
-            NSString * replaceId = [[NSUserDefaults standardUserDefaults] objectForKey:@"evernoteNote"];
+//            NSString * replaceId = [[NSUserDefaults standardUserDefaults] objectForKey:@"evernoteNote"];
             [[ENSession sharedSession] uploadNote:note
-                                    replaceNoteID:replaceId
-                                         complete:^(NSString * resultID, NSString * uploadError) {
-                                             NSLog(@"result note %@", resultID);
-                                             [[NSUserDefaults standardUserDefaults] setObject:resultID forKey:@"evernoteNote"];
-            }];
+                                    replaceNoteId:nil handler:^(NSString *noteId, NSError *uploadNoteError) {
+                                        NSLog(@"result note %@, error %@", noteId,uploadNoteError);
+                                        [[NSUserDefaults standardUserDefaults] setObject:noteId forKey:@"evernoteNote"];
+                                    }];
         } else {
-            NSLog(@"Auth failed: %@", localizedError);
+            NSLog(@"Auth failed: %@", authError);
         }
     }];
 }
