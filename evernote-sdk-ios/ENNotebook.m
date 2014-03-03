@@ -6,8 +6,7 @@
 //  Copyright (c) 2014 n/a. All rights reserved.
 //
 
-#import "ENNotebook.h"
-#import "EvernoteSDK.h"
+#import "ENSDKPrivate.h"
 
 @interface ENNotebook ()
 @property (nonatomic, strong) NSString * guid;

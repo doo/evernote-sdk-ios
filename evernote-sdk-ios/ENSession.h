@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "ENNote.h"
+#import "ENSDK.h"
 
 typedef void (^ENSessionUploadNoteCompletionHandler)(NSString * noteId, NSError * uploadNoteError);
 typedef void (^ENSessionListNotebooksCompletionHandler)(NSArray * notebooks, NSError * listNotebooksError);

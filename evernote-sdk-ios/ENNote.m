@@ -7,8 +7,8 @@
 //
 
 #import "EvernoteSDK.h"
-#import "ENNote.h"
 #import "ENSDKPrivate.h"
+#import "ENHTMLtoENMLConverter.h"
 
 #pragma mark - Subclass declarations
 
@@ -21,6 +21,10 @@
 
 @interface ENAttributedStringNote : ENNote
 @property (nonatomic, copy) NSAttributedString * stringContent;
+@end
+
+@interface ENHTMLNote : ENNote
+@property (nonatomic, copy) NSString * htmlContent;
 @end
 
 #pragma mark - ENNote
@@ -55,6 +59,13 @@
 {
     ENPlaintextNote * note = [[ENPlaintextNote alloc] init];
     note.stringContent = string;
+    return note;
+}
+
+- (id)initWithHTML:(NSString *)html
+{
+    ENHTMLNote * note = [[ENHTMLNote alloc] init];
+    note.htmlContent = html;
     return note;
 }
 
@@ -158,15 +169,45 @@
 @implementation ENAttributedStringNote
 - (id)init
 {
+    // Attributed string to HTML
     return [super initWithENML:nil];
 }
 
 - (NSString *)generateENMLContent
 {
-    ENMLWriter * writer = [[ENMLWriter alloc] init];
-    [writer startDocument];
-    [writer writeString:@"Hello iOS 7! (fixme)"];
-    [writer endDocument];
-    return writer.contents;
+    //TODO: pull out text attachments that can be resources and process those.
+    
+    // First convert to HTML
+    NSDictionary * documentAttributes = [NSDictionary dictionaryWithObjectsAndKeys:NSHTMLTextDocumentType, NSDocumentTypeDocumentAttribute, nil];
+    NSError * error = nil;
+    NSData * htmlData = [self.stringContent dataFromRange:NSMakeRange(0, self.stringContent.length) documentAttributes:documentAttributes error:&error];
+    if (!htmlData) {
+        NSLog(@"Error converting attributed string to HTML: %@", error);
+        return self.stringContent.string;
+    }
+    
+    NSString * htmlString = [[NSString alloc] initWithData:htmlData encoding:NSUTF8StringEncoding];
+    
+    // Now turn that into ENML.
+    ENHTMLtoENMLConverter * converter = [[ENHTMLtoENMLConverter alloc] init];
+    NSString * enml = [converter enmlFromHTMLContent:htmlString];
+
+    return enml;
+}
+@end
+
+#pragma mark - ENHTMLNote
+
+@implementation ENHTMLNote
+- (id)init
+{
+    return [super initWithENML:nil];
+}
+
+- (NSString *)generateENMLContent
+{
+    ENHTMLtoENMLConverter * converter = [[ENHTMLtoENMLConverter alloc] init];
+    NSString * enml = [converter enmlFromHTMLContent:self.htmlContent];
+    return enml;
 }
 @end

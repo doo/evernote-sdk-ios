@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 n/a. All rights reserved.
 //
 
+#import "ENSDKPrivate.h"
 #import "EvernoteSDK.h"
-#import "ENResource.h"
 #import "NSData+EvernoteSDK.h"
 
 @interface ENResource ()

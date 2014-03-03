@@ -7,13 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ENNotebook.h"
-#import "ENResource.h"
+#import "Availability.h"
+@class ENResource;
+@class ENNotebook;
 
 @interface ENNote : NSObject // <NSCoding>
 @property (nonatomic, copy) NSString * title;
 @property (nonatomic, strong) ENNotebook * notebook;
 - (id)initWithString:(NSString *)string;
+- (id)initWithHTML:(NSString *)html;
 - (id)initWithENML:(NSString *)enml;
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 70000
 - (id)initWithAttributedString:(NSAttributedString *)string;

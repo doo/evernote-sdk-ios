@@ -9,8 +9,8 @@
 #ifndef evernote_sdk_ios_ENSDKPrivate_h
 #define evernote_sdk_ios_ENSDKPrivate_h
 
-#import "ENNotebook.h"
-#import "ENNote.h"
+#import "ENSDK.h"
+#import "EvernoteSDK.h"
 
 @interface ENNotebook (Private)
 @property (nonatomic, readonly) NSString * guid;

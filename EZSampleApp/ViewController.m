@@ -36,8 +36,9 @@
     [[ENSession sharedSession] authenticateWithViewController:self handler:^(NSError * authError) {
         if (!authError) {
             NSLog(@"Auth succeeded, w/username '%@'", [[ENSession sharedSession] userDisplayName]);
-            ENNote * note = [[ENNote alloc] initWithString:@"Hello World!\n\nThis is the simple SDK."];
-            note.title = @"My Fifth! Note";
+            NSMutableAttributedString * attrString = [[NSMutableAttributedString alloc] initWithString:@"The quick brown fox jumps over the lazy doge."];
+            ENNote * note = [[ENNote alloc] initWithAttributedString:attrString];
+            note.title = @"My attr Note";
             ENResource * image = [[ENResource alloc] initWithImage:[UIImage imageNamed:@"quantizetexture.png"]];
             [note addResource:image];
 //            NSString * replaceId = [[NSUserDefaults standardUserDefaults] objectForKey:@"evernoteNote"];

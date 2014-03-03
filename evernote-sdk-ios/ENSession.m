@@ -6,9 +6,7 @@
 //  Copyright (c) 2014 n/a. All rights reserved.
 //
 
-#import "ENSession.h"
 #import "EvernoteSDK.h"
-#import "ENNotebook.h"
 #import "ENSDKPrivate.h"
 
 static NSString * ENSEssionPreferencesFilename = @"com.evernote.evernote-sdk-ios.plist";
