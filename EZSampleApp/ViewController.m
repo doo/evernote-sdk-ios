@@ -41,9 +41,11 @@
             note.title = @"My attr Note";
             ENResource * image = [[ENResource alloc] initWithImage:[UIImage imageNamed:@"quantizetexture.png"]];
             [note addResource:image];
-//            NSString * replaceId = [[NSUserDefaults standardUserDefaults] objectForKey:@"evernoteNote"];
+            NSString * replaceId = [[NSUserDefaults standardUserDefaults] objectForKey:@"evernoteNote"];
             [[ENSession sharedSession] uploadNote:note
-                                    replaceNoteId:nil handler:^(NSString *noteId, NSError *uploadNoteError) {
+                                           policy:replaceId ? ENSessionUploadPolicyReplaceOrCreate : ENSessionUploadPolicyCreate
+                                    replaceNoteId:replaceId
+                                         progress:nil completion:^(NSString *noteId, NSError *uploadNoteError) {
                                         NSLog(@"result note %@, error %@", noteId,uploadNoteError);
                                         [[NSUserDefaults standardUserDefaults] setObject:noteId forKey:@"evernoteNote"];
                                     }];

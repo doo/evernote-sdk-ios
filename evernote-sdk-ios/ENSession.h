@@ -10,8 +10,15 @@
 #import <UIKit/UIKit.h>
 #import "ENSDK.h"
 
+typedef void (^ENSessionUploadNoteProgressHandler)(CGFloat progress);
 typedef void (^ENSessionUploadNoteCompletionHandler)(NSString * noteId, NSError * uploadNoteError);
 typedef void (^ENSessionListNotebooksCompletionHandler)(NSArray * notebooks, NSError * listNotebooksError);
+
+typedef NS_ENUM(NSInteger, ENSessionUploadPolicy) {
+    ENSessionUploadPolicyCreate,
+    ENSessionUploadPolicyReplace,
+    ENSessionUploadPolicyReplaceOrCreate
+};
 
 @interface ENSession : NSObject
 @property (nonatomic, copy) NSString * defaultNotebookName;
@@ -28,5 +35,15 @@ typedef void (^ENSessionListNotebooksCompletionHandler)(NSArray * notebooks, NSE
 - (void)logout;
 
 - (void)listNotebooksWithHandler:(ENSessionListNotebooksCompletionHandler)handler;
-- (void)uploadNote:(ENNote *)note replaceNoteId:(NSString *)noteToReplace handler:(ENSessionUploadNoteCompletionHandler)handler;
+
+// Easy convenience method for creating new notes.
+- (void)uploadNote:(ENNote *)note
+        completion:(ENSessionUploadNoteCompletionHandler)completion;
+
+// Use the full method if you want to track progress, overwrite existing notes, etc.
+- (void)uploadNote:(ENNote *)note
+            policy:(ENSessionUploadPolicy)policy
+     replaceNoteId:(NSString *)noteToReplace
+          progress:(ENSessionUploadNoteProgressHandler)progress
+        completion:(ENSessionUploadNoteCompletionHandler)completion;
 @end

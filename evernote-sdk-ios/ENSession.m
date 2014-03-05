@@ -16,9 +16,10 @@ static NSString * ENSessionDefaultNotebookGuid = @"ENSessionDefaultNotebookGuid"
 @interface ENSessionUploadNoteContext : NSObject
 @property (nonatomic, strong) EDAMNote * note;
 @property (nonatomic, strong) NSString * guidToReplace;
+@property (nonatomic, assign) ENSessionUploadPolicy policy;
 @property (nonatomic, assign) BOOL destinedForDefaultNotebook;
 @property (nonatomic, strong) NSString * defaultNotebookName;
-@property (nonatomic, strong) ENSessionUploadNoteCompletionHandler handler;
+@property (nonatomic, strong) ENSessionUploadNoteCompletionHandler completion;
 @end
 
 @interface ENSession ()
@@ -124,22 +125,52 @@ static NSString * DeveloperKey, * NoteStoreUrl;
 
 #pragma mark - uploadNote
 
-- (void)uploadNote:(ENNote *)note replaceNoteId:(NSString *)noteToReplace handler:(ENSessionUploadNoteCompletionHandler)handler
+- (void)uploadNote:(ENNote *)note
+        completion:(ENSessionUploadNoteCompletionHandler)completion
 {
-    if (!note || !handler) {
+    [self uploadNote:note policy:ENSessionUploadPolicyCreate replaceNoteId:nil progress:nil completion:completion];
+}
+
+- (void)uploadNote:(ENNote *)note
+            policy:(ENSessionUploadPolicy)policy
+     replaceNoteId:(NSString *)noteToReplace
+          progress:(ENSessionUploadNoteProgressHandler)progress
+        completion:(ENSessionUploadNoteCompletionHandler)completion
+{
+    if (!note || !completion) {
         [NSException raise:NSInvalidArgumentException format:@"note and handler required"];
         return;
     }
     
-    if (!self.isAuthenticated) {
-        handler(nil, [NSError errorWithDomain:EvernoteSDKErrorDomain code:EDAMErrorCode_INVALID_AUTH userInfo:nil]);
+    if (policy == ENSessionUploadPolicyCreate && noteToReplace) {
+        [NSException raise:NSInvalidArgumentException format:@"can't use create policy when specifying an existing ID"];
         return;
+    }
+    if ((policy == ENSessionUploadPolicyReplace && !noteToReplace) ||
+        (policy == ENSessionUploadPolicyReplaceOrCreate && !noteToReplace)) {
+        [NSException raise:NSInvalidArgumentException format:@"must specify existing ID when requesting a replacement policy"];
+        return;
+    }
+    
+    if (!self.isAuthenticated) {
+        completion(nil, [NSError errorWithDomain:EvernoteSDKErrorDomain code:EDAMErrorCode_INVALID_AUTH userInfo:nil]);
+        return;
+    }
+    
+    if (progress) {
+        [[EvernoteNoteStore noteStore] setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+            if (totalBytesExpectedToWrite > 0) {
+                CGFloat t = totalBytesWritten / totalBytesExpectedToWrite;
+                progress(t);
+            }
+        }];
     }
     
     ENSessionUploadNoteContext * context = [[ENSessionUploadNoteContext alloc] init];
     context.note = [note EDAMNote];
     context.guidToReplace = noteToReplace;
-    context.handler = handler;
+    context.policy = policy;
+    context.completion = completion;
     context.defaultNotebookName = self.defaultNotebookName;
 
     if (noteToReplace) {
@@ -180,7 +211,7 @@ static NSString * DeveloperKey, * NoteStoreUrl;
         // None matched. Create it.
         [self uploadNote_createNotebookWithContext:context];
     } failure:^(NSError * error) {
-        context.handler(nil, error);
+        [self uploadNote_completeWithContext:context resultingGuid:nil error:error];
     }];
 }
 
@@ -193,24 +224,36 @@ static NSString * DeveloperKey, * NoteStoreUrl;
         context.note.notebookGuid = resultNotebook.guid;
         [self uploadNote_createWithContext:context];
     } failure:^(NSError * error) {
-        context.handler(nil, error);
+        [self uploadNote_completeWithContext:context resultingGuid:nil error:error];
     }];
 }
 
 - (void)uploadNote_updateWithContext:(ENSessionUploadNoteContext *)context
 {
     context.note.guid = context.guidToReplace;
+    context.note.active = YES;
     [[EvernoteNoteStore noteStore] updateNote:context.note success:^(EDAMNote * resultNote) {
-        context.handler(resultNote.guid, nil);
+        [self uploadNote_completeWithContext:context resultingGuid:resultNote.guid error:nil];
     } failure:^(NSError *error) {
-        context.handler(nil, error);
+        if ([error.userInfo[@"parameter"] isEqualToString:@"Note.guid"]) {
+            // We tried to replace a note that isn't there anymore. Now we look at the replacement policy.
+            if (context.policy == ENSessionUploadPolicyReplaceOrCreate) {
+                // Don't update it, just create it anew.
+                context.note.guid = nil;
+                context.policy = ENSessionUploadPolicyCreate;
+                context.guidToReplace = nil;
+                [self uploadNote_createWithContext:context];
+                return;
+            }
+        }
+        [self uploadNote_completeWithContext:context resultingGuid:nil error:error];
     }];
 }
 
 - (void)uploadNote_createWithContext:(ENSessionUploadNoteContext *)context
 {
     [[EvernoteNoteStore noteStore] createNote:context.note success:^(EDAMNote * resultNote) {
-        context.handler(resultNote.guid, nil);
+        [self uploadNote_completeWithContext:context resultingGuid:resultNote.guid error:nil];
     } failure:^(NSError * error) {
         if ([error.userInfo[@"parameter"] isEqualToString:@"Note.notebookGuid"] &&
             context.destinedForDefaultNotebook) {
@@ -220,8 +263,16 @@ static NSString * DeveloperKey, * NoteStoreUrl;
             [self uploadNote_findDefaultNotebookWithContext:context];
             return;
         }
-        context.handler(nil, error);
+        [self uploadNote_completeWithContext:context resultingGuid:nil error:error];
     }];
+}
+
+- (void)uploadNote_completeWithContext:(ENSessionUploadNoteContext *)context
+                         resultingGuid:(NSString *)guid
+                                 error:(NSError *)error
+{
+    [[EvernoteNoteStore noteStore] setUploadProgressBlock:nil];
+    context.completion(guid, error);
 }
 
 #pragma mark - Private routines
