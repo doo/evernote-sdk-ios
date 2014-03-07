@@ -10,9 +10,11 @@
 #import <UIKit/UIKit.h>
 #import "ENSDK.h"
 
+typedef void (^ENSessionAuthenticateCompletionHandler)(NSError * authenticateError);
+typedef void (^ENSessionListNotebooksCompletionHandler)(NSArray * notebooks, NSError * listNotebooksError);
 typedef void (^ENSessionUploadNoteProgressHandler)(CGFloat progress);
 typedef void (^ENSessionUploadNoteCompletionHandler)(NSString * noteId, NSError * uploadNoteError);
-typedef void (^ENSessionListNotebooksCompletionHandler)(NSArray * notebooks, NSError * listNotebooksError);
+typedef void (^ENSessionShareNoteCompletionHandler)(NSString * url, NSError * shareNoteError);
 
 typedef NS_ENUM(NSInteger, ENSessionUploadPolicy) {
     ENSessionUploadPolicyCreate,
@@ -27,12 +29,14 @@ typedef NS_ENUM(NSInteger, ENSessionUploadPolicy) {
 @property (nonatomic, readonly) NSString * userDisplayName;
 @property (nonatomic, readonly) NSString * businessName;
 
-+ (void)setSharedSessionHost:(NSString *)host consumerKey:(NSString *)key consumerSecret:(NSString *)secret;
-+ (void)setSharedDeveloperKey:(NSString *)key noteStoreUrl:(NSString *)url;
++ (void)setSharedSessionHost:(NSString *)host
+                 consumerKey:(NSString *)key
+              consumerSecret:(NSString *)secret;
 
 + (ENSession *)sharedSession;
 
-- (void)authenticateWithViewController:(UIViewController *)viewController handler:(void(^)(NSError * authenticateError))handler;
+- (void)authenticateWithViewController:(UIViewController *)viewController
+                            completion:(ENSessionAuthenticateCompletionHandler)completion;
 - (void)logout;
 
 - (void)listNotebooksWithHandler:(ENSessionListNotebooksCompletionHandler)completion;
@@ -47,4 +51,6 @@ typedef NS_ENUM(NSInteger, ENSessionUploadPolicy) {
      replaceNoteId:(NSString *)noteToReplace
           progress:(ENSessionUploadNoteProgressHandler)progress
         completion:(ENSessionUploadNoteCompletionHandler)completion;
+
+- (void)shareNoteId:(NSString *)noteId completion:(ENSessionShareNoteCompletionHandler)completion;
 @end

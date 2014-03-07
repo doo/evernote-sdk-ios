@@ -53,6 +53,7 @@ static NSString * DeveloperKey, * NoteStoreUrl;
     NoteStoreUrl = nil;
 }
 
+// XXX: This doesn't do anything yet.
 + (void)setSharedDeveloperKey:(NSString *)key noteStoreUrl:(NSString *)url
 {
     DeveloperKey = key;
@@ -73,10 +74,16 @@ static NSString * DeveloperKey, * NoteStoreUrl;
     return session;
 }
 
-- (void)authenticateWithViewController:(UIViewController *)viewController handler:(void(^)(NSError * authenticateError))handler;
+- (void)authenticateWithViewController:(UIViewController *)viewController
+                            completion:(ENSessionAuthenticateCompletionHandler)completion
 {
     self.isAuthenticated = NO;
     self.user = nil;
+    
+    if (!completion) {
+        [NSException raise:NSInvalidArgumentException format:@"handler required"];
+        return;
+    }
     
     //XXX: use EvernoteSession to bootstrap this for now...
     if (SessionHost) {
@@ -84,15 +91,15 @@ static NSString * DeveloperKey, * NoteStoreUrl;
     }
     [[EvernoteSession sharedSession] authenticateWithViewController:viewController completionHandler:^(NSError * error) {
         if (error) {
-            handler(error);
+            completion(error);
         } else {
             self.isAuthenticated = YES;
             [[EvernoteUserStore userStore] getUserWithSuccess:^(EDAMUser * user) {
                 self.user = user;
-                handler(nil);
+                completion(nil);
             } failure:^(NSError * getUserError) {
                 //xxx Log error. Keep name nil?
-                handler(nil);
+                completion(nil);
             }];
         }
     }];
@@ -115,6 +122,8 @@ static NSString * DeveloperKey, * NoteStoreUrl;
     [self removeAllPreferences];
     [[EvernoteSession sharedSession] logout];
 }
+
+#pragma mark - listNotebooks
 
 - (void)listNotebooksWithHandler:(ENSessionListNotebooksCompletionHandler)completion
 {
@@ -261,8 +270,8 @@ static NSString * DeveloperKey, * NoteStoreUrl;
           progress:(ENSessionUploadNoteProgressHandler)progress
         completion:(ENSessionUploadNoteCompletionHandler)completion
 {
-    if (!note || !completion) {
-        [NSException raise:NSInvalidArgumentException format:@"note and handler required"];
+    if (!note) {
+        [NSException raise:NSInvalidArgumentException format:@"note required"];
         return;
     }
     
@@ -408,7 +417,28 @@ static NSString * DeveloperKey, * NoteStoreUrl;
                                  error:(NSError *)error
 {
     [context.destinationNoteStore setUploadProgressBlock:nil];
-    context.completion(guid, error);
+    if (context.completion) {
+        context.completion(guid, error);
+    }
+}
+
+#pragma mark - shareNote
+
+- (void)shareNoteId:(NSString *)noteId completion:(ENSessionShareNoteCompletionHandler)completion
+{
+    // XXX: This only works for personal notes. To function against shared or business notebooks, we'd
+    // need to have enough info to construct a note store object for the note.
+    [[EvernoteNoteStore noteStore] shareNoteWithGuid:noteId success:^(NSString * noteKey) {
+        NSString * shardId = self.user.shardId;
+        NSString * shareUrl = [NSString stringWithFormat:@"http://%@/shard/%@/sh/%@/%@", [[EvernoteSession sharedSession] host], shardId, noteId, noteKey];
+        if (completion) {
+            completion(shareUrl, nil);
+        }
+    } failure:^(NSError * error) {
+        if (completion) {
+            completion(nil, error);
+        }
+    }];
 }
 
 #pragma mark - Private routines
