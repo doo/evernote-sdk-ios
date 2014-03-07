@@ -25,6 +25,7 @@ typedef NS_ENUM(NSInteger, ENSessionUploadPolicy) {
 
 @property (nonatomic, readonly) BOOL isAuthenticated;
 @property (nonatomic, readonly) NSString * userDisplayName;
+@property (nonatomic, readonly) NSString * businessName;
 
 + (void)setSharedSessionHost:(NSString *)host consumerKey:(NSString *)key consumerSecret:(NSString *)secret;
 + (void)setSharedDeveloperKey:(NSString *)key noteStoreUrl:(NSString *)url;
@@ -34,7 +35,7 @@ typedef NS_ENUM(NSInteger, ENSessionUploadPolicy) {
 - (void)authenticateWithViewController:(UIViewController *)viewController handler:(void(^)(NSError * authenticateError))handler;
 - (void)logout;
 
-- (void)listNotebooksWithHandler:(ENSessionListNotebooksCompletionHandler)handler;
+- (void)listNotebooksWithHandler:(ENSessionListNotebooksCompletionHandler)completion;
 
 // Easy convenience method for creating new notes.
 - (void)uploadNote:(ENNote *)note

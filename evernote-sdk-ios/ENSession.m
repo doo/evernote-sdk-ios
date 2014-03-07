@@ -13,8 +13,19 @@ static NSString * ENSEssionPreferencesFilename = @"com.evernote.evernote-sdk-ios
 
 static NSString * ENSessionDefaultNotebookGuid = @"ENSessionDefaultNotebookGuid";
 
+@interface ENSessionListNotebooksContext : NSObject
+@property (nonatomic, strong) NSArray * personalNotebooks;
+@property (nonatomic, strong) NSArray * linkedNotebooks;
+@property (nonatomic, strong) NSDictionary * sharedNotebooks; // map linkedNotebook.guid -> sharedNotebook
+@property (nonatomic, strong) NSDictionary * businessNotebooks; // map linkedNotebook.guid -> notebook
+@property (nonatomic, assign) NSInteger pendingSharedNotebooks;
+@property (nonatomic, strong) NSError * error;
+@property (nonatomic, strong) ENSessionListNotebooksCompletionHandler completion;
+@end
+
 @interface ENSessionUploadNoteContext : NSObject
 @property (nonatomic, strong) EDAMNote * note;
+@property (nonatomic, strong) EvernoteNoteStore * destinationNoteStore;
 @property (nonatomic, strong) NSString * guidToReplace;
 @property (nonatomic, assign) ENSessionUploadPolicy policy;
 @property (nonatomic, assign) BOOL destinedForDefaultNotebook;
@@ -92,6 +103,11 @@ static NSString * DeveloperKey, * NoteStoreUrl;
     return self.user.name ?: self.user.username;
 }
 
+- (NSString *)businessName
+{
+    return self.user.businessUserInfo.businessName;
+}
+
 - (void)logout
 {
     self.isAuthenticated = NO;
@@ -100,27 +116,135 @@ static NSString * DeveloperKey, * NoteStoreUrl;
     [[EvernoteSession sharedSession] logout];
 }
 
-- (void)listNotebooksWithHandler:(ENSessionListNotebooksCompletionHandler)handler
+- (void)listNotebooksWithHandler:(ENSessionListNotebooksCompletionHandler)completion
 {
-    if (!handler) {
+    if (!completion) {
         [NSException raise:NSInvalidArgumentException format:@"handler required"];
         return;
     }
     if (!self.isAuthenticated) {
-        handler(nil, [NSError errorWithDomain:EvernoteSDKErrorDomain code:EDAMErrorCode_INVALID_AUTH userInfo:nil]);
+        completion(nil, [NSError errorWithDomain:EvernoteSDKErrorDomain code:EDAMErrorCode_INVALID_AUTH userInfo:nil]);
         return;
     }
+    ENSessionListNotebooksContext * context = [[ENSessionListNotebooksContext alloc] init];
+    context.completion = completion;
+    [self listNotebooks_listNotebooksWithContext:context];
+}
+
+- (void)listNotebooks_listNotebooksWithContext:(ENSessionListNotebooksContext *)context
+{
     [[EvernoteNoteStore noteStore] listNotebooksWithSuccess:^(NSArray * notebooks) {
-        NSMutableArray * results = [NSMutableArray array];
-        for (EDAMNotebook * edamNotebook in notebooks) {
-            BOOL isApplicationDefaultNotebook = [[self defaultNotebookGuid] isEqualToString:edamNotebook.guid];
-            ENNotebook * notebook = [[ENNotebook alloc] initWithEdamNotebook:edamNotebook isApplicationDefault:isApplicationDefaultNotebook];
-            [results addObject:notebook];
-        }
-        handler(results, nil);
+        context.personalNotebooks = notebooks;
+        // Now get any linked notebooks.
+        [self listNotebooks_listLinkedNotebooksWithContext:context];
     } failure:^(NSError * error) {
-        handler(nil, error);
+        [self listNotebooks_completeWithContext:context notebooks:nil error:error];
     }];
+}
+
+- (void)listNotebooks_listLinkedNotebooksWithContext:(ENSessionListNotebooksContext *)context
+{
+    [[EvernoteNoteStore noteStore] listLinkedNotebooksWithSuccess:^(NSArray *linkedNotebooks) {
+        if (linkedNotebooks.count == 0) {
+            [self listNotebooks_prepareResultsWithContext:context];
+        } else {
+            context.linkedNotebooks = linkedNotebooks;
+            // We need to figure out privilege levels on all of these notebooks, which is byzantine
+            // at best, but here we go.
+            [self listNotebooks_fetchSharedNotebooksWithContext:context];
+        }
+    } failure:^(NSError *error) {
+        [self listNotebooks_completeWithContext:context notebooks:nil error:error];
+    }];
+}
+
+- (void)listNotebooks_fetchSharedNotebooksWithContext:(ENSessionListNotebooksContext *)context
+{
+    context.pendingSharedNotebooks = context.linkedNotebooks.count;
+    NSMutableDictionary * sharedNotebooks = [[NSMutableDictionary alloc] init];
+    context.sharedNotebooks = sharedNotebooks;
+    NSMutableDictionary * businessNotebooks = [[NSMutableDictionary alloc] init];
+    context.businessNotebooks = businessNotebooks;
+    
+    for (EDAMLinkedNotebook * linkedNotebook in context.linkedNotebooks) {
+        EvernoteNoteStore * noteStore = [EvernoteNoteStore noteStoreForLinkedNotebook:linkedNotebook];
+        [noteStore getSharedNotebookByAuthWithSuccess:^(EDAMSharedNotebook * sharedNotebook) {
+            // Add the shared notebook to the map.
+            [sharedNotebooks setObject:sharedNotebook forKey:linkedNotebook.guid];
+            // If the shared notebook shows a group privilege level, we're on the hook for another call to get the actual
+            // notebook object that corresponds to it, which will contain the real privilege level.
+            if (sharedNotebook.privilege == SharedNotebookPrivilegeLevel_GROUP) {
+                EvernoteNoteStore * businessNoteStore = [EvernoteNoteStore businessNoteStore];
+                [businessNoteStore getNotebookWithGuid:sharedNotebook.notebookGuid success:^(EDAMNotebook * correspondingNotebook) {
+                    [businessNotebooks setObject:correspondingNotebook forKey:linkedNotebook.guid];
+                    [self listNotebooks_completePendingSharedNotebookWithContext:context];
+                } failure:^(NSError *error) {
+                    context.error = error;
+                    [self listNotebooks_completePendingSharedNotebookWithContext:context];
+                }];
+                return;
+            }
+            [self listNotebooks_completePendingSharedNotebookWithContext:context];
+        } failure:^(NSError * error) {
+            context.error = error;
+            [self listNotebooks_completePendingSharedNotebookWithContext:context];
+        }];
+    }
+}
+
+- (void)listNotebooks_completePendingSharedNotebookWithContext:(ENSessionListNotebooksContext *)context
+{
+    if (--context.pendingSharedNotebooks == 0) {
+        [self listNotebooks_processSharedNotebooksWithContext:context];
+    }
+}
+
+- (void)listNotebooks_processSharedNotebooksWithContext:(ENSessionListNotebooksContext *)context
+{
+    if (context.error) {
+        // One of the calls failed. Currently we treat this as a hard error, and fail the entire call.
+        [self listNotebooks_completeWithContext:context notebooks:nil error:context.error];
+        return;
+    }
+    
+    [self listNotebooks_prepareResultsWithContext:context];
+}
+
+- (void)listNotebooks_prepareResultsWithContext:(ENSessionListNotebooksContext *)context
+{
+    NSMutableArray * result = [NSMutableArray array];
+    
+    // Add all personal notebooks.
+    NSString * defaultGuid = [self defaultNotebookGuid];
+    for (EDAMNotebook * personalNotebook in context.personalNotebooks) {
+        ENNotebook * notebook = [[ENNotebook alloc] initWithNotebook:personalNotebook];
+        notebook.isApplicationDefaultNotebook = [defaultGuid isEqualToString:personalNotebook.guid];
+        [result addObject:notebook];
+    }
+    
+    // Add linked notebooks.
+    for (EDAMLinkedNotebook * linkedNotebook in context.linkedNotebooks) {
+        EDAMSharedNotebook * sharedNotebook = [context.sharedNotebooks objectForKey:linkedNotebook.guid];
+        EDAMNotebook * businessNotebook = [context.businessNotebooks objectForKey:linkedNotebook.guid];
+        if (sharedNotebook) {
+            ENNotebook * notebook = [[ENNotebook alloc] initWithLinkedNotebook:linkedNotebook sharedNotebook:sharedNotebook businessNotebook:businessNotebook];
+            [result addObject:notebook];
+        }
+    }
+    
+    // Sort them by name. This is just an convenience for the caller in case they don't bother to sort them themselves.
+    [result sortUsingComparator:^NSComparisonResult(ENNotebook * obj1, ENNotebook * obj2) {
+        return [obj1.name compare:obj2.name options:NSCaseInsensitiveSearch];
+    }];
+    
+    [self listNotebooks_completeWithContext:context notebooks:result error:nil];
+}
+
+- (void)listNotebooks_completeWithContext:(ENSessionListNotebooksContext *)context
+                                notebooks:(NSArray *)notebooks
+                                    error:(NSError *)error
+{
+    context.completion(notebooks, error);
 }
 
 #pragma mark - uploadNote
@@ -152,18 +276,14 @@ static NSString * DeveloperKey, * NoteStoreUrl;
         return;
     }
     
-    if (!self.isAuthenticated) {
-        completion(nil, [NSError errorWithDomain:EvernoteSDKErrorDomain code:EDAMErrorCode_INVALID_AUTH userInfo:nil]);
+    if (note.notebook && !note.notebook.allowsWriting) {
+        [NSException raise:NSInvalidArgumentException format:@"a specified notebook must not be readonly"];
         return;
     }
     
-    if (progress) {
-        [[EvernoteNoteStore noteStore] setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
-            if (totalBytesExpectedToWrite > 0) {
-                CGFloat t = totalBytesWritten / totalBytesExpectedToWrite;
-                progress(t);
-            }
-        }];
+    if (!self.isAuthenticated) {
+        completion(nil, [NSError errorWithDomain:EvernoteSDKErrorDomain code:EDAMErrorCode_INVALID_AUTH userInfo:nil]);
+        return;
     }
     
     ENSessionUploadNoteContext * context = [[ENSessionUploadNoteContext alloc] init];
@@ -173,6 +293,22 @@ static NSString * DeveloperKey, * NoteStoreUrl;
     context.completion = completion;
     context.defaultNotebookName = self.defaultNotebookName;
 
+    // Track a whole new destination note store only for explicit, linked notebook destinations.
+    if (note.notebook.linkedNotebook) {
+        context.destinationNoteStore = [EvernoteNoteStore noteStoreForLinkedNotebook:note.notebook.linkedNotebook];
+    } else {
+        context.destinationNoteStore = [EvernoteNoteStore noteStore];
+    }
+    
+    if (progress) {
+        [context.destinationNoteStore setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+            if (totalBytesExpectedToWrite > 0) {
+                CGFloat t = totalBytesWritten / totalBytesExpectedToWrite;
+                progress(t);
+            }
+        }];
+    }
+    
     if (noteToReplace) {
         [self uploadNote_updateWithContext:context];
     } else {
@@ -232,13 +368,13 @@ static NSString * DeveloperKey, * NoteStoreUrl;
 {
     context.note.guid = context.guidToReplace;
     context.note.active = YES;
-    [[EvernoteNoteStore noteStore] updateNote:context.note success:^(EDAMNote * resultNote) {
+    [context.destinationNoteStore updateNote:context.note success:^(EDAMNote * resultNote) {
         [self uploadNote_completeWithContext:context resultingGuid:resultNote.guid error:nil];
     } failure:^(NSError *error) {
         if ([error.userInfo[@"parameter"] isEqualToString:@"Note.guid"]) {
             // We tried to replace a note that isn't there anymore. Now we look at the replacement policy.
             if (context.policy == ENSessionUploadPolicyReplaceOrCreate) {
-                // Don't update it, just create it anew.
+                // Can't update it, just create it anew.
                 context.note.guid = nil;
                 context.policy = ENSessionUploadPolicyCreate;
                 context.guidToReplace = nil;
@@ -252,7 +388,7 @@ static NSString * DeveloperKey, * NoteStoreUrl;
 
 - (void)uploadNote_createWithContext:(ENSessionUploadNoteContext *)context
 {
-    [[EvernoteNoteStore noteStore] createNote:context.note success:^(EDAMNote * resultNote) {
+    [context.destinationNoteStore createNote:context.note success:^(EDAMNote * resultNote) {
         [self uploadNote_completeWithContext:context resultingGuid:resultNote.guid error:nil];
     } failure:^(NSError * error) {
         if ([error.userInfo[@"parameter"] isEqualToString:@"Note.notebookGuid"] &&
@@ -271,7 +407,7 @@ static NSString * DeveloperKey, * NoteStoreUrl;
                          resultingGuid:(NSString *)guid
                                  error:(NSError *)error
 {
-    [[EvernoteNoteStore noteStore] setUploadProgressBlock:nil];
+    [context.destinationNoteStore setUploadProgressBlock:nil];
     context.completion(guid, error);
 }
 
@@ -319,7 +455,10 @@ static NSString * PreferencesPath()
 }
 @end
 
-#pragma mark - ENSessionUploadNoteContext implementation
+#pragma mark - Private context definitions
+                                                
+@implementation ENSessionListNotebooksContext
+@end
 
 @implementation ENSessionUploadNoteContext
 @end

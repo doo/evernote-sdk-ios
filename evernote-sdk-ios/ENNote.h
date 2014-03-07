@@ -15,7 +15,7 @@
 @property (nonatomic, copy) NSString * title;
 @property (nonatomic, strong) ENNotebook * notebook;
 - (id)initWithString:(NSString *)string;
-- (id)initWithHTML:(NSString *)html;
+- (id)initWithSanitizedHTML:(NSString *)html;
 - (id)initWithENML:(NSString *)enml;
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 70000
 - (id)initWithAttributedString:(NSAttributedString *)string;

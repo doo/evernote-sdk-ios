@@ -62,7 +62,7 @@
     return note;
 }
 
-- (id)initWithHTML:(NSString *)html
+- (id)initWithSanitizedHTML:(NSString *)html
 {
     ENHTMLNote * note = [[ENHTMLNote alloc] init];
     note.htmlContent = html;

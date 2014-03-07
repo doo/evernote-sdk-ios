@@ -14,7 +14,10 @@
 
 @interface ENNotebook (Private)
 @property (nonatomic, readonly) NSString * guid;
-- (id)initWithEdamNotebook:(EDAMNotebook *)notebook isApplicationDefault:(BOOL)isDefault;
+@property (nonatomic, strong) EDAMLinkedNotebook * linkedNotebook;
+@property (nonatomic, assign) BOOL isApplicationDefaultNotebook;
+- (id)initWithNotebook:(EDAMNotebook *)notebook;
+- (id)initWithLinkedNotebook:(EDAMLinkedNotebook *)linkedNotebook sharedNotebook:(EDAMSharedNotebook *)sharedNotebook businessNotebook:(EDAMNotebook *)businessNotebook;
 @end
 
 @interface ENResource (Private)
