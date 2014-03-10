@@ -32,23 +32,23 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    [[ENSession sharedSession] setDefaultNotebookName:@"Biiger"];
+    [[ENSession sharedSession] setDefaultNotebookName:@"My Test Notebook"];
     [[ENSession sharedSession] authenticateWithViewController:self completion:^(NSError * authError) {
         if (!authError) {
             NSLog(@"Auth succeeded, w/username '%@' in biz '%@'", [[ENSession sharedSession] userDisplayName], [[ENSession sharedSession] businessName]);
             NSMutableAttributedString * attrString = [[NSMutableAttributedString alloc] initWithString:@"The quick brown fox jumps over the lazy doge."];
             [attrString addAttribute:NSForegroundColorAttributeName value:[UIColor orangeColor] range:NSMakeRange(0, attrString.length)];
             ENNote * note = [[ENNote alloc] initWithAttributedString:attrString];
-            note.title = @"A note that i'm sharing!";
+            note.title = @"Noteref test!";
             ENResource * image = [[ENResource alloc] initWithImage:[UIImage imageNamed:@"quantizetexture.png"]];
             [note addResource:image];
-            NSString * replaceId = nil; //[[NSUserDefaults standardUserDefaults] objectForKey:@"evernoteNote"];
+            ENNoteRef * replaceRef = [ENNoteRef noteRefFromData:[[NSUserDefaults standardUserDefaults] objectForKey:@"evernoteNoteRefTest"]];
             [[ENSession sharedSession] uploadNote:note
-                                           policy:replaceId ? ENSessionUploadPolicyReplaceOrCreate : ENSessionUploadPolicyCreate
-                                    replaceNoteId:replaceId
-                                         progress:nil completion:^(NSString *noteId, NSError *uploadNoteError) {
-                                             NSLog(@"result note %@, error %@", noteId,uploadNoteError);
-                                             [[NSUserDefaults standardUserDefaults] setObject:noteId forKey:@"evernoteNote"];
+                                           policy:replaceRef ? ENSessionUploadPolicyReplaceOrCreate : ENSessionUploadPolicyCreate
+                                      replaceNote:replaceRef
+                                         progress:nil completion:^(ENNoteRef * noteRef, NSError *uploadNoteError) {
+                                             NSLog(@"result note %@, error %@", noteRef,uploadNoteError);
+                                             [[NSUserDefaults standardUserDefaults] setObject:[noteRef asData] forKey:@"evernoteNoteRefTest"];
                                          }];
 
             

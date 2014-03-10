@@ -7,6 +7,7 @@
 //
 
 #import "ENNotebook.h"
+#import "ENNoteRef.h"
 #import "ENNote.h"
 #import "ENResource.h"
 #import "ENSession.h"

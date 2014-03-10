@@ -32,4 +32,9 @@
 - (EDAMNote *)EDAMNote;
 @end
 
+
+@interface ENNoteRef (Private)
+@property (nonatomic, copy) NSString * guid;
+@end
+
 #endif

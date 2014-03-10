@@ -26,7 +26,7 @@ static NSString * ENSessionDefaultNotebookGuid = @"ENSessionDefaultNotebookGuid"
 @interface ENSessionUploadNoteContext : NSObject
 @property (nonatomic, strong) EDAMNote * note;
 @property (nonatomic, strong) EvernoteNoteStore * destinationNoteStore;
-@property (nonatomic, strong) NSString * guidToReplace;
+@property (nonatomic, strong) ENNoteRef * refToReplace;
 @property (nonatomic, assign) ENSessionUploadPolicy policy;
 @property (nonatomic, assign) BOOL destinedForDefaultNotebook;
 @property (nonatomic, strong) NSString * defaultNotebookName;
@@ -112,7 +112,10 @@ static NSString * DeveloperKey, * NoteStoreUrl;
 
 - (NSString *)businessName
 {
-    return self.user.businessUserInfo.businessName;
+    if (self.user.accounting.businessId) {
+        return self.user.accounting.businessName;
+    }
+    return nil;
 }
 
 - (void)logout
@@ -261,12 +264,12 @@ static NSString * DeveloperKey, * NoteStoreUrl;
 - (void)uploadNote:(ENNote *)note
         completion:(ENSessionUploadNoteCompletionHandler)completion
 {
-    [self uploadNote:note policy:ENSessionUploadPolicyCreate replaceNoteId:nil progress:nil completion:completion];
+    [self uploadNote:note policy:ENSessionUploadPolicyCreate replaceNote:nil progress:nil completion:completion];
 }
 
 - (void)uploadNote:(ENNote *)note
             policy:(ENSessionUploadPolicy)policy
-     replaceNoteId:(NSString *)noteToReplace
+       replaceNote:(ENNoteRef *)noteToReplace
           progress:(ENSessionUploadNoteProgressHandler)progress
         completion:(ENSessionUploadNoteCompletionHandler)completion
 {
@@ -297,7 +300,7 @@ static NSString * DeveloperKey, * NoteStoreUrl;
     
     ENSessionUploadNoteContext * context = [[ENSessionUploadNoteContext alloc] init];
     context.note = [note EDAMNote];
-    context.guidToReplace = noteToReplace;
+    context.refToReplace = noteToReplace;
     context.policy = policy;
     context.completion = completion;
     context.defaultNotebookName = self.defaultNotebookName;
@@ -375,7 +378,7 @@ static NSString * DeveloperKey, * NoteStoreUrl;
 
 - (void)uploadNote_updateWithContext:(ENSessionUploadNoteContext *)context
 {
-    context.note.guid = context.guidToReplace;
+    context.note.guid = context.refToReplace.guid;
     context.note.active = YES;
     [context.destinationNoteStore updateNote:context.note success:^(EDAMNote * resultNote) {
         [self uploadNote_completeWithContext:context resultingGuid:resultNote.guid error:nil];
@@ -386,7 +389,7 @@ static NSString * DeveloperKey, * NoteStoreUrl;
                 // Can't update it, just create it anew.
                 context.note.guid = nil;
                 context.policy = ENSessionUploadPolicyCreate;
-                context.guidToReplace = nil;
+                context.refToReplace = nil;
                 [self uploadNote_createWithContext:context];
                 return;
             }
@@ -418,19 +421,22 @@ static NSString * DeveloperKey, * NoteStoreUrl;
 {
     [context.destinationNoteStore setUploadProgressBlock:nil];
     if (context.completion) {
-        context.completion(guid, error);
+        ENNoteRef * noteRef = [[ENNoteRef alloc] init];
+        noteRef.guid = guid;
+        context.completion(noteRef, error);
     }
 }
 
 #pragma mark - shareNote
 
-- (void)shareNoteId:(NSString *)noteId completion:(ENSessionShareNoteCompletionHandler)completion
+- (void)shareNoteRef:(ENNoteRef *)noteRef
+          completion:(ENSessionShareNoteCompletionHandler)completion
 {
     // XXX: This only works for personal notes. To function against shared or business notebooks, we'd
     // need to have enough info to construct a note store object for the note.
-    [[EvernoteNoteStore noteStore] shareNoteWithGuid:noteId success:^(NSString * noteKey) {
+    [[EvernoteNoteStore noteStore] shareNoteWithGuid:noteRef.guid success:^(NSString * noteKey) {
         NSString * shardId = self.user.shardId;
-        NSString * shareUrl = [NSString stringWithFormat:@"http://%@/shard/%@/sh/%@/%@", [[EvernoteSession sharedSession] host], shardId, noteId, noteKey];
+        NSString * shareUrl = [NSString stringWithFormat:@"http://%@/shard/%@/sh/%@/%@", [[EvernoteSession sharedSession] host], shardId, noteRef.guid, noteKey];
         if (completion) {
             completion(shareUrl, nil);
         }

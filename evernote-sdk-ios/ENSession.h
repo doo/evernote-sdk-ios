@@ -13,7 +13,7 @@
 typedef void (^ENSessionAuthenticateCompletionHandler)(NSError * authenticateError);
 typedef void (^ENSessionListNotebooksCompletionHandler)(NSArray * notebooks, NSError * listNotebooksError);
 typedef void (^ENSessionUploadNoteProgressHandler)(CGFloat progress);
-typedef void (^ENSessionUploadNoteCompletionHandler)(NSString * noteId, NSError * uploadNoteError);
+typedef void (^ENSessionUploadNoteCompletionHandler)(ENNoteRef * noteRef, NSError * uploadNoteError);
 typedef void (^ENSessionShareNoteCompletionHandler)(NSString * url, NSError * shareNoteError);
 
 typedef NS_ENUM(NSInteger, ENSessionUploadPolicy) {
@@ -48,9 +48,10 @@ typedef NS_ENUM(NSInteger, ENSessionUploadPolicy) {
 // Use the full method if you want to track progress, overwrite existing notes, etc.
 - (void)uploadNote:(ENNote *)note
             policy:(ENSessionUploadPolicy)policy
-     replaceNoteId:(NSString *)noteToReplace
+       replaceNote:(ENNoteRef *)noteToReplace
           progress:(ENSessionUploadNoteProgressHandler)progress
         completion:(ENSessionUploadNoteCompletionHandler)completion;
 
-- (void)shareNoteId:(NSString *)noteId completion:(ENSessionShareNoteCompletionHandler)completion;
+- (void)shareNoteRef:(ENNoteRef *)noteRef
+          completion:(ENSessionShareNoteCompletionHandler)completion;
 @end

@@ -250,6 +250,9 @@
 		BE44482918C5111B009AAE1B /* ENXMLSaxParser.h in Headers */ = {isa = PBXBuildFile; fileRef = BE44482718C5111B009AAE1B /* ENXMLSaxParser.h */; };
 		BE44482A18C5111B009AAE1B /* ENXMLSaxParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BE44482818C5111B009AAE1B /* ENXMLSaxParser.m */; };
 		BE44482B18C5111C009AAE1B /* ENXMLSaxParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BE44482818C5111B009AAE1B /* ENXMLSaxParser.m */; };
+		BE44482F18CA822A009AAE1B /* ENNoteRef.h in Headers */ = {isa = PBXBuildFile; fileRef = BE44482D18CA822A009AAE1B /* ENNoteRef.h */; };
+		BE44483018CA822A009AAE1B /* ENNoteRef.m in Sources */ = {isa = PBXBuildFile; fileRef = BE44482E18CA822A009AAE1B /* ENNoteRef.m */; };
+		BE44483118CA822A009AAE1B /* ENNoteRef.m in Sources */ = {isa = PBXBuildFile; fileRef = BE44482E18CA822A009AAE1B /* ENNoteRef.m */; };
 		BE4C601E18BD53C500A3D170 /* EvernoteSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BB3D2391524EE62001C4534 /* EvernoteSession.m */; };
 		BE4C601F18BD53C500A3D170 /* EDAMLimits.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BB3D22F1524EE62001C4534 /* EDAMLimits.m */; settings = {COMPILER_FLAGS = "-w"; }; };
 		BE4C602018BD53C500A3D170 /* EDAMNoteStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BB3D2311524EE62001C4534 /* EDAMNoteStore.m */; settings = {COMPILER_FLAGS = "-w"; }; };
@@ -572,6 +575,8 @@
 		BE44482718C5111B009AAE1B /* ENXMLSaxParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENXMLSaxParser.h; sourceTree = "<group>"; };
 		BE44482818C5111B009AAE1B /* ENXMLSaxParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENXMLSaxParser.m; sourceTree = "<group>"; };
 		BE44482C18C51CEE009AAE1B /* ENSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ENSDK.h; sourceTree = "<group>"; };
+		BE44482D18CA822A009AAE1B /* ENNoteRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENNoteRef.h; sourceTree = "<group>"; };
+		BE44482E18CA822A009AAE1B /* ENNoteRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENNoteRef.m; sourceTree = "<group>"; };
 		BE4C607E18BD53C500A3D170 /* SampleApp copy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SampleApp copy.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE4C607F18BD53C600A3D170 /* SampleApp copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "SampleApp copy-Info.plist"; path = "/Users/bzotto/src/evernote-sdk-ios/SampleApp copy-Info.plist"; sourceTree = "<absolute>"; };
 		BE620D6018BD3656007716B2 /* ENSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENSession.h; sourceTree = "<group>"; };
@@ -1126,6 +1131,8 @@
 				BEDCCEB618BD5A660090803C /* ENNote.m */,
 				BEDCCEBA18BD8DD80090803C /* ENResource.h */,
 				BEDCCEBB18BD8DD80090803C /* ENResource.m */,
+				BE44482D18CA822A009AAE1B /* ENNoteRef.h */,
+				BE44482E18CA822A009AAE1B /* ENNoteRef.m */,
 			);
 			name = ENSDK;
 			sourceTree = "<group>";
@@ -1230,6 +1237,7 @@
 				A9D166C5169151D600043DA0 /* TObjective-C.h in Headers */,
 				A96FE4EE16A0A3DB00F1AD8C /* ENAFURLConnectionOperation.h in Headers */,
 				A9B1E86616C2242200D54760 /* KSForwardingWriter.h in Headers */,
+				BE44482F18CA822A009AAE1B /* ENNoteRef.h in Headers */,
 				A9B1E86916C2242200D54760 /* KSHTMLWriter.h in Headers */,
 				A9B1E86C16C2242200D54760 /* KSWriter.h in Headers */,
 				A9B1E86F16C2242200D54760 /* KSXMLAttributes.h in Headers */,
@@ -1502,6 +1510,7 @@
 				A9B1E8A816C3265300D54760 /* ENApplicationBridge.m in Sources */,
 				A9B1E8AD16C3265300D54760 /* ENAuthenticationRequest.m in Sources */,
 				BEDCCEB818BD5A660090803C /* ENNote.m in Sources */,
+				BE44483018CA822A009AAE1B /* ENNoteRef.m in Sources */,
 				A9B1E8B016C3265300D54760 /* ENLinkNotebookRequest.m in Sources */,
 				A9B1E8B316C3265300D54760 /* ENNewNoteRequest.m in Sources */,
 				A9B1E8B616C3265300D54760 /* ENNoteImportRequest.m in Sources */,
@@ -1662,6 +1671,7 @@
 				BE4C605318BD53C500A3D170 /* NotebookChooserViewController.m in Sources */,
 				BE4C605818BD53C500A3D170 /* ENEncryptedContentInfo.m in Sources */,
 				BE4C605918BD53C500A3D170 /* ENMIMEUtils.m in Sources */,
+				BE44483118CA822A009AAE1B /* ENNoteRef.m in Sources */,
 				BE4C605A18BD53C500A3D170 /* ENMLWriter.m in Sources */,
 				BE4C605B18BD53C500A3D170 /* ENXMLDTD.m in Sources */,
 				BE4C605C18BD53C500A3D170 /* ENXMLWriter.m in Sources */,
