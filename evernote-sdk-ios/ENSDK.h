@@ -10,4 +10,5 @@
 #import "ENNoteRef.h"
 #import "ENNote.h"
 #import "ENResource.h"
+#import "ENError.h"
 #import "ENSession.h"

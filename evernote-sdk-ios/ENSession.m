@@ -175,7 +175,7 @@ static NSString * DeveloperKey, * NoteStoreUrl;
         return;
     }
     if (!self.isAuthenticated) {
-        completion(nil, [NSError errorWithDomain:EvernoteSDKErrorDomain code:EDAMErrorCode_INVALID_AUTH userInfo:nil]);
+        completion(nil, [NSError errorWithDomain:ENErrorDomain code:ENErrorCodeAuthExpired userInfo:nil]);
         return;
     }
     ENSessionListNotebooksContext * context = [[ENSessionListNotebooksContext alloc] init];
@@ -334,7 +334,7 @@ static NSString * DeveloperKey, * NoteStoreUrl;
     }
     
     if (!self.isAuthenticated) {
-        completion(nil, [NSError errorWithDomain:EvernoteSDKErrorDomain code:EDAMErrorCode_INVALID_AUTH userInfo:nil]);
+        completion(nil, [NSError errorWithDomain:ENErrorDomain code:ENErrorCodeAuthExpired userInfo:nil]);
         return;
     }
     
