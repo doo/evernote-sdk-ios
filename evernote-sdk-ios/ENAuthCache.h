@@ -10,7 +10,6 @@
 #import "EvernoteSDK.h"
 
 @interface ENAuthCache : NSObject
-+ (ENAuthCache *)sharedCache;
 - (void)setAuthenticationResult:(EDAMAuthenticationResult *)result forLinkedNotebookGuid:(NSString *)guid;
 - (EDAMAuthenticationResult *)authenticationResultForLinkedNotebookGuid:(NSString *)guid;
 @end

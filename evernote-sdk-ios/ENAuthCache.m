@@ -14,16 +14,6 @@
 @end
 
 @implementation ENAuthCache
-+ (ENAuthCache *)sharedCache
-{
-    static ENAuthCache * session = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        session = [[ENAuthCache alloc] init];
-    });
-    return session;
-}
-
 - (id)init
 {
     self = [super init];
