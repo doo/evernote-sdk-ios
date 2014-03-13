@@ -10,7 +10,6 @@
 
 // An opaque reference to an existing note in the service. It can be used to
 // share or update that same note at a later time.
-
 @interface ENNoteRef : NSObject <NSCoding>
 + (instancetype)noteRefFromData:(NSData *)data;
 - (NSData *)asData;

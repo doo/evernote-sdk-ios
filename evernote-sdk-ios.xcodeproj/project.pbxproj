@@ -602,6 +602,7 @@
 		BE47CFE318D2487600D712F3 /* ENError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENError.m; sourceTree = "<group>"; };
 		BE47CFE718D254F100D712F3 /* ENLinkedNotebookRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENLinkedNotebookRef.h; sourceTree = "<group>"; };
 		BE47CFE818D254F200D712F3 /* ENLinkedNotebookRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENLinkedNotebookRef.m; sourceTree = "<group>"; };
+		BE47CFEC18D258D400D712F3 /* ENNoteRefInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ENNoteRefInternal.h; sourceTree = "<group>"; };
 		BE4C607E18BD53C500A3D170 /* SampleApp copy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SampleApp copy.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE4C607F18BD53C600A3D170 /* SampleApp copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "SampleApp copy-Info.plist"; path = "/Users/bzotto/src/evernote-sdk-ios/SampleApp copy-Info.plist"; sourceTree = "<absolute>"; };
 		BE620D6018BD3656007716B2 /* ENSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENSession.h; sourceTree = "<group>"; };
@@ -1179,6 +1180,7 @@
 				BE44484218CFD084009AAE1B /* ENStoreClient.m */,
 				BE47CFE718D254F100D712F3 /* ENLinkedNotebookRef.h */,
 				BE47CFE818D254F200D712F3 /* ENLinkedNotebookRef.m */,
+				BE47CFEC18D258D400D712F3 /* ENNoteRefInternal.h */,
 			);
 			name = Internal;
 			sourceTree = "<group>";

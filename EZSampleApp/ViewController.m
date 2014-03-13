@@ -36,7 +36,7 @@
     [[ENSession sharedSession] authenticateWithViewController:self completion:^(NSError * authError) {
         if (!authError) {
             NSLog(@"Auth succeeded, w/username '%@' in biz '%@'", [[ENSession sharedSession] userDisplayName], [[ENSession sharedSession] businessName]);
-            [self listAllNotebooks];
+            [self uploadToBusinessAndShare];
         } else {
             NSLog(@"Auth failed: %@", authError);
         }
@@ -68,6 +68,34 @@
         for (ENNotebook * notebook in notebooks) {
             NSLog(@"%@", notebook);
         }
+    }];
+}
+
+- (void)uploadToBusinessAndShare
+{
+    [[ENSession sharedSession] listNotebooksWithHandler:^(NSArray *notebooks, NSError *listNotebooksError) {
+        NSLog(@"Retrieved %d notebooks", notebooks.count);
+        ENNotebook * notebookToUse = nil;
+        for (ENNotebook * notebook in notebooks) {
+            if ([notebook.name isEqualToString:@"benvernote's Business Notebook"]) {
+                notebookToUse = notebook;
+                break;
+            }
+        }
+        
+        // Save a note to this notebook
+        ENNote * note = [[ENNote alloc] initWithString:@"Check out my cool note 2"];
+        note.title = @"Save & Share to Business";
+        note.notebook = notebookToUse;
+        [[ENSession sharedSession] uploadNote:note completion:^(ENNoteRef *noteRef, NSError *uploadNoteError) {
+            if (noteRef) {
+                [[ENSession sharedSession] shareNoteRef:noteRef completion:^(NSString *url, NSError *shareNoteError) {
+                    if (url) {
+                        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
+                    }
+                }];
+            }
+        }];
     }];
 }
 

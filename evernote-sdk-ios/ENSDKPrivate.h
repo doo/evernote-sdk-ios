@@ -11,6 +11,8 @@
 
 #import "ENSDK.h"
 #import "EvernoteSDK.h"
+#import "ENLinkedNotebookRef.h"
+#import "ENNoteRefInternal.h"
 
 @interface ENNotebook (Private)
 @property (nonatomic, readonly) NSString * guid;
@@ -32,9 +34,5 @@
 - (EDAMNote *)EDAMNote;
 @end
 
-
-@interface ENNoteRef (Private)
-@property (nonatomic, copy) NSString * guid;
-@end
 
 #endif

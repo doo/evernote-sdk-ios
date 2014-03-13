@@ -28,8 +28,8 @@ static NSString * ENSessionDefaultNotebookGuid = @"ENSessionDefaultNotebookGuid"
 
 @interface ENSessionUploadNoteContext : NSObject
 @property (nonatomic, strong) EDAMNote * note;
-@property (nonatomic, strong) ENNoteStoreClient * destinationNoteStore;
 @property (nonatomic, strong) ENNoteRef * refToReplace;
+@property (nonatomic, strong) ENNotebook * noteDestinationNotebook;
 @property (nonatomic, assign) ENSessionUploadPolicy policy;
 @property (nonatomic, assign) BOOL destinedForDefaultNotebook;
 @property (nonatomic, strong) NSString * defaultNotebookName;
@@ -43,6 +43,7 @@ static NSString * ENSessionDefaultNotebookGuid = @"ENSessionDefaultNotebookGuid"
 @property (nonatomic, strong) NSString * primaryAuthenticationToken;
 @property (nonatomic, strong) ENNoteStoreClient * primaryNoteStore;
 @property (nonatomic, strong) ENNoteStoreClient * businessNoteStore;
+@property (nonatomic, strong) NSString * businessShardId;
 @property (nonatomic, strong) ENAuthCache * linkedAuthCache;
 @property (nonatomic, strong) dispatch_queue_t sharedQueue;
 @end
@@ -126,6 +127,7 @@ static NSString * DeveloperKey, * NoteStoreUrl;
                 self.user = user;
                 [[EvernoteUserStore userStore] authenticateToBusinessWithSuccess:^(EDAMAuthenticationResult *authenticationResult) {
                     //XXXX: Don't do this here.
+                    self.businessShardId = authenticationResult.user.shardId;
                     self.businessNoteStore = [ENNoteStoreClient noteStoreClientWithUrl:authenticationResult.noteStoreUrl authenticationToken:authenticationResult.authenticationToken];
                     self.businessNoteStore.storeClientDelegate = self;
                     self.businessNoteStore.noteStoreDelegate = self;
@@ -341,16 +343,10 @@ static NSString * DeveloperKey, * NoteStoreUrl;
     ENSessionUploadNoteContext * context = [[ENSessionUploadNoteContext alloc] init];
     context.note = [note EDAMNote];
     context.refToReplace = noteToReplace;
+    context.noteDestinationNotebook = note.notebook;
     context.policy = policy;
     context.completion = completion;
     context.defaultNotebookName = self.defaultNotebookName;
-
-    // Track a whole new destination note store only for explicit, linked notebook destinations.
-    if (note.notebook.linkedNotebook) {
-        context.destinationNoteStore = [self noteStoreForLinkedNotebook:note.notebook.linkedNotebook];
-    } else {
-        context.destinationNoteStore = [self primaryNoteStore];
-    }
     
     if (progress) {
 //        [context.destinationNoteStore setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
@@ -364,7 +360,7 @@ static NSString * DeveloperKey, * NoteStoreUrl;
     if (noteToReplace) {
         [self uploadNote_updateWithContext:context];
     } else {
-        if (!context.note.notebookGuid) {
+        if (!context.noteDestinationNotebook) {
             // Caller has not specified an explicit notebook. Is there a default notebook set?
             if (self.defaultNotebookName) {
                 context.destinedForDefaultNotebook = YES;
@@ -399,7 +395,7 @@ static NSString * DeveloperKey, * NoteStoreUrl;
         // None matched. Create it.
         [self uploadNote_createNotebookWithContext:context];
     } failure:^(NSError * error) {
-        [self uploadNote_completeWithContext:context resultingGuid:nil error:error];
+        [self uploadNote_completeWithContext:context resultingNoteRef:nil error:error];
     }];
 }
 
@@ -412,7 +408,7 @@ static NSString * DeveloperKey, * NoteStoreUrl;
         context.note.notebookGuid = resultNotebook.guid;
         [self uploadNote_createWithContext:context];
     } failure:^(NSError * error) {
-        [self uploadNote_completeWithContext:context resultingGuid:nil error:error];
+        [self uploadNote_completeWithContext:context resultingNoteRef:nil error:error];
     }];
 }
 
@@ -420,8 +416,9 @@ static NSString * DeveloperKey, * NoteStoreUrl;
 {
     context.note.guid = context.refToReplace.guid;
     context.note.active = YES;
-    [context.destinationNoteStore updateNote:context.note success:^(EDAMNote * resultNote) {
-        [self uploadNote_completeWithContext:context resultingGuid:resultNote.guid error:nil];
+    ENNoteStoreClient * noteStore = [self noteStoreForNoteRef:context.refToReplace];
+    [noteStore updateNote:context.note success:^(EDAMNote * resultNote) {
+        [self uploadNote_completeWithContext:context resultingNoteRef:context.refToReplace error:nil];
     } failure:^(NSError *error) {
         if ([error.userInfo[@"parameter"] isEqualToString:@"Note.guid"]) {
             // We tried to replace a note that isn't there anymore. Now we look at the replacement policy.
@@ -434,14 +431,31 @@ static NSString * DeveloperKey, * NoteStoreUrl;
                 return;
             }
         }
-        [self uploadNote_completeWithContext:context resultingGuid:nil error:error];
+        [self uploadNote_completeWithContext:context resultingNoteRef:nil error:error];
     }];
 }
 
 - (void)uploadNote_createWithContext:(ENSessionUploadNoteContext *)context
 {
-    [context.destinationNoteStore createNote:context.note success:^(EDAMNote * resultNote) {
-        [self uploadNote_completeWithContext:context resultingGuid:resultNote.guid error:nil];
+    // Create a note store for wherever we're going to put this note. Also begin to construct the final note ref,
+    // which will vary based on location of note.
+    ENNoteStoreClient * noteStore = nil;
+    ENNoteRef * finalNoteRef = [[ENNoteRef alloc] init];
+    if (context.noteDestinationNotebook.isBusinessNotebook) {
+        noteStore = [self businessNoteStore];
+        finalNoteRef.type = ENNoteRefTypeBusiness;
+    } else if (context.noteDestinationNotebook.isLinked) {
+        noteStore = [self noteStoreForLinkedNotebook:context.noteDestinationNotebook.linkedNotebook];
+        finalNoteRef.type = ENNoteRefTypeShared;
+        finalNoteRef.linkedNotebook = [ENLinkedNotebookRef linkedNotebookRefFromLinkedNotebook:context.noteDestinationNotebook.linkedNotebook];
+    } else {
+        noteStore = [self primaryNoteStore];
+        finalNoteRef.type = ENNoteRefTypePersonal;
+    }
+    
+    [noteStore createNote:context.note success:^(EDAMNote * resultNote) {
+        finalNoteRef.guid = resultNote.guid;
+        [self uploadNote_completeWithContext:context resultingNoteRef:finalNoteRef error:nil];
     } failure:^(NSError * error) {
         if ([error.userInfo[@"parameter"] isEqualToString:@"Note.notebookGuid"] &&
             context.destinedForDefaultNotebook) {
@@ -451,18 +465,16 @@ static NSString * DeveloperKey, * NoteStoreUrl;
             [self uploadNote_findDefaultNotebookWithContext:context];
             return;
         }
-        [self uploadNote_completeWithContext:context resultingGuid:nil error:error];
+        [self uploadNote_completeWithContext:context resultingNoteRef:nil error:error];
     }];
 }
 
 - (void)uploadNote_completeWithContext:(ENSessionUploadNoteContext *)context
-                         resultingGuid:(NSString *)guid
+                      resultingNoteRef:(ENNoteRef *)noteRef
                                  error:(NSError *)error
 {
 //    [context.destinationNoteStore setUploadProgressBlock:nil];
     if (context.completion) {
-        ENNoteRef * noteRef = [[ENNoteRef alloc] init];
-        noteRef.guid = guid;
         context.completion(noteRef, error);
     }
 }
@@ -472,10 +484,9 @@ static NSString * DeveloperKey, * NoteStoreUrl;
 - (void)shareNoteRef:(ENNoteRef *)noteRef
           completion:(ENSessionShareNoteCompletionHandler)completion
 {
-    // XXX: This only works for personal notes. To function against shared or business notebooks, we'd
-    // need to have enough info to construct a note store object for the note.
-    [self.primaryNoteStore shareNoteWithGuid:noteRef.guid success:^(NSString * noteKey) {
-        NSString * shardId = self.user.shardId;
+    ENNoteStoreClient * noteStore = [self noteStoreForNoteRef:noteRef];
+    [noteStore shareNoteWithGuid:noteRef.guid success:^(NSString * noteKey) {
+        NSString * shardId = [self shardIdForNoteRef:noteRef];
         NSString * shareUrl = [NSString stringWithFormat:@"http://%@/shard/%@/sh/%@/%@", [[EvernoteSession sharedSession] host], shardId, noteRef.guid, noteKey];
         if (completion) {
             completion(shareUrl, nil);
@@ -517,6 +528,33 @@ static NSString * DeveloperKey, * NoteStoreUrl;
     linkedClient.storeClientDelegate = self;
     linkedClient.noteStoreDelegate = self;
     return linkedClient;
+}
+
+- (ENNoteStoreClient *)noteStoreForNoteRef:(ENNoteRef *)noteRef
+{
+    if (noteRef.type == ENNoteRefTypePersonal) {
+        return [self primaryNoteStore];
+    } else if (noteRef.type == ENNoteRefTypeBusiness) {
+        return [self businessNoteStore];
+    } else if (noteRef.type == ENNoteRefTypeShared) {
+        ENNoteStoreClient * linkedClient = [ENNoteStoreClient noteStoreClientForLinkedNotebookRef:noteRef.linkedNotebook];
+        linkedClient.storeClientDelegate = self;
+        linkedClient.noteStoreDelegate = self;
+        return linkedClient;
+    }
+    return nil;
+}
+
+- (NSString *)shardIdForNoteRef:(ENNoteRef *)noteRef
+{
+    if (noteRef.type == ENNoteRefTypePersonal) {
+        return self.user.shardId;
+    } else if (noteRef.type == ENNoteRefTypeBusiness) {
+        return self.businessShardId;
+    } else if (noteRef.type == ENNoteRefTypeShared) {
+        return noteRef.linkedNotebook.shardId;
+    }
+    return nil;
 }
 
 static NSString * PreferencesPath()

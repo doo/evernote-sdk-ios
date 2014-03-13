@@ -7,10 +7,8 @@
 //
 
 #import "ENNoteRef.h"
-
-@interface ENNoteRef ()
-@property (nonatomic, copy) NSString * guid;
-@end
+#import "ENLinkedNotebookRef.h"
+#import "ENNoteRefInternal.h"
 
 @implementation ENNoteRef
 + (instancetype)noteRefFromData:(NSData *)data
@@ -34,14 +32,18 @@
 {
     self = [super init];
     if (self) {
+        self.type = (NSInteger)[decoder decodeInt32ForKey:@"type"];
         self.guid = [decoder decodeObjectForKey:@"guid"];
+        self.linkedNotebook = [decoder decodeObjectForKey:@"linkedNotebook"];
     }
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
+    [encoder encodeInt32:self.type forKey:@"type"];
     [encoder encodeObject:self.guid forKey:@"guid"];
+    [encoder encodeObject:self.linkedNotebook forKey:@"linkedNotebook"];
 }
 
 - (NSData *)asData
