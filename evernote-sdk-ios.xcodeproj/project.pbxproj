@@ -253,6 +253,15 @@
 		BE44482F18CA822A009AAE1B /* ENNoteRef.h in Headers */ = {isa = PBXBuildFile; fileRef = BE44482D18CA822A009AAE1B /* ENNoteRef.h */; };
 		BE44483018CA822A009AAE1B /* ENNoteRef.m in Sources */ = {isa = PBXBuildFile; fileRef = BE44482E18CA822A009AAE1B /* ENNoteRef.m */; };
 		BE44483118CA822A009AAE1B /* ENNoteRef.m in Sources */ = {isa = PBXBuildFile; fileRef = BE44482E18CA822A009AAE1B /* ENNoteRef.m */; };
+		BE44483918CE78B0009AAE1B /* ENAuthCache.h in Headers */ = {isa = PBXBuildFile; fileRef = BE44483718CE78B0009AAE1B /* ENAuthCache.h */; };
+		BE44483A18CE78B0009AAE1B /* ENAuthCache.m in Sources */ = {isa = PBXBuildFile; fileRef = BE44483818CE78B0009AAE1B /* ENAuthCache.m */; };
+		BE44483B18CE78B0009AAE1B /* ENAuthCache.m in Sources */ = {isa = PBXBuildFile; fileRef = BE44483818CE78B0009AAE1B /* ENAuthCache.m */; };
+		BE44483E18CF8B17009AAE1B /* ENNoteStoreClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BE44483C18CF8B17009AAE1B /* ENNoteStoreClient.h */; };
+		BE44483F18CF8B17009AAE1B /* ENNoteStoreClient.m in Sources */ = {isa = PBXBuildFile; fileRef = BE44483D18CF8B17009AAE1B /* ENNoteStoreClient.m */; };
+		BE44484018CF8B17009AAE1B /* ENNoteStoreClient.m in Sources */ = {isa = PBXBuildFile; fileRef = BE44483D18CF8B17009AAE1B /* ENNoteStoreClient.m */; };
+		BE44484318CFD084009AAE1B /* ENStoreClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BE44484118CFD084009AAE1B /* ENStoreClient.h */; };
+		BE44484418CFD084009AAE1B /* ENStoreClient.m in Sources */ = {isa = PBXBuildFile; fileRef = BE44484218CFD084009AAE1B /* ENStoreClient.m */; };
+		BE44484518CFD084009AAE1B /* ENStoreClient.m in Sources */ = {isa = PBXBuildFile; fileRef = BE44484218CFD084009AAE1B /* ENStoreClient.m */; };
 		BE4C601E18BD53C500A3D170 /* EvernoteSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BB3D2391524EE62001C4534 /* EvernoteSession.m */; };
 		BE4C601F18BD53C500A3D170 /* EDAMLimits.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BB3D22F1524EE62001C4534 /* EDAMLimits.m */; settings = {COMPILER_FLAGS = "-w"; }; };
 		BE4C602018BD53C500A3D170 /* EDAMNoteStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BB3D2311524EE62001C4534 /* EDAMNoteStore.m */; settings = {COMPILER_FLAGS = "-w"; }; };
@@ -577,6 +586,12 @@
 		BE44482C18C51CEE009AAE1B /* ENSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ENSDK.h; sourceTree = "<group>"; };
 		BE44482D18CA822A009AAE1B /* ENNoteRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENNoteRef.h; sourceTree = "<group>"; };
 		BE44482E18CA822A009AAE1B /* ENNoteRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENNoteRef.m; sourceTree = "<group>"; };
+		BE44483718CE78B0009AAE1B /* ENAuthCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENAuthCache.h; sourceTree = "<group>"; };
+		BE44483818CE78B0009AAE1B /* ENAuthCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENAuthCache.m; sourceTree = "<group>"; };
+		BE44483C18CF8B17009AAE1B /* ENNoteStoreClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENNoteStoreClient.h; sourceTree = "<group>"; };
+		BE44483D18CF8B17009AAE1B /* ENNoteStoreClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENNoteStoreClient.m; sourceTree = "<group>"; };
+		BE44484118CFD084009AAE1B /* ENStoreClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENStoreClient.h; sourceTree = "<group>"; };
+		BE44484218CFD084009AAE1B /* ENStoreClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENStoreClient.m; sourceTree = "<group>"; };
 		BE4C607E18BD53C500A3D170 /* SampleApp copy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SampleApp copy.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE4C607F18BD53C600A3D170 /* SampleApp copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "SampleApp copy-Info.plist"; path = "/Users/bzotto/src/evernote-sdk-ios/SampleApp copy-Info.plist"; sourceTree = "<absolute>"; };
 		BE620D6018BD3656007716B2 /* ENSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENSession.h; sourceTree = "<group>"; };
@@ -1144,6 +1159,12 @@
 				BE44482318C50F6E009AAE1B /* ENHTMLtoENMLConverter.m */,
 				BE44482718C5111B009AAE1B /* ENXMLSaxParser.h */,
 				BE44482818C5111B009AAE1B /* ENXMLSaxParser.m */,
+				BE44483718CE78B0009AAE1B /* ENAuthCache.h */,
+				BE44483818CE78B0009AAE1B /* ENAuthCache.m */,
+				BE44483C18CF8B17009AAE1B /* ENNoteStoreClient.h */,
+				BE44483D18CF8B17009AAE1B /* ENNoteStoreClient.m */,
+				BE44484118CFD084009AAE1B /* ENStoreClient.h */,
+				BE44484218CFD084009AAE1B /* ENStoreClient.m */,
 			);
 			name = Internal;
 			sourceTree = "<group>";
@@ -1193,6 +1214,7 @@
 				0B943F601525015500DB20A3 /* TProtocolException.h in Headers */,
 				0B943F631525015500DB20A3 /* TProtocolFactory.h in Headers */,
 				0B943F641525015500DB20A3 /* TProtocolUtil.h in Headers */,
+				BE44483918CE78B0009AAE1B /* ENAuthCache.h in Headers */,
 				0B943F6A1525015500DB20A3 /* TApplicationException.h in Headers */,
 				0B943F6D1525015500DB20A3 /* TException.h in Headers */,
 				0B943F711525015500DB20A3 /* TProcessor.h in Headers */,
@@ -1213,6 +1235,7 @@
 				A9C55501167149B1006E0020 /* EvernoteNoteStore+Extras.h in Headers */,
 				BE620D6618BD43C1007716B2 /* ENNotebook.h in Headers */,
 				0B2B9D6815449AEE00E5BD44 /* EvernoteSDK.h in Headers */,
+				BE44484318CFD084009AAE1B /* ENStoreClient.h in Headers */,
 				0B345EBE1544633F00A1FDBF /* EvernoteNoteStore.h in Headers */,
 				A9C555061671539A006E0020 /* EvernoteUserStore+Extras.h in Headers */,
 				A9C554FC16712F17006E0020 /* NSDate+EDAMAdditions.h in Headers */,
@@ -1242,6 +1265,7 @@
 				A9B1E86C16C2242200D54760 /* KSWriter.h in Headers */,
 				A9B1E86F16C2242200D54760 /* KSXMLAttributes.h in Headers */,
 				A9B1E87216C2242200D54760 /* KSXMLWriter.h in Headers */,
+				BE44483E18CF8B17009AAE1B /* ENNoteStoreClient.h in Headers */,
 				A9B1E87A16C2259F00D54760 /* NSString+XMLAdditions.h in Headers */,
 				A9B1E89016C31B9A00D54760 /* NoteBrowserViewController.h in Headers */,
 				A9B1E8A716C3265300D54760 /* ENApplicationBridge.h in Headers */,
@@ -1463,6 +1487,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0BB3D23C1524EE62001C4534 /* EDAMLimits.m in Sources */,
+				BE44484418CFD084009AAE1B /* ENStoreClient.m in Sources */,
 				0BB3D23E1524EE62001C4534 /* EDAMNoteStore.m in Sources */,
 				0BB3D2401524EE62001C4534 /* EDAMTypes.m in Sources */,
 				0BB3D2421524EE62001C4534 /* EDAMUserStore.m in Sources */,
@@ -1495,6 +1520,7 @@
 				BEDCCEBD18BD8DD80090803C /* ENResource.m in Sources */,
 				A9C55502167149B1006E0020 /* EvernoteNoteStore+Extras.m in Sources */,
 				A9C555071671539A006E0020 /* EvernoteUserStore+Extras.m in Sources */,
+				BE44483A18CE78B0009AAE1B /* ENAuthCache.m in Sources */,
 				A92602C01672B6DD00F01E63 /* NSData+EvernoteSDK.m in Sources */,
 				A92602C516740D5700F01E63 /* ENMLUtility.m in Sources */,
 				A96FE4D916A0958600F1AD8C /* EDAMNoteStoreClient+Utilities.m in Sources */,
@@ -1519,6 +1545,7 @@
 				A9B1E8BF16C3265300D54760 /* ENSearchRequest.m in Sources */,
 				A9BE47D8178200B400471BF7 /* ENEncryptedContentInfo.m in Sources */,
 				A9BE47DB178200B400471BF7 /* ENMIMEUtils.m in Sources */,
+				BE44483F18CF8B17009AAE1B /* ENNoteStoreClient.m in Sources */,
 				A9BE47DE178200B400471BF7 /* ENMLWriter.m in Sources */,
 				A9BE47E1178200B400471BF7 /* ENXMLDTD.m in Sources */,
 				A9BE47E5178200B400471BF7 /* ENXMLWriter.m in Sources */,
@@ -1615,6 +1642,7 @@
 				BE44482618C50F6F009AAE1B /* ENHTMLtoENMLConverter.m in Sources */,
 				BE4C608718BD557E00A3D170 /* ENNotebook.m in Sources */,
 				BE4C608018BD53FA00A3D170 /* AppDelegate.m in Sources */,
+				BE44484018CF8B17009AAE1B /* ENNoteStoreClient.m in Sources */,
 				BE4C608118BD53FA00A3D170 /* main.m in Sources */,
 				BE4C608218BD53FA00A3D170 /* ViewController.m in Sources */,
 				BE4C601E18BD53C500A3D170 /* EvernoteSession.m in Sources */,
@@ -1623,6 +1651,7 @@
 				BE4C602118BD53C500A3D170 /* EDAMTypes.m in Sources */,
 				BE4C602218BD53C500A3D170 /* EDAMUserStore.m in Sources */,
 				BE4C602318BD53C500A3D170 /* EDAMErrors.m in Sources */,
+				BE44484518CFD084009AAE1B /* ENStoreClient.m in Sources */,
 				BE4C602718BD53C500A3D170 /* ENGCOAuth.m in Sources */,
 				BEDCCEB918BD5A660090803C /* ENNote.m in Sources */,
 				BE4C602818BD53C500A3D170 /* NSData+ENBase64.m in Sources */,
@@ -1632,6 +1661,7 @@
 				BE4C602C18BD53C500A3D170 /* TProtocolUtil.m in Sources */,
 				BE4C602D18BD53C500A3D170 /* TApplicationException.m in Sources */,
 				BE4C602E18BD53C500A3D170 /* TException.m in Sources */,
+				BE44483B18CE78B0009AAE1B /* ENAuthCache.m in Sources */,
 				BE4C602F18BD53C500A3D170 /* THTTPClient.m in Sources */,
 				BE4C603018BD53C500A3D170 /* TMemoryBuffer.m in Sources */,
 				BE4C603118BD53C500A3D170 /* TTransportException.m in Sources */,

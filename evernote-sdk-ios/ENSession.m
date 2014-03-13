@@ -8,6 +8,9 @@
 
 #import "EvernoteSDK.h"
 #import "ENSDKPrivate.h"
+#import "ENAuthCache.h"
+#import "ENNoteStoreClient.h"
+#import "ENCredentialStore.h"
 
 static NSString * ENSEssionPreferencesFilename = @"com.evernote.evernote-sdk-ios.plist";
 
@@ -25,7 +28,7 @@ static NSString * ENSessionDefaultNotebookGuid = @"ENSessionDefaultNotebookGuid"
 
 @interface ENSessionUploadNoteContext : NSObject
 @property (nonatomic, strong) EDAMNote * note;
-@property (nonatomic, strong) EvernoteNoteStore * destinationNoteStore;
+@property (nonatomic, strong) ENNoteStoreClient * destinationNoteStore;
 @property (nonatomic, strong) ENNoteRef * refToReplace;
 @property (nonatomic, assign) ENSessionUploadPolicy policy;
 @property (nonatomic, assign) BOOL destinedForDefaultNotebook;
@@ -33,9 +36,15 @@ static NSString * ENSessionDefaultNotebookGuid = @"ENSessionDefaultNotebookGuid"
 @property (nonatomic, strong) ENSessionUploadNoteCompletionHandler completion;
 @end
 
-@interface ENSession ()
+@interface ENSession () <ENStoreClientDelegate, ENNoteStoreClientDelegate>
 @property (nonatomic, assign) BOOL isAuthenticated;
 @property (nonatomic, strong) EDAMUser * user;
+@property (nonatomic, strong) ENCredentialStore * credentialStore;
+@property (nonatomic, strong) NSString * primaryAuthenticationToken;
+@property (nonatomic, strong) ENNoteStoreClient * primaryNoteStore;
+@property (nonatomic, strong) ENNoteStoreClient * businessNoteStore;
+@property (nonatomic, strong) ENAuthCache * linkedAuthCache;
+@property (nonatomic, strong) dispatch_queue_t sharedQueue;
 @end
 
 @implementation ENSession
@@ -74,6 +83,22 @@ static NSString * DeveloperKey, * NoteStoreUrl;
     return session;
 }
 
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        self.sharedQueue = dispatch_queue_create("com.evernote.sdk.ENSession", NULL);
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+#if !OS_OBJECT_USE_OBJC
+    dispatch_release(_sharedQueue);
+#endif
+}
+
 - (void)authenticateWithViewController:(UIViewController *)viewController
                             completion:(ENSessionAuthenticateCompletionHandler)completion
 {
@@ -94,9 +119,20 @@ static NSString * DeveloperKey, * NoteStoreUrl;
             completion(error);
         } else {
             self.isAuthenticated = YES;
+            self.credentialStore = [ENCredentialStore loadCredentials];
+            ENCredentials * credentials = [self.credentialStore credentialsForHost:SessionHost];
+            self.primaryAuthenticationToken = credentials.authenticationToken;
             [[EvernoteUserStore userStore] getUserWithSuccess:^(EDAMUser * user) {
                 self.user = user;
-                completion(nil);
+                [[EvernoteUserStore userStore] authenticateToBusinessWithSuccess:^(EDAMAuthenticationResult *authenticationResult) {
+                    //XXXX: Don't do this here.
+                    self.businessNoteStore = [ENNoteStoreClient noteStoreClientWithUrl:authenticationResult.noteStoreUrl authenticationToken:authenticationResult.authenticationToken];
+                    self.businessNoteStore.storeClientDelegate = self;
+                    self.businessNoteStore.noteStoreDelegate = self;
+                    completion(nil);
+                } failure:^(NSError * authenticateToBusinessError) {
+                    completion(nil);
+                }];
             } failure:^(NSError * getUserError) {
                 //xxx Log error. Keep name nil?
                 completion(nil);
@@ -122,6 +158,10 @@ static NSString * DeveloperKey, * NoteStoreUrl;
 {
     self.isAuthenticated = NO;
     self.user = nil;
+    self.primaryAuthenticationToken = nil;
+    self.primaryNoteStore = nil;
+    self.businessNoteStore = nil;
+    self.linkedAuthCache = nil;
     [self removeAllPreferences];
     [[EvernoteSession sharedSession] logout];
 }
@@ -145,7 +185,7 @@ static NSString * DeveloperKey, * NoteStoreUrl;
 
 - (void)listNotebooks_listNotebooksWithContext:(ENSessionListNotebooksContext *)context
 {
-    [[EvernoteNoteStore noteStore] listNotebooksWithSuccess:^(NSArray * notebooks) {
+    [self.primaryNoteStore listNotebooksWithSuccess:^(NSArray * notebooks) {
         context.personalNotebooks = notebooks;
         // Now get any linked notebooks.
         [self listNotebooks_listLinkedNotebooksWithContext:context];
@@ -156,7 +196,7 @@ static NSString * DeveloperKey, * NoteStoreUrl;
 
 - (void)listNotebooks_listLinkedNotebooksWithContext:(ENSessionListNotebooksContext *)context
 {
-    [[EvernoteNoteStore noteStore] listLinkedNotebooksWithSuccess:^(NSArray *linkedNotebooks) {
+    [self.primaryNoteStore listLinkedNotebooksWithSuccess:^(NSArray *linkedNotebooks) {
         if (linkedNotebooks.count == 0) {
             [self listNotebooks_prepareResultsWithContext:context];
         } else {
@@ -179,14 +219,14 @@ static NSString * DeveloperKey, * NoteStoreUrl;
     context.businessNotebooks = businessNotebooks;
     
     for (EDAMLinkedNotebook * linkedNotebook in context.linkedNotebooks) {
-        EvernoteNoteStore * noteStore = [EvernoteNoteStore noteStoreForLinkedNotebook:linkedNotebook];
+        ENNoteStoreClient * noteStore = [self noteStoreForLinkedNotebook:linkedNotebook];
         [noteStore getSharedNotebookByAuthWithSuccess:^(EDAMSharedNotebook * sharedNotebook) {
             // Add the shared notebook to the map.
             [sharedNotebooks setObject:sharedNotebook forKey:linkedNotebook.guid];
             // If the shared notebook shows a group privilege level, we're on the hook for another call to get the actual
             // notebook object that corresponds to it, which will contain the real privilege level.
             if (sharedNotebook.privilege == SharedNotebookPrivilegeLevel_GROUP) {
-                EvernoteNoteStore * businessNoteStore = [EvernoteNoteStore businessNoteStore];
+                ENNoteStoreClient * businessNoteStore = [self businessNoteStore];
                 [businessNoteStore getNotebookWithGuid:sharedNotebook.notebookGuid success:^(EDAMNotebook * correspondingNotebook) {
                     [businessNotebooks setObject:correspondingNotebook forKey:linkedNotebook.guid];
                     [self listNotebooks_completePendingSharedNotebookWithContext:context];
@@ -307,18 +347,18 @@ static NSString * DeveloperKey, * NoteStoreUrl;
 
     // Track a whole new destination note store only for explicit, linked notebook destinations.
     if (note.notebook.linkedNotebook) {
-        context.destinationNoteStore = [EvernoteNoteStore noteStoreForLinkedNotebook:note.notebook.linkedNotebook];
+        context.destinationNoteStore = [self noteStoreForLinkedNotebook:note.notebook.linkedNotebook];
     } else {
-        context.destinationNoteStore = [EvernoteNoteStore noteStore];
+        context.destinationNoteStore = [self primaryNoteStore];
     }
     
     if (progress) {
-        [context.destinationNoteStore setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
-            if (totalBytesExpectedToWrite > 0) {
-                CGFloat t = totalBytesWritten / totalBytesExpectedToWrite;
-                progress(t);
-            }
-        }];
+//        [context.destinationNoteStore setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
+//            if (totalBytesExpectedToWrite > 0) {
+//                CGFloat t = totalBytesWritten / totalBytesExpectedToWrite;
+//                progress(t);
+//            }
+//        }];
     }
     
     if (noteToReplace) {
@@ -346,7 +386,7 @@ static NSString * DeveloperKey, * NoteStoreUrl;
 
 - (void)uploadNote_findDefaultNotebookWithContext:(ENSessionUploadNoteContext *)context
 {
-    [[EvernoteNoteStore noteStore] listNotebooksWithSuccess:^(NSArray * notebooks) {
+    [self.primaryNoteStore listNotebooksWithSuccess:^(NSArray * notebooks) {
         // Walk the notebooks to see if any of them match the default that we're looking for.
         for (EDAMNotebook * notebook in notebooks) {
             if ([notebook.name caseInsensitiveCompare:context.defaultNotebookName] == NSOrderedSame) {
@@ -367,7 +407,7 @@ static NSString * DeveloperKey, * NoteStoreUrl;
 {
     EDAMNotebook * notebook = [[EDAMNotebook alloc] init];
     notebook.name = context.defaultNotebookName;
-    [[EvernoteNoteStore noteStore] createNotebook:notebook success:^(EDAMNotebook * resultNotebook) {
+    [self.primaryNoteStore createNotebook:notebook success:^(EDAMNotebook * resultNotebook) {
         [self setDefaultNotebookGuid:resultNotebook.guid];
         context.note.notebookGuid = resultNotebook.guid;
         [self uploadNote_createWithContext:context];
@@ -419,7 +459,7 @@ static NSString * DeveloperKey, * NoteStoreUrl;
                          resultingGuid:(NSString *)guid
                                  error:(NSError *)error
 {
-    [context.destinationNoteStore setUploadProgressBlock:nil];
+//    [context.destinationNoteStore setUploadProgressBlock:nil];
     if (context.completion) {
         ENNoteRef * noteRef = [[ENNoteRef alloc] init];
         noteRef.guid = guid;
@@ -434,7 +474,7 @@ static NSString * DeveloperKey, * NoteStoreUrl;
 {
     // XXX: This only works for personal notes. To function against shared or business notebooks, we'd
     // need to have enough info to construct a note store object for the note.
-    [[EvernoteNoteStore noteStore] shareNoteWithGuid:noteRef.guid success:^(NSString * noteKey) {
+    [self.primaryNoteStore shareNoteWithGuid:noteRef.guid success:^(NSString * noteKey) {
         NSString * shardId = self.user.shardId;
         NSString * shareUrl = [NSString stringWithFormat:@"http://%@/shard/%@/sh/%@/%@", [[EvernoteSession sharedSession] host], shardId, noteRef.guid, noteKey];
         if (completion) {
@@ -448,6 +488,36 @@ static NSString * DeveloperKey, * NoteStoreUrl;
 }
 
 #pragma mark - Private routines
+
+- (ENNoteStoreClient *)primaryNoteStore
+{
+    if (!_primaryNoteStore) {
+        ENCredentials * credentials = [self.credentialStore credentialsForHost:SessionHost];
+        _primaryNoteStore = [ENNoteStoreClient noteStoreClientWithUrl:credentials.noteStoreUrl authenticationToken:credentials.authenticationToken];
+        _primaryNoteStore.storeClientDelegate = self;
+        _primaryNoteStore.noteStoreDelegate = self;
+    }
+    return _primaryNoteStore;
+}
+
+- (ENNoteStoreClient *)businessNoteStore
+{
+    //XXX Currently this is not lazily initialized, but constructed at normal auth time directly because we don't yet have user store stuff migrated.    
+    if (!_businessNoteStore) {
+//        EDAMAuthenticationResult * authResult = [self.userStoreClient authenticateToBusiness:self.primaryAuthenticationToken];
+//        _businessNoteStore = [ENNoteStoreClient noteStoreClientWithUrl:authResult.noteStoreUrl authenticationToken:authResult.authenticationToken];
+    }
+    return _businessNoteStore;
+}
+
+- (ENNoteStoreClient *)noteStoreForLinkedNotebook:(EDAMLinkedNotebook *)linkedNotebook
+{
+    ENNoteStoreClientLinkedNotebookRef * linkedNotebookRef = [ENNoteStoreClientLinkedNotebookRef linkedNotebookRefFromLinkedNotebook:linkedNotebook];
+    ENNoteStoreClient * linkedClient = [ENNoteStoreClient noteStoreClientForLinkedNotebookRef:linkedNotebookRef];
+    linkedClient.storeClientDelegate = self;
+    linkedClient.noteStoreDelegate = self;
+    return linkedClient;
+}
 
 static NSString * PreferencesPath()
 {
@@ -489,6 +559,34 @@ static NSString * PreferencesPath()
 {
     [self setPreferencesObject:guid forKey:ENSessionDefaultNotebookGuid];
 }
+
+#pragma - ENStoreClientDelegate
+
+- (dispatch_queue_t)dispatchQueueForStoreClient:(ENStoreClient *)client
+{
+    return self.sharedQueue;
+}
+
+#pragma - ENNoteStoreClientDelegate
+
+- (NSString *)authenticationTokenForLinkedNotebookRef:(ENNoteStoreClientLinkedNotebookRef *)linkedNotebookRef
+{
+    NSAssert(![NSThread isMainThread], @"Cannot authenticate to linked notebook on main thread");
+    
+    // See if we have auth data already for this notebook.
+    EDAMAuthenticationResult * auth = [self.linkedAuthCache authenticationResultForLinkedNotebookGuid:linkedNotebookRef.guid];
+    if (!auth) {
+        // Create a temporary note store client for the linked note store, with our primary auth token,
+        // in order to authenticate to the shared notebook.
+        ENNoteStoreClient * linkedNoteStore = [ENNoteStoreClient noteStoreClientWithUrl:linkedNotebookRef.noteStoreUrl authenticationToken:self.primaryAuthenticationToken];
+        linkedNoteStore.noteStoreDelegate = self;
+        linkedNoteStore.storeClientDelegate = self;
+        auth = [linkedNoteStore authenticateToSharedNotebookWithShareKey:linkedNotebookRef.shareKey];
+        [self.linkedAuthCache setAuthenticationResult:auth forLinkedNotebookGuid:linkedNotebookRef.guid];
+    }
+    return auth.authenticationToken;
+}
+
 @end
 
 #pragma mark - Private context definitions
