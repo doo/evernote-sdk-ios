@@ -9,25 +9,16 @@
 #import <Foundation/Foundation.h>
 #import "ENStoreClient.h"
 #import "EvernoteSDK.h"
-
-// This object contains the minimum information required to authenticate to a shared notebook.
-// It is intentionally narrower than a full EDAMLinkedNotebook, allowing these general bits of information
-// to be persisted independently of a full EDAMLinkedNotebook.
-@interface ENNoteStoreClientLinkedNotebookRef : NSObject
-@property (nonatomic, strong) NSString * guid;
-@property (nonatomic, strong) NSString * noteStoreUrl;
-@property (nonatomic, strong) NSString * shareKey;
-+ (ENNoteStoreClientLinkedNotebookRef *)linkedNotebookRefFromLinkedNotebook:(EDAMLinkedNotebook *)linkedNotebook;
-@end
+#import "ENLinkedNotebookRef.h"
 
 @protocol ENNoteStoreClientDelegate <NSObject>
-- (NSString *)authenticationTokenForLinkedNotebookRef:(ENNoteStoreClientLinkedNotebookRef *)linkedNotebookRef;
+- (NSString *)authenticationTokenForLinkedNotebookRef:(ENLinkedNotebookRef *)linkedNotebookRef;
 @end
 
 @interface ENNoteStoreClient : ENStoreClient
 @property (nonatomic, weak) id<ENNoteStoreClientDelegate> noteStoreDelegate;
 + (ENNoteStoreClient *)noteStoreClientWithUrl:(NSString *)url authenticationToken:(NSString *)authenticationToken;
-+ (ENNoteStoreClient *)noteStoreClientForLinkedNotebookRef:(ENNoteStoreClientLinkedNotebookRef *)linkedNotebookRef;
++ (ENNoteStoreClient *)noteStoreClientForLinkedNotebookRef:(ENLinkedNotebookRef *)linkedNotebookRef;
 
 // N.B. This method is synchronous and can throw exceptions.
 // Should be called only from within protected code blocks

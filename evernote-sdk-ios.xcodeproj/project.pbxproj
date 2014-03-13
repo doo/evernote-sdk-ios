@@ -265,6 +265,9 @@
 		BE47CFE418D2487600D712F3 /* ENError.h in Headers */ = {isa = PBXBuildFile; fileRef = BE47CFE218D2487600D712F3 /* ENError.h */; };
 		BE47CFE518D2487600D712F3 /* ENError.m in Sources */ = {isa = PBXBuildFile; fileRef = BE47CFE318D2487600D712F3 /* ENError.m */; };
 		BE47CFE618D24D2B00D712F3 /* ENError.m in Sources */ = {isa = PBXBuildFile; fileRef = BE47CFE318D2487600D712F3 /* ENError.m */; };
+		BE47CFE918D254F200D712F3 /* ENLinkedNotebookRef.h in Headers */ = {isa = PBXBuildFile; fileRef = BE47CFE718D254F100D712F3 /* ENLinkedNotebookRef.h */; };
+		BE47CFEA18D254F200D712F3 /* ENLinkedNotebookRef.m in Sources */ = {isa = PBXBuildFile; fileRef = BE47CFE818D254F200D712F3 /* ENLinkedNotebookRef.m */; };
+		BE47CFEB18D2553900D712F3 /* ENLinkedNotebookRef.m in Sources */ = {isa = PBXBuildFile; fileRef = BE47CFE818D254F200D712F3 /* ENLinkedNotebookRef.m */; };
 		BE4C601E18BD53C500A3D170 /* EvernoteSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BB3D2391524EE62001C4534 /* EvernoteSession.m */; };
 		BE4C601F18BD53C500A3D170 /* EDAMLimits.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BB3D22F1524EE62001C4534 /* EDAMLimits.m */; settings = {COMPILER_FLAGS = "-w"; }; };
 		BE4C602018BD53C500A3D170 /* EDAMNoteStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BB3D2311524EE62001C4534 /* EDAMNoteStore.m */; settings = {COMPILER_FLAGS = "-w"; }; };
@@ -597,6 +600,8 @@
 		BE44484218CFD084009AAE1B /* ENStoreClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENStoreClient.m; sourceTree = "<group>"; };
 		BE47CFE218D2487600D712F3 /* ENError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENError.h; sourceTree = "<group>"; };
 		BE47CFE318D2487600D712F3 /* ENError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENError.m; sourceTree = "<group>"; };
+		BE47CFE718D254F100D712F3 /* ENLinkedNotebookRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENLinkedNotebookRef.h; sourceTree = "<group>"; };
+		BE47CFE818D254F200D712F3 /* ENLinkedNotebookRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENLinkedNotebookRef.m; sourceTree = "<group>"; };
 		BE4C607E18BD53C500A3D170 /* SampleApp copy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SampleApp copy.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE4C607F18BD53C600A3D170 /* SampleApp copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "SampleApp copy-Info.plist"; path = "/Users/bzotto/src/evernote-sdk-ios/SampleApp copy-Info.plist"; sourceTree = "<absolute>"; };
 		BE620D6018BD3656007716B2 /* ENSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENSession.h; sourceTree = "<group>"; };
@@ -1172,6 +1177,8 @@
 				BE44483D18CF8B17009AAE1B /* ENNoteStoreClient.m */,
 				BE44484118CFD084009AAE1B /* ENStoreClient.h */,
 				BE44484218CFD084009AAE1B /* ENStoreClient.m */,
+				BE47CFE718D254F100D712F3 /* ENLinkedNotebookRef.h */,
+				BE47CFE818D254F200D712F3 /* ENLinkedNotebookRef.m */,
 			);
 			name = Internal;
 			sourceTree = "<group>";
@@ -1259,6 +1266,7 @@
 				0B943F521525015500DB20A3 /* ENGCOAuth.h in Headers */,
 				BE44482918C5111B009AAE1B /* ENXMLSaxParser.h in Headers */,
 				0B943F551525015500DB20A3 /* NSData+ENBase64.h in Headers */,
+				BE47CFE918D254F200D712F3 /* ENLinkedNotebookRef.h in Headers */,
 				0BF0CF81152E25E1003D6115 /* SSKeychain.h in Headers */,
 				0B98592815432592007D7D37 /* ENAPI.h in Headers */,
 				0B98592B15432592007D7D37 /* ENCredentials.h in Headers */,
@@ -1538,6 +1546,7 @@
 				A9B1E86716C2242200D54760 /* KSForwardingWriter.m in Sources */,
 				A9B1E86A16C2242200D54760 /* KSHTMLWriter.m in Sources */,
 				A9B1E86D16C2242200D54760 /* KSWriter.m in Sources */,
+				BE47CFEA18D254F200D712F3 /* ENLinkedNotebookRef.m in Sources */,
 				A9B1E87016C2242200D54760 /* KSXMLAttributes.m in Sources */,
 				A9B1E87316C2242200D54760 /* KSXMLWriter.m in Sources */,
 				A9B1E87B16C2259F00D54760 /* NSString+XMLAdditions.m in Sources */,
@@ -1647,6 +1656,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE47CFEB18D2553900D712F3 /* ENLinkedNotebookRef.m in Sources */,
 				BE47CFE618D24D2B00D712F3 /* ENError.m in Sources */,
 				BE4C608518BD557E00A3D170 /* ENSession.m in Sources */,
 				BE44482618C50F6F009AAE1B /* ENHTMLtoENMLConverter.m in Sources */,

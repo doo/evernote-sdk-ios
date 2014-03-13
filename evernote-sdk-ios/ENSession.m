@@ -512,7 +512,7 @@ static NSString * DeveloperKey, * NoteStoreUrl;
 
 - (ENNoteStoreClient *)noteStoreForLinkedNotebook:(EDAMLinkedNotebook *)linkedNotebook
 {
-    ENNoteStoreClientLinkedNotebookRef * linkedNotebookRef = [ENNoteStoreClientLinkedNotebookRef linkedNotebookRefFromLinkedNotebook:linkedNotebook];
+    ENLinkedNotebookRef * linkedNotebookRef = [ENLinkedNotebookRef linkedNotebookRefFromLinkedNotebook:linkedNotebook];
     ENNoteStoreClient * linkedClient = [ENNoteStoreClient noteStoreClientForLinkedNotebookRef:linkedNotebookRef];
     linkedClient.storeClientDelegate = self;
     linkedClient.noteStoreDelegate = self;
@@ -569,7 +569,7 @@ static NSString * PreferencesPath()
 
 #pragma - ENNoteStoreClientDelegate
 
-- (NSString *)authenticationTokenForLinkedNotebookRef:(ENNoteStoreClientLinkedNotebookRef *)linkedNotebookRef
+- (NSString *)authenticationTokenForLinkedNotebookRef:(ENLinkedNotebookRef *)linkedNotebookRef
 {
     NSAssert(![NSThread isMainThread], @"Cannot authenticate to linked notebook on main thread");
     

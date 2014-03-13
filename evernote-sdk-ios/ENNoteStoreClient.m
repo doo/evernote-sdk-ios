@@ -20,7 +20,7 @@
 // abstraction, this object wouldn't know anything about linked notebooks, it would
 // house solely the client and auth token. But we want this object to be lightweight and created on the
 // main thread easily, and requiring full auth in these cases would complicate things significantly.
-@property (nonatomic, strong) ENNoteStoreClientLinkedNotebookRef * linkedNotebookRef;
+@property (nonatomic, strong) ENLinkedNotebookRef * linkedNotebookRef;
 @end
 
 @implementation ENNoteStoreClient
@@ -29,7 +29,7 @@
     return [[self alloc] initWithNoteStoreUrl:url authenticationToken:authenticationToken];
 }
 
-+ (ENNoteStoreClient *)noteStoreClientForLinkedNotebookRef:(ENNoteStoreClientLinkedNotebookRef *)linkedNotebookRef;
++ (ENNoteStoreClient *)noteStoreClientForLinkedNotebookRef:(ENLinkedNotebookRef *)linkedNotebookRef;
 {
     return [[self alloc] initWithLinkedNotebookRef:linkedNotebookRef];
 }
@@ -44,7 +44,7 @@
     return self;
 }
 
-- (id)initWithLinkedNotebookRef:(ENNoteStoreClientLinkedNotebookRef *)linkedNotebookRef
+- (id)initWithLinkedNotebookRef:(ENLinkedNotebookRef *)linkedNotebookRef
 {
     self = [super init];
     if (self) {
@@ -152,18 +152,5 @@
     [self invokeAsyncIdBlock:^id {
         return [self.client updateNote:[self authenticationToken] note:note];
     } success:success failure:failure];
-}
-@end
-
-#pragma mark - ENNoteStoreClientLinkedNotebookRef
-
-@implementation ENNoteStoreClientLinkedNotebookRef
-+ (ENNoteStoreClientLinkedNotebookRef *)linkedNotebookRefFromLinkedNotebook:(EDAMLinkedNotebook *)linkedNotebook
-{
-    ENNoteStoreClientLinkedNotebookRef * linkedNotebookRef = [[ENNoteStoreClientLinkedNotebookRef alloc] init];
-    linkedNotebookRef.guid = linkedNotebook.guid;
-    linkedNotebookRef.noteStoreUrl = linkedNotebook.noteStoreUrl;
-    linkedNotebookRef.shareKey = linkedNotebook.shareKey;
-    return linkedNotebookRef;
 }
 @end
