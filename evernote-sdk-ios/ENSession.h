@@ -33,6 +33,10 @@ typedef NS_ENUM(NSInteger, ENSessionUploadPolicy) {
                  consumerKey:(NSString *)key
               consumerSecret:(NSString *)secret;
 
++ (void)setSharedSessionHost:(NSString *)host
+              developerToken:(NSString *)token
+                noteStoreUrl:(NSString *)url;
+
 + (ENSession *)sharedSession;
 
 - (void)authenticateWithViewController:(UIViewController *)viewController

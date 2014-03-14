@@ -108,7 +108,7 @@
                      success:(void(^)(BOOL val))success
                      failure:(void(^)(NSError *error))failure
 {
-    NSAssert(self.storeClientDelegate, @"ENNoteStoreClient delegate not set");
+    NSAssert(self.storeClientDelegate, @"ENStoreClient delegate not set");
     dispatch_async([self.storeClientDelegate dispatchQueueForStoreClient:self], ^(void) {
         __block BOOL retVal = NO;
         @try {
@@ -132,7 +132,7 @@
                       success:(void(^)(int32_t val))success
                       failure:(void(^)(NSError *error))failure
 {
-    NSAssert(self.storeClientDelegate, @"ENNoteStoreClient delegate not set");
+    NSAssert(self.storeClientDelegate, @"ENStoreClient delegate not set");
     dispatch_async([self.storeClientDelegate dispatchQueueForStoreClient:self], ^(void) {
         __block int32_t retVal = -1;
         @try {
@@ -157,7 +157,7 @@
                    success:(void(^)(id))success
                    failure:(void(^)(NSError *error))failure
 {
-    NSAssert(self.storeClientDelegate, @"ENNoteStoreClient delegate not set");
+    NSAssert(self.storeClientDelegate, @"ENStoreClient delegate not set");
     dispatch_async([self.storeClientDelegate dispatchQueueForStoreClient:self], ^(void) {
         id retVal = nil;
         @try {
@@ -181,7 +181,7 @@
                      success:(void(^)())success
                      failure:(void(^)(NSError *error))failure
 {
-    NSAssert(self.storeClientDelegate, @"ENNoteStoreClient delegate not set");
+    NSAssert(self.storeClientDelegate, @"ENStoreClient delegate not set");
     dispatch_async([self.storeClientDelegate dispatchQueueForStoreClient:self], ^(void) {
         @try {
             if (block) {

@@ -10,6 +10,7 @@
 #import "ENSDKPrivate.h"
 #import "ENAuthCache.h"
 #import "ENNoteStoreClient.h"
+#import "ENUserStoreClient.h"
 #import "ENCredentialStore.h"
 
 static NSString * ENSEssionPreferencesFilename = @"com.evernote.evernote-sdk-ios.plist";
@@ -29,7 +30,7 @@ static NSString * ENSessionDefaultNotebookGuid = @"ENSessionDefaultNotebookGuid"
 @interface ENSessionUploadNoteContext : NSObject
 @property (nonatomic, strong) EDAMNote * note;
 @property (nonatomic, strong) ENNoteRef * refToReplace;
-@property (nonatomic, strong) ENNotebook * noteDestinationNotebook;
+@property (nonatomic, strong) ENNotebook * notebook;
 @property (nonatomic, assign) ENSessionUploadPolicy policy;
 @property (nonatomic, assign) BOOL destinedForDefaultNotebook;
 @property (nonatomic, strong) NSString * defaultNotebookName;
@@ -41,6 +42,7 @@ static NSString * ENSessionDefaultNotebookGuid = @"ENSessionDefaultNotebookGuid"
 @property (nonatomic, strong) EDAMUser * user;
 @property (nonatomic, strong) ENCredentialStore * credentialStore;
 @property (nonatomic, strong) NSString * primaryAuthenticationToken;
+@property (nonatomic, strong) ENUserStoreClient * userStore;
 @property (nonatomic, strong) ENNoteStoreClient * primaryNoteStore;
 @property (nonatomic, strong) ENNoteStoreClient * businessNoteStore;
 @property (nonatomic, strong) NSString * businessShardId;
@@ -51,25 +53,28 @@ static NSString * ENSessionDefaultNotebookGuid = @"ENSessionDefaultNotebookGuid"
 @implementation ENSession
 
 static NSString * SessionHost, * ConsumerKey, * ConsumerSecret;
-static NSString * DeveloperKey, * NoteStoreUrl;
+static NSString * DeveloperToken, * NoteStoreUrl;
 
-+ (void)setSharedSessionHost:(NSString *)host consumerKey:(NSString *)key consumerSecret:(NSString *)secret
++ (void)setSharedSessionHost:(NSString *)host
+                 consumerKey:(NSString *)key
+              consumerSecret:(NSString *)secret
 {
     SessionHost = host;
     ConsumerKey = key;
     ConsumerSecret = secret;
     
-    DeveloperKey = nil;
+    DeveloperToken = nil;
     NoteStoreUrl = nil;
 }
 
-// XXX: This doesn't do anything yet.
-+ (void)setSharedDeveloperKey:(NSString *)key noteStoreUrl:(NSString *)url
++ (void)setSharedSessionHost:(NSString *)host
+              developerToken:(NSString *)token
+                noteStoreUrl:(NSString *)url
 {
-    DeveloperKey = key;
+    SessionHost = host;
+    DeveloperToken = token;
     NoteStoreUrl = url;
 
-    SessionHost = nil;
     ConsumerKey = nil;
     ConsumerSecret = nil;
 }
@@ -111,6 +116,14 @@ static NSString * DeveloperKey, * NoteStoreUrl;
         return;
     }
     
+    // If the developer token is set, then we can short circuit the entire auth flow and just call ourselves authenticated.
+    if (DeveloperToken) {
+        self.isAuthenticated = YES;
+        self.primaryAuthenticationToken = DeveloperToken;
+        [self performPostAuthenticationWithCompletion:completion];
+        return;
+    }
+    
     //XXX: use EvernoteSession to bootstrap this for now...
     if (SessionHost) {
         [EvernoteSession setSharedSessionHost:SessionHost consumerKey:ConsumerKey consumerSecret:ConsumerSecret];
@@ -123,23 +136,28 @@ static NSString * DeveloperKey, * NoteStoreUrl;
             self.credentialStore = [ENCredentialStore loadCredentials];
             ENCredentials * credentials = [self.credentialStore credentialsForHost:SessionHost];
             self.primaryAuthenticationToken = credentials.authenticationToken;
-            [[EvernoteUserStore userStore] getUserWithSuccess:^(EDAMUser * user) {
-                self.user = user;
-                [[EvernoteUserStore userStore] authenticateToBusinessWithSuccess:^(EDAMAuthenticationResult *authenticationResult) {
-                    //XXXX: Don't do this here.
-                    self.businessShardId = authenticationResult.user.shardId;
-                    self.businessNoteStore = [ENNoteStoreClient noteStoreClientWithUrl:authenticationResult.noteStoreUrl authenticationToken:authenticationResult.authenticationToken];
-                    self.businessNoteStore.storeClientDelegate = self;
-                    self.businessNoteStore.noteStoreDelegate = self;
-                    completion(nil);
-                } failure:^(NSError * authenticateToBusinessError) {
-                    completion(nil);
-                }];
-            } failure:^(NSError * getUserError) {
-                //xxx Log error. Keep name nil?
-                completion(nil);
-            }];
+            [self performPostAuthenticationWithCompletion:completion];
         }
+    }];
+}
+
+- (void)performPostAuthenticationWithCompletion:(ENSessionAuthenticateCompletionHandler)completion
+{
+    [[self userStore] getUserWithSuccess:^(EDAMUser * user) {
+        self.user = user;
+        [[self userStore] authenticateToBusinessWithSuccess:^(EDAMAuthenticationResult *authenticationResult) {
+            //XXXX: Don't do this here.
+            self.businessShardId = authenticationResult.user.shardId;
+            self.businessNoteStore = [ENNoteStoreClient noteStoreClientWithUrl:authenticationResult.noteStoreUrl authenticationToken:authenticationResult.authenticationToken];
+            self.businessNoteStore.storeClientDelegate = self;
+            self.businessNoteStore.noteStoreDelegate = self;
+            completion(nil);
+        } failure:^(NSError * authenticateToBusinessError) {
+            completion(nil);
+        }];
+    } failure:^(NSError * getUserError) {
+        //xxx Log error. Keep name nil?
+        completion(nil);
     }];
 }
 
@@ -343,7 +361,7 @@ static NSString * DeveloperKey, * NoteStoreUrl;
     ENSessionUploadNoteContext * context = [[ENSessionUploadNoteContext alloc] init];
     context.note = [note EDAMNote];
     context.refToReplace = noteToReplace;
-    context.noteDestinationNotebook = note.notebook;
+    context.notebook = note.notebook;
     context.policy = policy;
     context.completion = completion;
     context.defaultNotebookName = self.defaultNotebookName;
@@ -360,7 +378,7 @@ static NSString * DeveloperKey, * NoteStoreUrl;
     if (noteToReplace) {
         [self uploadNote_updateWithContext:context];
     } else {
-        if (!context.noteDestinationNotebook) {
+        if (!context.notebook) {
             // Caller has not specified an explicit notebook. Is there a default notebook set?
             if (self.defaultNotebookName) {
                 context.destinedForDefaultNotebook = YES;
@@ -441,13 +459,13 @@ static NSString * DeveloperKey, * NoteStoreUrl;
     // which will vary based on location of note.
     ENNoteStoreClient * noteStore = nil;
     ENNoteRef * finalNoteRef = [[ENNoteRef alloc] init];
-    if (context.noteDestinationNotebook.isBusinessNotebook) {
+    if (context.notebook.isBusinessNotebook) {
         noteStore = [self businessNoteStore];
         finalNoteRef.type = ENNoteRefTypeBusiness;
-    } else if (context.noteDestinationNotebook.isLinked) {
-        noteStore = [self noteStoreForLinkedNotebook:context.noteDestinationNotebook.linkedNotebook];
+    } else if (context.notebook.isLinked) {
+        noteStore = [self noteStoreForLinkedNotebook:context.notebook.linkedNotebook];
         finalNoteRef.type = ENNoteRefTypeShared;
-        finalNoteRef.linkedNotebook = [ENLinkedNotebookRef linkedNotebookRefFromLinkedNotebook:context.noteDestinationNotebook.linkedNotebook];
+        finalNoteRef.linkedNotebook = [ENLinkedNotebookRef linkedNotebookRefFromLinkedNotebook:context.notebook.linkedNotebook];
     } else {
         noteStore = [self primaryNoteStore];
         finalNoteRef.type = ENNoteRefTypePersonal;
@@ -487,7 +505,7 @@ static NSString * DeveloperKey, * NoteStoreUrl;
     ENNoteStoreClient * noteStore = [self noteStoreForNoteRef:noteRef];
     [noteStore shareNoteWithGuid:noteRef.guid success:^(NSString * noteKey) {
         NSString * shardId = [self shardIdForNoteRef:noteRef];
-        NSString * shareUrl = [NSString stringWithFormat:@"http://%@/shard/%@/sh/%@/%@", [[EvernoteSession sharedSession] host], shardId, noteRef.guid, noteKey];
+        NSString * shareUrl = [NSString stringWithFormat:@"http://%@/shard/%@/sh/%@/%@", SessionHost, shardId, noteRef.guid, noteKey];
         if (completion) {
             completion(shareUrl, nil);
         }
@@ -500,11 +518,24 @@ static NSString * DeveloperKey, * NoteStoreUrl;
 
 #pragma mark - Private routines
 
+- (ENUserStoreClient *)userStore
+{
+    if (!_userStore) {
+        _userStore = [ENUserStoreClient userStoreClientWithUrl:[[self class] userStoreUrl] authenticationToken:self.primaryAuthenticationToken];
+        _userStore.storeClientDelegate = self;
+    }
+    return _userStore;
+}
+
 - (ENNoteStoreClient *)primaryNoteStore
 {
     if (!_primaryNoteStore) {
-        ENCredentials * credentials = [self.credentialStore credentialsForHost:SessionHost];
-        _primaryNoteStore = [ENNoteStoreClient noteStoreClientWithUrl:credentials.noteStoreUrl authenticationToken:credentials.authenticationToken];
+        if (DeveloperToken) {
+            _primaryNoteStore = [ENNoteStoreClient noteStoreClientWithUrl:NoteStoreUrl authenticationToken:DeveloperToken];
+        } else {
+            ENCredentials * credentials = [self.credentialStore credentialsForHost:SessionHost];
+            _primaryNoteStore = [ENNoteStoreClient noteStoreClientWithUrl:credentials.noteStoreUrl authenticationToken:credentials.authenticationToken];
+        }
         _primaryNoteStore.storeClientDelegate = self;
         _primaryNoteStore.noteStoreDelegate = self;
     }
@@ -596,6 +627,22 @@ static NSString * PreferencesPath()
 - (void)setDefaultNotebookGuid:(NSString *)guid
 {
     [self setPreferencesObject:guid forKey:ENSessionDefaultNotebookGuid];
+}
+
++ (NSString *)userStoreUrl
+{
+    // If the host string includes an explict port (e.g., foo.bar.com:8080), use http. Otherwise https.
+    
+    // use a simple regex to check for a colon and port number suffix
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@".*:[0-9]+"
+                                                                           options:NSRegularExpressionCaseInsensitive
+                                                                             error:nil];
+    NSUInteger numberOfMatches = [regex numberOfMatchesInString:SessionHost
+                                                        options:0
+                                                          range:NSMakeRange(0, [SessionHost length])];
+    BOOL hasPort = (numberOfMatches > 0);
+    NSString *scheme = (hasPort) ? @"http" : @"https";
+    return [NSString stringWithFormat:@"%@://%@/edam/user", scheme, SessionHost];
 }
 
 #pragma - ENStoreClientDelegate

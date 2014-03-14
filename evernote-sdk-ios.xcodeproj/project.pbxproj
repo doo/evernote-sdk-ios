@@ -268,6 +268,9 @@
 		BE47CFE918D254F200D712F3 /* ENLinkedNotebookRef.h in Headers */ = {isa = PBXBuildFile; fileRef = BE47CFE718D254F100D712F3 /* ENLinkedNotebookRef.h */; };
 		BE47CFEA18D254F200D712F3 /* ENLinkedNotebookRef.m in Sources */ = {isa = PBXBuildFile; fileRef = BE47CFE818D254F200D712F3 /* ENLinkedNotebookRef.m */; };
 		BE47CFEB18D2553900D712F3 /* ENLinkedNotebookRef.m in Sources */ = {isa = PBXBuildFile; fileRef = BE47CFE818D254F200D712F3 /* ENLinkedNotebookRef.m */; };
+		BE47CFEF18D27A7900D712F3 /* ENUserStoreClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BE47CFED18D27A7900D712F3 /* ENUserStoreClient.h */; };
+		BE47CFF018D27A7A00D712F3 /* ENUserStoreClient.m in Sources */ = {isa = PBXBuildFile; fileRef = BE47CFEE18D27A7900D712F3 /* ENUserStoreClient.m */; };
+		BE47CFF118D27C8F00D712F3 /* ENUserStoreClient.m in Sources */ = {isa = PBXBuildFile; fileRef = BE47CFEE18D27A7900D712F3 /* ENUserStoreClient.m */; };
 		BE4C601E18BD53C500A3D170 /* EvernoteSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BB3D2391524EE62001C4534 /* EvernoteSession.m */; };
 		BE4C601F18BD53C500A3D170 /* EDAMLimits.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BB3D22F1524EE62001C4534 /* EDAMLimits.m */; settings = {COMPILER_FLAGS = "-w"; }; };
 		BE4C602018BD53C500A3D170 /* EDAMNoteStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BB3D2311524EE62001C4534 /* EDAMNoteStore.m */; settings = {COMPILER_FLAGS = "-w"; }; };
@@ -603,6 +606,8 @@
 		BE47CFE718D254F100D712F3 /* ENLinkedNotebookRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENLinkedNotebookRef.h; sourceTree = "<group>"; };
 		BE47CFE818D254F200D712F3 /* ENLinkedNotebookRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENLinkedNotebookRef.m; sourceTree = "<group>"; };
 		BE47CFEC18D258D400D712F3 /* ENNoteRefInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ENNoteRefInternal.h; sourceTree = "<group>"; };
+		BE47CFED18D27A7900D712F3 /* ENUserStoreClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENUserStoreClient.h; sourceTree = "<group>"; };
+		BE47CFEE18D27A7900D712F3 /* ENUserStoreClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENUserStoreClient.m; sourceTree = "<group>"; };
 		BE4C607E18BD53C500A3D170 /* SampleApp copy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SampleApp copy.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE4C607F18BD53C600A3D170 /* SampleApp copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "SampleApp copy-Info.plist"; path = "/Users/bzotto/src/evernote-sdk-ios/SampleApp copy-Info.plist"; sourceTree = "<absolute>"; };
 		BE620D6018BD3656007716B2 /* ENSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENSession.h; sourceTree = "<group>"; };
@@ -1181,6 +1186,8 @@
 				BE47CFE718D254F100D712F3 /* ENLinkedNotebookRef.h */,
 				BE47CFE818D254F200D712F3 /* ENLinkedNotebookRef.m */,
 				BE47CFEC18D258D400D712F3 /* ENNoteRefInternal.h */,
+				BE47CFED18D27A7900D712F3 /* ENUserStoreClient.h */,
+				BE47CFEE18D27A7900D712F3 /* ENUserStoreClient.m */,
 			);
 			name = Internal;
 			sourceTree = "<group>";
@@ -1234,6 +1241,7 @@
 				0B943F6A1525015500DB20A3 /* TApplicationException.h in Headers */,
 				0B943F6D1525015500DB20A3 /* TException.h in Headers */,
 				0B943F711525015500DB20A3 /* TProcessor.h in Headers */,
+				BE47CFEF18D27A7900D712F3 /* ENUserStoreClient.h in Headers */,
 				0B943F721525015500DB20A3 /* TProcessorFactory.h in Headers */,
 				0B943F731525015500DB20A3 /* THTTPClient.h in Headers */,
 				A9BE47D7178200B400471BF7 /* ENEncryptedContentInfo.h in Headers */,
@@ -1544,6 +1552,7 @@
 				BE47CFE518D2487600D712F3 /* ENError.m in Sources */,
 				A96FE4D916A0958600F1AD8C /* EDAMNoteStoreClient+Utilities.m in Sources */,
 				BE44482A18C5111B009AAE1B /* ENXMLSaxParser.m in Sources */,
+				BE47CFF018D27A7A00D712F3 /* ENUserStoreClient.m in Sources */,
 				A96FE4EF16A0A3DB00F1AD8C /* ENAFURLConnectionOperation.m in Sources */,
 				A9B1E86716C2242200D54760 /* KSForwardingWriter.m in Sources */,
 				A9B1E86A16C2242200D54760 /* KSHTMLWriter.m in Sources */,
@@ -1658,6 +1667,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE47CFF118D27C8F00D712F3 /* ENUserStoreClient.m in Sources */,
 				BE47CFEB18D2553900D712F3 /* ENLinkedNotebookRef.m in Sources */,
 				BE47CFE618D24D2B00D712F3 /* ENError.m in Sources */,
 				BE4C608518BD557E00A3D170 /* ENSession.m in Sources */,
