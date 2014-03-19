@@ -46,6 +46,9 @@
 - (void)updateNote:(EDAMNote *)note
            success:(void(^)(EDAMNote *note))success
            failure:(void(^)(NSError *error))failure;
+- (void)deleteNoteWithGuid:(EDAMGuid)guid
+                   success:(void(^)(int32_t usn))success
+                   failure:(void(^)(NSError *error))failure;
 
 
 

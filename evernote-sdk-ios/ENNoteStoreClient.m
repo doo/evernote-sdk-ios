@@ -153,4 +153,13 @@
         return [self.client updateNote:[self authenticationToken] note:note];
     } success:success failure:failure];
 }
+
+- (void)deleteNoteWithGuid:(EDAMGuid)guid
+                   success:(void(^)(int32_t usn))success
+                   failure:(void(^)(NSError *error))failure
+{
+    [self invokeAsyncInt32Block:^int32_t {
+        return [self.client deleteNote:[self authenticationToken] guid:guid];
+    } success:success failure:failure];
+}
 @end

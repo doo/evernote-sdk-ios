@@ -78,7 +78,7 @@
     EDAMResource * resource = [[EDAMResource alloc] init];
     resource.guid = self.guid;
     if (!resource.guid && self.data) {
-        resource.data = [[EDAMData alloc] initWithBodyHash:self.dataHash size:self.data.length body:self.data];
+        resource.data = [[EDAMData alloc] initWithBodyHash:self.dataHash size:(int32_t)self.data.length body:self.data];
     }
     resource.mime = self.mimeType;
     if (self.filename) {

@@ -516,6 +516,23 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     }];
 }
 
+#pragma mark - deleteNote
+
+- (void)deleteNoteRef:(ENNoteRef *)noteRef
+           completion:(ENSessionDeleteNoteCompletionHandler)completion
+{
+    ENNoteStoreClient * noteStore = [self noteStoreForNoteRef:noteRef];
+    [noteStore deleteNoteWithGuid:noteRef.guid success:^(int32_t usn) {
+        if (completion) {
+            completion(nil);
+        }
+    } failure:^(NSError * error) {
+        if (completion) {
+            completion(error);;
+        }
+    }];
+}
+
 #pragma mark - Private routines
 
 - (ENUserStoreClient *)userStore

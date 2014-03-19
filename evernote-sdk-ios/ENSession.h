@@ -15,6 +15,7 @@ typedef void (^ENSessionListNotebooksCompletionHandler)(NSArray * notebooks, NSE
 typedef void (^ENSessionUploadNoteProgressHandler)(CGFloat progress);
 typedef void (^ENSessionUploadNoteCompletionHandler)(ENNoteRef * noteRef, NSError * uploadNoteError);
 typedef void (^ENSessionShareNoteCompletionHandler)(NSString * url, NSError * shareNoteError);
+typedef void (^ENSessionDeleteNoteCompletionHandler)(NSError * deleteNoteError);
 
 typedef NS_ENUM(NSInteger, ENSessionUploadPolicy) {
     ENSessionUploadPolicyCreate,
@@ -58,4 +59,7 @@ typedef NS_ENUM(NSInteger, ENSessionUploadPolicy) {
 
 - (void)shareNoteRef:(ENNoteRef *)noteRef
           completion:(ENSessionShareNoteCompletionHandler)completion;
+
+- (void)deleteNoteRef:(ENNoteRef *)noteRef
+           completion:(ENSessionDeleteNoteCompletionHandler)completion;
 @end

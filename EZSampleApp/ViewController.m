@@ -58,13 +58,14 @@
                                  progress:nil completion:^(ENNoteRef * noteRef, NSError *uploadNoteError) {
                                      NSLog(@"result note %@, error %@", noteRef,uploadNoteError);
                                      [[NSUserDefaults standardUserDefaults] setObject:[noteRef asData] forKey:@"evernoteNoteRefTest"];
+                                     [[NSUserDefaults standardUserDefaults] synchronize];
                                  }];
 }
 
 - (void)listAllNotebooks
 {
     [[ENSession sharedSession] listNotebooksWithHandler:^(NSArray *notebooks, NSError *listNotebooksError) {
-        NSLog(@"Retrieved %d notebooks", notebooks.count);
+        NSLog(@"Retrieved %d notebooks", (int)notebooks.count);
         for (ENNotebook * notebook in notebooks) {
             NSLog(@"%@", notebook);
         }
@@ -74,7 +75,7 @@
 - (void)uploadToBusinessAndShare
 {
     [[ENSession sharedSession] listNotebooksWithHandler:^(NSArray *notebooks, NSError *listNotebooksError) {
-        NSLog(@"Retrieved %d notebooks", notebooks.count);
+        NSLog(@"Retrieved %d notebooks", (int)notebooks.count);
         ENNotebook * notebookToUse = nil;
         for (ENNotebook * notebook in notebooks) {
             if ([notebook.name isEqualToString:@"benvernote's Business Notebook"]) {
@@ -97,6 +98,16 @@
             }
         }];
     }];
+}
+
+- (void)deleteTestNote
+{
+    ENNoteRef * deleteRef = [ENNoteRef noteRefFromData:[[NSUserDefaults standardUserDefaults] objectForKey:@"evernoteNoteRefTest"]];
+    if (deleteRef) {
+        [[ENSession sharedSession] deleteNoteRef:deleteRef completion:^(NSError *deleteNoteError) {
+            NSLog(@"delete error: %@", deleteNoteError);
+        }];
+    }
 }
 
 @end
