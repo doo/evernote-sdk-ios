@@ -14,6 +14,7 @@
 @interface ENNote : NSObject // <NSCoding>
 @property (nonatomic, copy) NSString * title;
 @property (nonatomic, strong) ENNotebook * notebook;
+@property (nonatomic, copy) NSArray * tagNames;
 - (id)initWithString:(NSString *)string;
 - (id)initWithSanitizedHTML:(NSString *)html;
 - (id)initWithENML:(NSString *)enml;

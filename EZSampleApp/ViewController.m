@@ -26,9 +26,8 @@
     
     // Share button.
     UIButton * button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    button.titleLabel.text = @"Test Activity";
-    button.titleLabel.textColor = [UIColor blackColor];
-    button.titleLabel.backgroundColor = [UIColor whiteColor];
+    [button setTitle:@"Test Activity" forState:UIControlStateNormal];
+    [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     button.frame = CGRectMake(0, 0, 200, 200);
     [button addTarget:self action:@selector(testActivity:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:button];

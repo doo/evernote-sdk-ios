@@ -109,6 +109,20 @@
     note.title = self.title;
     note.notebookGuid = self.notebook.guid;
     
+    // Setup note attributes. Use app bundle name for source application unless the app wants to override.
+    NSString * sourceApplication = [[ENSession sharedSession] sourceApplication];
+    if (!sourceApplication) {
+        sourceApplication = [[NSBundle mainBundle] bundleIdentifier];
+    }
+    EDAMNoteAttributes * attributes = [[EDAMNoteAttributes alloc] init];
+    attributes.sourceApplication = sourceApplication;
+    note.attributes = attributes;
+    
+    // Move tags over if present.
+    if (self.tagNames) {
+        note.tagNames = [NSMutableArray arrayWithArray:self.tagNames];
+    }
+    
     // Turn any ENResources on the note into EDAMResources.
     NSMutableArray * resources = [NSMutableArray array];
     for (ENResource * localResource in self.resources) {
