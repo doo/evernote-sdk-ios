@@ -12,3 +12,5 @@
 #import "ENResource.h"
 #import "ENError.h"
 #import "ENSession.h"
+
+#import "ENEvernoteActivity.h"

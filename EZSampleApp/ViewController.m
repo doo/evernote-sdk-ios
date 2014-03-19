@@ -23,6 +23,15 @@
     UIView * view = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     view.backgroundColor = [UIColor orangeColor];
     self.view = view;
+    
+    // Share button.
+    UIButton * button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    button.titleLabel.text = @"Test Activity";
+    button.titleLabel.textColor = [UIColor blackColor];
+    button.titleLabel.backgroundColor = [UIColor whiteColor];
+    button.frame = CGRectMake(0, 0, 200, 200);
+    [button addTarget:self action:@selector(testActivity:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:button];
 }
 
 - (void)viewDidLoad
@@ -36,7 +45,7 @@
     [[ENSession sharedSession] authenticateWithViewController:self completion:^(NSError * authError) {
         if (!authError) {
             NSLog(@"Auth succeeded, w/username '%@' in biz '%@'", [[ENSession sharedSession] userDisplayName], [[ENSession sharedSession] businessName]);
-            [self uploadToBusinessAndShare];
+//            [self uploadToBusinessAndShare];
         } else {
             NSLog(@"Auth failed: %@", authError);
         }
@@ -108,6 +117,19 @@
             NSLog(@"delete error: %@", deleteNoteError);
         }];
     }
+}
+
+- (void)testActivity:(id)sender
+{
+    ENEvernoteActivity * activity = [[ENEvernoteActivity alloc] init];
+    activity.noteTitle = @"Medium Cheddar Cheese";
+    
+    NSString * content1 = @"This is some content";
+    NSString * content2 = @"This is some other content!";
+    UIImage * image = [UIImage imageNamed:@"quantizetexture.png"];
+    
+    UIActivityViewController * avc = [[UIActivityViewController alloc] initWithActivityItems:@[image,content1,content2] applicationActivities:@[activity]];
+    [self presentViewController:avc animated:YES completion:nil];
 }
 
 @end
