@@ -11,7 +11,7 @@
 @interface ENNotebook ()
 @property (nonatomic, strong) EDAMNotebook * notebook;
 @property (nonatomic, strong) EDAMLinkedNotebook * linkedNotebook;
-@property (nonatomic, assign) EDAMSharedNotebook * sharedNotebook;
+@property (nonatomic, strong) EDAMSharedNotebook * sharedNotebook;
 @property (nonatomic, assign) BOOL isApplicationDefaultNotebook;
 @end
 
@@ -95,6 +95,14 @@
     return self.linkedNotebook != nil && self.notebook != nil;
 }
 
+- (BOOL)isDefaultNotebook
+{
+    if (self.notebook) {
+        return self.notebook.defaultNotebook;
+    }
+    return NO;
+}
+
 - (BOOL)allowsWriting
 {
     if (![self isLinked]) {
@@ -121,5 +129,18 @@
 {
     return [NSString stringWithFormat:@"<%@: %p; name = \"%@\"; linked = %@; business = %@; access = %@>",
             [self class], self, self.name, self.isLinked ? @"YES" : @"NO", self.isBusinessNotebook ? @"YES" : @"NO", self.allowsWriting ? @"R/W" : @"R/O"];
+}
+
+- (BOOL)isEqual:(id)object
+{
+    if (!object || ![object isKindOfClass:[self class]]) {
+        return NO;
+    }
+    return [self.guid isEqualToString:((ENNotebook *)object).guid];
+}
+
+- (NSUInteger)hash
+{
+    return [self.guid hash];
 }
 @end

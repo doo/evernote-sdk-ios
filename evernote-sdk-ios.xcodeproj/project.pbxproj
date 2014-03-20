@@ -365,6 +365,13 @@
 		BE620D6318BD3656007716B2 /* ENSession.m in Sources */ = {isa = PBXBuildFile; fileRef = BE620D6118BD3656007716B2 /* ENSession.m */; };
 		BE620D6618BD43C1007716B2 /* ENNotebook.h in Headers */ = {isa = PBXBuildFile; fileRef = BE620D6418BD43C1007716B2 /* ENNotebook.h */; };
 		BE620D6718BD43C1007716B2 /* ENNotebook.m in Sources */ = {isa = PBXBuildFile; fileRef = BE620D6518BD43C1007716B2 /* ENNotebook.m */; };
+		BED3F5D618DB7C5C00E68109 /* ENSendToEvernoteViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = BED3F5D318DB7C5C00E68109 /* ENSendToEvernoteViewController.h */; };
+		BED3F5D718DB7C5C00E68109 /* ENSendToEvernoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BED3F5D418DB7C5C00E68109 /* ENSendToEvernoteViewController.m */; };
+		BED3F5D818DB845E00E68109 /* ENSendToEvernoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BED3F5D418DB7C5C00E68109 /* ENSendToEvernoteViewController.m */; };
+		BED3F5D918DB850400E68109 /* ENSendToEvernoteViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BED3F5D518DB7C5C00E68109 /* ENSendToEvernoteViewController.xib */; };
+		BED3F5E118DB8CB400E68109 /* ENNotebookChooserViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = BED3F5DF18DB8CB400E68109 /* ENNotebookChooserViewController.h */; };
+		BED3F5E218DB8CB400E68109 /* ENNotebookChooserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BED3F5E018DB8CB400E68109 /* ENNotebookChooserViewController.m */; };
+		BED3F5E318DB8CB400E68109 /* ENNotebookChooserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BED3F5E018DB8CB400E68109 /* ENNotebookChooserViewController.m */; };
 		BEDCCEB718BD5A660090803C /* ENNote.h in Headers */ = {isa = PBXBuildFile; fileRef = BEDCCEB518BD5A660090803C /* ENNote.h */; };
 		BEDCCEB818BD5A660090803C /* ENNote.m in Sources */ = {isa = PBXBuildFile; fileRef = BEDCCEB618BD5A660090803C /* ENNote.m */; };
 		BEDCCEB918BD5A660090803C /* ENNote.m in Sources */ = {isa = PBXBuildFile; fileRef = BEDCCEB618BD5A660090803C /* ENNote.m */; };
@@ -630,6 +637,11 @@
 		BE620D8418BD5134007716B2 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		BE620D9818BD51EF007716B2 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		BE620D9918BD51EF007716B2 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		BED3F5D318DB7C5C00E68109 /* ENSendToEvernoteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENSendToEvernoteViewController.h; sourceTree = "<group>"; };
+		BED3F5D418DB7C5C00E68109 /* ENSendToEvernoteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENSendToEvernoteViewController.m; sourceTree = "<group>"; };
+		BED3F5D518DB7C5C00E68109 /* ENSendToEvernoteViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ENSendToEvernoteViewController.xib; sourceTree = "<group>"; };
+		BED3F5DF18DB8CB400E68109 /* ENNotebookChooserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENNotebookChooserViewController.h; sourceTree = "<group>"; };
+		BED3F5E018DB8CB400E68109 /* ENNotebookChooserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENNotebookChooserViewController.m; sourceTree = "<group>"; };
 		BEDCCEB518BD5A660090803C /* ENNote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENNote.h; sourceTree = "<group>"; };
 		BEDCCEB618BD5A660090803C /* ENNote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENNote.m; sourceTree = "<group>"; };
 		BEDCCEBA18BD8DD80090803C /* ENResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENResource.h; sourceTree = "<group>"; };
@@ -1158,6 +1170,7 @@
 			children = (
 				BE44482C18C51CEE009AAE1B /* ENSDK.h */,
 				BE44482118C50F5F009AAE1B /* Internal */,
+				BED3F5CA18DB6DE900E68109 /* SendToEvernoteActivity */,
 				BE620D6818BD459E007716B2 /* ENSDKPrivate.h */,
 				BE620D6018BD3656007716B2 /* ENSession.h */,
 				BE620D6118BD3656007716B2 /* ENSession.m */,
@@ -1171,8 +1184,6 @@
 				BE44482E18CA822A009AAE1B /* ENNoteRef.m */,
 				BE47CFE218D2487600D712F3 /* ENError.h */,
 				BE47CFE318D2487600D712F3 /* ENError.m */,
-				BE0D974018DA48320004A1C7 /* ENSendToEvernoteActivity.h */,
-				BE0D974118DA48320004A1C7 /* ENSendToEvernoteActivity.m */,
 			);
 			name = ENSDK;
 			sourceTree = "<group>";
@@ -1224,6 +1235,20 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		BED3F5CA18DB6DE900E68109 /* SendToEvernoteActivity */ = {
+			isa = PBXGroup;
+			children = (
+				BE0D974018DA48320004A1C7 /* ENSendToEvernoteActivity.h */,
+				BE0D974118DA48320004A1C7 /* ENSendToEvernoteActivity.m */,
+				BED3F5D318DB7C5C00E68109 /* ENSendToEvernoteViewController.h */,
+				BED3F5D418DB7C5C00E68109 /* ENSendToEvernoteViewController.m */,
+				BED3F5D518DB7C5C00E68109 /* ENSendToEvernoteViewController.xib */,
+				BED3F5DF18DB8CB400E68109 /* ENNotebookChooserViewController.h */,
+				BED3F5E018DB8CB400E68109 /* ENNotebookChooserViewController.m */,
+			);
+			name = SendToEvernoteActivity;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -1249,6 +1274,7 @@
 				0B943F6D1525015500DB20A3 /* TException.h in Headers */,
 				0B943F711525015500DB20A3 /* TProcessor.h in Headers */,
 				BE47CFEF18D27A7900D712F3 /* ENUserStoreClient.h in Headers */,
+				BED3F5D618DB7C5C00E68109 /* ENSendToEvernoteViewController.h in Headers */,
 				0B943F721525015500DB20A3 /* TProcessorFactory.h in Headers */,
 				0B943F731525015500DB20A3 /* THTTPClient.h in Headers */,
 				A9BE47D7178200B400471BF7 /* ENEncryptedContentInfo.h in Headers */,
@@ -1309,6 +1335,7 @@
 				A9B1E8AF16C3265300D54760 /* ENLinkNotebookRequest.h in Headers */,
 				A9B1E8B216C3265300D54760 /* ENNewNoteRequest.h in Headers */,
 				A9B1E8B516C3265300D54760 /* ENNoteImportRequest.h in Headers */,
+				BED3F5E118DB8CB400E68109 /* ENNotebookChooserViewController.h in Headers */,
 				A9B1E8B816C3265300D54760 /* ENNoteViewRequest.h in Headers */,
 				A9B1E8BB16C3265300D54760 /* ENResourceAttachment.h in Headers */,
 				A9B1E8BE16C3265300D54760 /* ENSearchRequest.h in Headers */,
@@ -1460,6 +1487,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BED3F5D918DB850400E68109 /* ENSendToEvernoteViewController.xib in Resources */,
 				BE4C606818BD53C500A3D170 /* evernote-export.dtd in Resources */,
 				BE4C606918BD53C500A3D170 /* xhtml-special.ent in Resources */,
 				BE4C606A18BD53C500A3D170 /* xhtml-symbol.ent in Resources */,
@@ -1574,6 +1602,8 @@
 				A9B1E8A816C3265300D54760 /* ENApplicationBridge.m in Sources */,
 				A9B1E8AD16C3265300D54760 /* ENAuthenticationRequest.m in Sources */,
 				BEDCCEB818BD5A660090803C /* ENNote.m in Sources */,
+				BED3F5D718DB7C5C00E68109 /* ENSendToEvernoteViewController.m in Sources */,
+				BED3F5E218DB8CB400E68109 /* ENNotebookChooserViewController.m in Sources */,
 				BE44483018CA822A009AAE1B /* ENNoteRef.m in Sources */,
 				A9B1E8B016C3265300D54760 /* ENLinkNotebookRequest.m in Sources */,
 				A9B1E8B316C3265300D54760 /* ENNewNoteRequest.m in Sources */,
@@ -1676,6 +1706,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BED3F5D818DB845E00E68109 /* ENSendToEvernoteViewController.m in Sources */,
 				BE0D974418DA517F0004A1C7 /* ENSendToEvernoteActivity.m in Sources */,
 				BE47CFF118D27C8F00D712F3 /* ENUserStoreClient.m in Sources */,
 				BE47CFEB18D2553900D712F3 /* ENLinkedNotebookRef.m in Sources */,
@@ -1715,6 +1746,7 @@
 				BE4C603718BD53C500A3D170 /* EvernoteUserStore.m in Sources */,
 				BE4C603818BD53C500A3D170 /* EvernoteSDK.m in Sources */,
 				BE4C603918BD53C500A3D170 /* ENOAuthViewController.m in Sources */,
+				BED3F5E318DB8CB400E68109 /* ENNotebookChooserViewController.m in Sources */,
 				BE4C603A18BD53C500A3D170 /* ENConstants.m in Sources */,
 				BE4C603B18BD53C500A3D170 /* NSDate+EDAMAdditions.m in Sources */,
 				BEDCCEBE18BD8DD80090803C /* ENResource.m in Sources */,

@@ -7,10 +7,12 @@
 //
 
 #import "ENSendToEvernoteActivity.h"
+#import "ENSendToEvernoteViewController.h"
 #import "ENSDK.h"
 
-@interface ENSendToEvernoteActivity ()
+@interface ENSendToEvernoteActivity () <ENSendToEvernoteViewControllerDelegate>
 @property (nonatomic, strong) ENNote * preparedNote;
+@property (nonatomic, strong) NSArray * notebooks;
 @end
 
 @implementation ENSendToEvernoteActivity
@@ -94,15 +96,30 @@
         [note addResource:imageResource];
     }
     
-    note.title = self.noteTitle ?: @"Untitled Note";
-    
     self.preparedNote = note;
 }
 
-- (void)performActivity
+- (UIViewController *)activityViewController
 {
-    [[ENSession sharedSession] uploadNote:self.preparedNote completion:^(ENNoteRef *noteRef, NSError *uploadNoteError) {
-        [self activityDidFinish:(noteRef != nil)];
-    }];
+    ENSendToEvernoteViewController * s2a = [[ENSendToEvernoteViewController alloc] initWithNibName:@"ENSendToEvernoteViewController" bundle:nil];
+    s2a.delegate = self;
+    return s2a;
+}
+
+#pragma mark - ENSendToEvernoteViewControllerDelegate
+
+- (ENNote *)noteForViewController:(ENSendToEvernoteViewController *)viewController
+{
+    return self.preparedNote;
+}
+
+- (NSString *)defaultNoteTitleForViewController:(ENSendToEvernoteViewController *)viewController
+{
+    return self.noteTitle;
+}
+
+- (void)viewController:(ENSendToEvernoteViewController *)viewController didFinishWithSuccess:(BOOL)success
+{
+    [self activityDidFinish:success];
 }
 @end
