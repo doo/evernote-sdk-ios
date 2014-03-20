@@ -103,7 +103,8 @@
 {
     ENSendToEvernoteViewController * s2a = [[ENSendToEvernoteViewController alloc] initWithNibName:@"ENSendToEvernoteViewController" bundle:nil];
     s2a.delegate = self;
-    return s2a;
+    UINavigationController * nav = [[UINavigationController alloc] initWithRootViewController:s2a];
+    return nav;
 }
 
 #pragma mark - ENSendToEvernoteViewControllerDelegate

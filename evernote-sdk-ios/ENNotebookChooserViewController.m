@@ -18,9 +18,13 @@
 {
     self = [super initWithStyle:style];
     if (self) {
-        self.navigationItem.title = @"Notebooks";
     }
     return self;
+}
+
+- (void)viewDidLoad
+{
+    self.navigationItem.title = @"Notebooks";
 }
 
 #pragma mark - Table view data source

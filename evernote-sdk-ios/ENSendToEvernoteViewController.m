@@ -15,7 +15,7 @@
 @end
 
 @interface ENSendToEvernoteViewController () <ENNotebookChooserViewControllerDelegate, UITextFieldDelegate>
-@property (nonatomic, strong) IBOutlet UIButton * sendButton;
+@property (nonatomic, strong) IBOutlet UIBarButtonItem * sendButtonItem;
 @property (nonatomic, strong) IBOutlet UITextField * titleField;
 @property (nonatomic, strong) IBOutlet UITextField * notebookField;
 @property (nonatomic, strong) IBOutlet UITextField * tagsField;
@@ -38,10 +38,19 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.sendButton.enabled = NO;
+    
+    // Nav update
+    self.navigationItem.title = @"Evernote";
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancel:)];
+    self.sendButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Send" style:UIBarButtonItemStylePlain target:self action:@selector(send:)];
+    self.navigationItem.rightBarButtonItem = self.sendButtonItem;
+    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:nil action:nil];
+
+    //
+    self.sendButtonItem.enabled = NO;
     self.titleField.text = [self.delegate defaultNoteTitleForViewController:self];
     self.notebookField.delegate = self;
-    self.tagsField.placeholder = @"Enter tags, separated by commas"; // XXX loc
+    self.tagsField.placeholder = @"Enter tags, separated by commas."; // XXX loc
     
     //XXX: hack because the UI isn't final and i don't feel like subclassing.
     UIView * marginPlaceholder = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 22, self.titleField.frame.size.height)];
@@ -68,7 +77,7 @@
                 break;
             }
         }
-        self.sendButton.enabled = YES;
+        self.sendButtonItem.enabled = YES;
     }];
 }
 
@@ -87,12 +96,12 @@
     chooser.delegate = self;
     chooser.notebookList = self.notebookList;
     chooser.currentNotebook = self.currentNotebook;
-    [self presentViewController:chooser animated:YES completion:nil];
+    [self.navigationController pushViewController:chooser animated:YES];
 }
 
 #pragma mark - Actions
 
-- (IBAction)send:(id)sender
+- (void)send:(id)sender
 {
     // Fetch the note we've built so far.
     ENNote * note = [self.delegate noteForViewController:self];
@@ -123,7 +132,7 @@
     }];
 }
 
-- (IBAction)cancel:(id)sender
+- (void)cancel:(id)sender
 {
     [self.delegate viewController:self didFinishWithSuccess:NO];
 }
@@ -134,7 +143,7 @@
 {
     self.currentNotebook = notebook;
     [self updateCurrentNotebookDisplay];
-    [chooser dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 #pragma mark - UITextFieldDelegate
