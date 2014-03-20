@@ -116,6 +116,10 @@
     }
     EDAMNoteAttributes * attributes = [[EDAMNoteAttributes alloc] init];
     attributes.sourceApplication = sourceApplication;
+
+    // By convention for all iOS based apps.
+    attributes.source = @"mobile.ios";
+    
     note.attributes = attributes;
     
     // Move tags over if present.
