@@ -6,14 +6,14 @@
 //  Copyright (c) 2014 n/a. All rights reserved.
 //
 
-#import "ENEvernoteActivity.h"
+#import "ENSendToEvernoteActivity.h"
 #import "ENSDK.h"
 
-@interface ENEvernoteActivity ()
+@interface ENSendToEvernoteActivity ()
 @property (nonatomic, strong) ENNote * preparedNote;
 @end
 
-@implementation ENEvernoteActivity
+@implementation ENSendToEvernoteActivity
 + (UIActivityCategory)activityCategory
 {
     return UIActivityCategoryAction;

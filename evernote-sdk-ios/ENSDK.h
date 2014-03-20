@@ -13,4 +13,4 @@
 #import "ENError.h"
 #import "ENSession.h"
 
-#import "ENEvernoteActivity.h"
+#import "ENSendToEvernoteActivity.h"
