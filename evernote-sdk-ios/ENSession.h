@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "ENSDK.h"
+#import "ENSDKLogging.h"
 
 typedef void (^ENSessionAuthenticateCompletionHandler)(NSError * authenticateError);
 typedef void (^ENSessionListNotebooksCompletionHandler)(NSArray * notebooks, NSError * listNotebooksError);
@@ -24,6 +25,7 @@ typedef NS_ENUM(NSInteger, ENSessionUploadPolicy) {
 };
 
 @interface ENSession : NSObject
+@property (nonatomic, strong) id<ENSDKLogging> logger;
 @property (nonatomic, copy) NSString * defaultNotebookName;
 @property (nonatomic, copy) NSString * sourceApplication;  
 

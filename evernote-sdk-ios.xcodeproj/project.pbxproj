@@ -642,6 +642,7 @@
 		BED3F5D518DB7C5C00E68109 /* ENSendToEvernoteViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ENSendToEvernoteViewController.xib; sourceTree = "<group>"; };
 		BED3F5DF18DB8CB400E68109 /* ENNotebookChooserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENNotebookChooserViewController.h; sourceTree = "<group>"; };
 		BED3F5E018DB8CB400E68109 /* ENNotebookChooserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENNotebookChooserViewController.m; sourceTree = "<group>"; };
+		BED3F5E518DBAA4F00E68109 /* ENSDKLogging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ENSDKLogging.h; sourceTree = "<group>"; };
 		BEDCCEB518BD5A660090803C /* ENNote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENNote.h; sourceTree = "<group>"; };
 		BEDCCEB618BD5A660090803C /* ENNote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENNote.m; sourceTree = "<group>"; };
 		BEDCCEBA18BD8DD80090803C /* ENResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENResource.h; sourceTree = "<group>"; };
@@ -1169,6 +1170,7 @@
 			isa = PBXGroup;
 			children = (
 				BE44482C18C51CEE009AAE1B /* ENSDK.h */,
+				BED3F5E518DBAA4F00E68109 /* ENSDKLogging.h */,
 				BE44482118C50F5F009AAE1B /* Internal */,
 				BED3F5CA18DB6DE900E68109 /* SendToEvernoteActivity */,
 				BE620D6818BD459E007716B2 /* ENSDKPrivate.h */,

@@ -17,6 +17,9 @@ static NSString * ENSEssionPreferencesFilename = @"com.evernote.evernote-sdk-ios
 
 static NSString * ENSessionDefaultNotebookGuid = @"ENSessionDefaultNotebookGuid";
 
+@interface ENSessionDefaultLogger : NSObject <ENSDKLogging>
+@end
+
 @interface ENSessionListNotebooksContext : NSObject
 @property (nonatomic, strong) NSArray * personalNotebooks;
 @property (nonatomic, strong) NSArray * linkedNotebooks;
@@ -93,6 +96,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
 {
     self = [super init];
     if (self) {
+        self.logger = [[ENSessionDefaultLogger alloc] init];
         self.sharedQueue = dispatch_queue_create("com.evernote.sdk.ENSession", NULL);
     }
     return self;
@@ -690,6 +694,21 @@ static NSString * PreferencesPath()
 }
 
 @end
+
+#pragma mark - Default logger
+
+@implementation ENSessionDefaultLogger
+- (void)logInfoString:(NSString *)str
+{
+    NSLog(@"ENSDK: %@", str);
+}
+
+- (void)logErrorString:(NSString *)str
+{
+    NSLog(@"ENSDK ERROR: %@", str);
+}
+@end
+
 
 #pragma mark - Private context definitions
                                                 
