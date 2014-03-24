@@ -1171,7 +1171,6 @@
 			children = (
 				BE44482C18C51CEE009AAE1B /* ENSDK.h */,
 				BED3F5E518DBAA4F00E68109 /* ENSDKLogging.h */,
-				BE44482118C50F5F009AAE1B /* Internal */,
 				BED3F5CA18DB6DE900E68109 /* SendToEvernoteActivity */,
 				BE620D6818BD459E007716B2 /* ENSDKPrivate.h */,
 				BE620D6018BD3656007716B2 /* ENSession.h */,
@@ -1186,6 +1185,7 @@
 				BE44482E18CA822A009AAE1B /* ENNoteRef.m */,
 				BE47CFE218D2487600D712F3 /* ENError.h */,
 				BE47CFE318D2487600D712F3 /* ENError.m */,
+				BE44482118C50F5F009AAE1B /* Internal */,
 			);
 			name = ENSDK;
 			sourceTree = "<group>";

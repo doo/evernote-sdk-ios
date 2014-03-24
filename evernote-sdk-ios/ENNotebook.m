@@ -18,18 +18,25 @@
 @implementation ENNotebook
 - (id)initWithNotebook:(EDAMNotebook *)notebook 
 {
-    self = [super init];
-    if (self) {
-        self.notebook = notebook;
-    }
-    return self;
+    return [self initWithNotebook:notebook linkedNotebook:nil sharedNotebook:nil];
 }
 
-- (id)initWithLinkedNotebook:(EDAMLinkedNotebook *)linkedNotebook sharedNotebook:(EDAMSharedNotebook *)sharedNotebook businessNotebook:(EDAMNotebook *)businessNotebook
+- (id)initWithSharedNotebook:(EDAMSharedNotebook *)sharedNotebook forLinkedNotebook:(EDAMLinkedNotebook *)linkedNotebook
+{
+    return [self initWithNotebook:nil linkedNotebook:linkedNotebook sharedNotebook:sharedNotebook];
+}
+
+- (id)initWithSharedNotebook:(EDAMSharedNotebook *)sharedNotebook forLinkedNotebook:(EDAMLinkedNotebook *)linkedNotebook withBusinessNotebook:(EDAMNotebook *)notebook
+{
+    return [self initWithNotebook:notebook linkedNotebook:linkedNotebook sharedNotebook:sharedNotebook];
+}
+
+// Designated initializer used by all protected initializers
+- (id)initWithNotebook:(EDAMNotebook *)notebook linkedNotebook:(EDAMLinkedNotebook *)linkedNotebook sharedNotebook:(EDAMSharedNotebook *)sharedNotebook
 {
     self = [super init];
     if (self) {
-        self.notebook = businessNotebook;
+        self.notebook = notebook;
         self.linkedNotebook = linkedNotebook;
         self.sharedNotebook = sharedNotebook;
     }
@@ -90,8 +97,8 @@
 
 - (BOOL)isBusinessNotebook
 {
-    // This is a little fragile. Currently works because we never instantiate one of these objects
-    // when linked with the "native" notebook, unless we know it's in the user's business.
+    // Business notebooks are the only ones that have a combination of a linked notebook and normal
+    // notebook being set. In this case, the normal notebook represents the notebook inside the business.
     return self.linkedNotebook != nil && self.notebook != nil;
 }
 

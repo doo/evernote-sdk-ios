@@ -149,18 +149,26 @@ static NSString * DeveloperToken, * NoteStoreUrl;
 {
     [[self userStore] getUserWithSuccess:^(EDAMUser * user) {
         self.user = user;
-        [[self userStore] authenticateToBusinessWithSuccess:^(EDAMAuthenticationResult *authenticationResult) {
-            //XXXX: Don't do this here.
-            self.businessShardId = authenticationResult.user.shardId;
-            self.businessNoteStore = [ENNoteStoreClient noteStoreClientWithUrl:authenticationResult.noteStoreUrl authenticationToken:authenticationResult.authenticationToken];
-            self.businessNoteStore.storeClientDelegate = self;
-            self.businessNoteStore.noteStoreDelegate = self;
+        // If we know this user is a business user, authenticate to their business store as well.
+        // XXX We should keep business credentials in the credential store and use them as
+        // appropriate. Currently we'll do the roundtrip every time.
+        if (user.accounting.businessId != 0) {
+            [[self userStore] authenticateToBusinessWithSuccess:^(EDAMAuthenticationResult *authenticationResult) {
+                self.businessShardId = authenticationResult.user.shardId;
+                self.businessNoteStore = [ENNoteStoreClient noteStoreClientWithUrl:authenticationResult.noteStoreUrl authenticationToken:authenticationResult.authenticationToken];
+                self.businessNoteStore.storeClientDelegate = self;
+                self.businessNoteStore.noteStoreDelegate = self;
+                completion(nil);
+            } failure:^(NSError * authenticateToBusinessError) {
+                ENSDKLogError(@"Failed to authenticate to business for business user: %@", authenticateToBusinessError);
+                completion(nil);
+            }];
+        } else {
+            // Not a business user. OK.
             completion(nil);
-        } failure:^(NSError * authenticateToBusinessError) {
-            completion(nil);
-        }];
+        }
     } failure:^(NSError * getUserError) {
-        //xxx Log error. Keep name nil?
+        ENSDKLogError(@"Failed to get user info for user: %@", getUserError);
         completion(nil);
     }];
 }
@@ -172,7 +180,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
 
 - (NSString *)businessName
 {
-    if (self.user.accounting.businessId) {
+    if (self.user.accounting.businessId != 0) {
         return self.user.accounting.businessName;
     }
     return nil;
@@ -303,7 +311,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
         EDAMSharedNotebook * sharedNotebook = [context.sharedNotebooks objectForKey:linkedNotebook.guid];
         EDAMNotebook * businessNotebook = [context.businessNotebooks objectForKey:linkedNotebook.guid];
         if (sharedNotebook) {
-            ENNotebook * notebook = [[ENNotebook alloc] initWithLinkedNotebook:linkedNotebook sharedNotebook:sharedNotebook businessNotebook:businessNotebook];
+            ENNotebook * notebook = [[ENNotebook alloc] initWithSharedNotebook:sharedNotebook forLinkedNotebook:linkedNotebook withBusinessNotebook:businessNotebook];
             [result addObject:notebook];
         }
     }
@@ -561,16 +569,6 @@ static NSString * DeveloperToken, * NoteStoreUrl;
         _primaryNoteStore.noteStoreDelegate = self;
     }
     return _primaryNoteStore;
-}
-
-- (ENNoteStoreClient *)businessNoteStore
-{
-    //XXX Currently this is not lazily initialized, but constructed at normal auth time directly because we don't yet have user store stuff migrated.    
-    if (!_businessNoteStore) {
-//        EDAMAuthenticationResult * authResult = [self.userStoreClient authenticateToBusiness:self.primaryAuthenticationToken];
-//        _businessNoteStore = [ENNoteStoreClient noteStoreClientWithUrl:authResult.noteStoreUrl authenticationToken:authResult.authenticationToken];
-    }
-    return _businessNoteStore;
 }
 
 - (ENNoteStoreClient *)noteStoreForLinkedNotebook:(EDAMLinkedNotebook *)linkedNotebook
