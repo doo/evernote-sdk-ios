@@ -46,10 +46,10 @@
     NSData * jpegData = UIImageJPEGRepresentation(image, 0.7);
     if (jpegData.length < pngData.length) {
         pngData = nil;
-        return [self initWithData:jpegData mimeType:@"image/jpeg"];
+        return [self initWithData:jpegData mimeType:[EDAMLimitsConstants EDAM_MIME_TYPE_JPEG]];
     } else {
         jpegData = nil;
-        return [self initWithData:pngData mimeType:@"image/png"];
+        return [self initWithData:pngData mimeType:[EDAMLimitsConstants EDAM_MIME_TYPE_PNG]];
     }
 }
 
