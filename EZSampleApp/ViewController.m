@@ -43,7 +43,7 @@
     [[ENSession sharedSession] setDefaultNotebookName:@"My Test Notebook"];
     [[ENSession sharedSession] authenticateWithViewController:self completion:^(NSError * authError) {
         if (!authError) {
-            NSLog(@"Auth succeeded, w/username '%@' in biz '%@'", [[ENSession sharedSession] userDisplayName], [[ENSession sharedSession] businessName]);
+            NSLog(@"Auth succeeded, w/username '%@' in biz '%@'", [[ENSession sharedSession] userDisplayName], [[ENSession sharedSession] businessDisplayName]);
 //            [self uploadToBusinessAndShare];
         } else {
             NSLog(@"Auth failed: %@", authError);

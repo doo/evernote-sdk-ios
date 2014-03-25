@@ -174,14 +174,24 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     }];
 }
 
+- (BOOL)isIsPremiumUser
+{
+    return self.user.privilege >= PrivilegeLevel_PREMIUM;
+}
+
+- (BOOL)isBusinessUser
+{
+    return self.user.accounting.businessIdIsSet;
+}
+
 - (NSString *)userDisplayName
 {
     return self.user.name ?: self.user.username;
 }
 
-- (NSString *)businessName
+- (NSString *)businessDisplayName
 {
-    if (self.user.accounting.businessId != 0) {
+    if ([self isBusinessUser]) {
         return self.user.accounting.businessName;
     }
     return nil;
@@ -431,6 +441,13 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     if (!self.isAuthenticated) {
         completion(nil, [NSError errorWithDomain:ENErrorDomain code:ENErrorCodeAuthExpired userInfo:nil]);
         return;
+    }
+    
+    // Run size validation on any resources included with the note. This is done at upload time because
+    // the sizes are a function of the user's service level, which can change.
+    if (![note validateForLimits]) {
+        ENSDKLogError(@"Note failed limits validation. Cannot upload. %@", self);
+        completion(nil, [NSError errorWithDomain:ENErrorDomain code:ENErrorCodeLimitReached userInfo:nil]);
     }
     
     ENSessionUploadNoteContext * context = [[ENSessionUploadNoteContext alloc] init];

@@ -36,6 +36,7 @@
 - (void)setEnmlContent:(NSString *)enmlContent;
 - (void)setResources:(NSArray *)resources;
 - (EDAMNote *)EDAMNote;
+- (BOOL)validateForLimits;
 @end
 
 // Logging utility macros.

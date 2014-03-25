@@ -365,6 +365,9 @@
 		BE620D6318BD3656007716B2 /* ENSession.m in Sources */ = {isa = PBXBuildFile; fileRef = BE620D6118BD3656007716B2 /* ENSession.m */; };
 		BE620D6618BD43C1007716B2 /* ENNotebook.h in Headers */ = {isa = PBXBuildFile; fileRef = BE620D6418BD43C1007716B2 /* ENNotebook.h */; };
 		BE620D6718BD43C1007716B2 /* ENNotebook.m in Sources */ = {isa = PBXBuildFile; fileRef = BE620D6518BD43C1007716B2 /* ENNotebook.m */; };
+		BE870ACF18E10D4600154B19 /* NSString+ENScrubbing.h in Headers */ = {isa = PBXBuildFile; fileRef = BE870ACD18E10D4600154B19 /* NSString+ENScrubbing.h */; };
+		BE870AD018E10D4600154B19 /* NSString+ENScrubbing.m in Sources */ = {isa = PBXBuildFile; fileRef = BE870ACE18E10D4600154B19 /* NSString+ENScrubbing.m */; };
+		BE870AD118E110DB00154B19 /* NSString+ENScrubbing.m in Sources */ = {isa = PBXBuildFile; fileRef = BE870ACE18E10D4600154B19 /* NSString+ENScrubbing.m */; };
 		BED3F5D618DB7C5C00E68109 /* ENSendToEvernoteViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = BED3F5D318DB7C5C00E68109 /* ENSendToEvernoteViewController.h */; };
 		BED3F5D718DB7C5C00E68109 /* ENSendToEvernoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BED3F5D418DB7C5C00E68109 /* ENSendToEvernoteViewController.m */; };
 		BED3F5D818DB845E00E68109 /* ENSendToEvernoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BED3F5D418DB7C5C00E68109 /* ENSendToEvernoteViewController.m */; };
@@ -637,6 +640,8 @@
 		BE620D8418BD5134007716B2 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		BE620D9818BD51EF007716B2 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		BE620D9918BD51EF007716B2 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		BE870ACD18E10D4600154B19 /* NSString+ENScrubbing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+ENScrubbing.h"; sourceTree = "<group>"; };
+		BE870ACE18E10D4600154B19 /* NSString+ENScrubbing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+ENScrubbing.m"; sourceTree = "<group>"; };
 		BED3F5D318DB7C5C00E68109 /* ENSendToEvernoteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENSendToEvernoteViewController.h; sourceTree = "<group>"; };
 		BED3F5D418DB7C5C00E68109 /* ENSendToEvernoteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENSendToEvernoteViewController.m; sourceTree = "<group>"; };
 		BED3F5D518DB7C5C00E68109 /* ENSendToEvernoteViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ENSendToEvernoteViewController.xib; sourceTree = "<group>"; };
@@ -1208,6 +1213,8 @@
 				BE47CFEC18D258D400D712F3 /* ENNoteRefInternal.h */,
 				BE47CFED18D27A7900D712F3 /* ENUserStoreClient.h */,
 				BE47CFEE18D27A7900D712F3 /* ENUserStoreClient.m */,
+				BE870ACD18E10D4600154B19 /* NSString+ENScrubbing.h */,
+				BE870ACE18E10D4600154B19 /* NSString+ENScrubbing.m */,
 			);
 			name = Internal;
 			sourceTree = "<group>";
@@ -1326,6 +1333,7 @@
 				A9B1E86C16C2242200D54760 /* KSWriter.h in Headers */,
 				A9B1E86F16C2242200D54760 /* KSXMLAttributes.h in Headers */,
 				A9B1E87216C2242200D54760 /* KSXMLWriter.h in Headers */,
+				BE870ACF18E10D4600154B19 /* NSString+ENScrubbing.h in Headers */,
 				BE44483E18CF8B17009AAE1B /* ENNoteStoreClient.h in Headers */,
 				A9B1E87A16C2259F00D54760 /* NSString+XMLAdditions.h in Headers */,
 				A9B1E89016C31B9A00D54760 /* NoteBrowserViewController.h in Headers */,
@@ -1580,6 +1588,7 @@
 				0B2B9D6915449AEE00E5BD44 /* EvernoteSDK.m in Sources */,
 				A96E28ED165597CA0031EC63 /* ENOAuthViewController.m in Sources */,
 				A9FDF719165C5C7200DC7E4B /* ENConstants.m in Sources */,
+				BE870AD018E10D4600154B19 /* NSString+ENScrubbing.m in Sources */,
 				A9C554FD16712F17006E0020 /* NSDate+EDAMAdditions.m in Sources */,
 				BEDCCEBD18BD8DD80090803C /* ENResource.m in Sources */,
 				A9C55502167149B1006E0020 /* EvernoteNoteStore+Extras.m in Sources */,
@@ -1708,6 +1717,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE870AD118E110DB00154B19 /* NSString+ENScrubbing.m in Sources */,
 				BED3F5D818DB845E00E68109 /* ENSendToEvernoteViewController.m in Sources */,
 				BE0D974418DA517F0004A1C7 /* ENSendToEvernoteActivity.m in Sources */,
 				BE47CFF118D27C8F00D712F3 /* ENUserStoreClient.m in Sources */,
