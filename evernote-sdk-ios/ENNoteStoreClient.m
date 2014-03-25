@@ -162,4 +162,12 @@
         return [self.client deleteNote:[self authenticationToken] guid:guid];
     } success:success failure:failure];
 }
+
+- (void)listSharedNotebooksWithSuccess:(void(^)(NSArray *sharedNotebooks))success
+                               failure:(void(^)(NSError *error))failure
+{
+    [self invokeAsyncIdBlock:^id {
+        return [self.client listSharedNotebooks:[self authenticationToken]];
+    } success:success failure:failure];
+}
 @end

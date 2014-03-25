@@ -21,10 +21,11 @@ static NSString * ENSessionDefaultNotebookGuid = @"ENSessionDefaultNotebookGuid"
 @end
 
 @interface ENSessionListNotebooksContext : NSObject
-@property (nonatomic, strong) NSArray * personalNotebooks;
-@property (nonatomic, strong) NSArray * linkedNotebooks;
-@property (nonatomic, strong) NSDictionary * sharedNotebooks; // map linkedNotebook.guid -> sharedNotebook
-@property (nonatomic, strong) NSDictionary * businessNotebooks; // map linkedNotebook.guid -> notebook
+@property (nonatomic, strong) NSMutableArray * resultNotebooks;
+@property (nonatomic, strong) NSMutableArray * linkedPersonalNotebooks;
+@property (nonatomic, strong) NSMutableDictionary * sharedBusinessNotebooks;
+@property (nonatomic, strong) NSMutableDictionary * businessNotebooks;
+@property (nonatomic, strong) NSMutableDictionary * sharedNotebooks;
 @property (nonatomic, assign) NSInteger pendingSharedNotebooks;
 @property (nonatomic, strong) NSError * error;
 @property (nonatomic, strong) ENSessionListNotebooksCompletionHandler completion;
@@ -200,6 +201,19 @@ static NSString * DeveloperToken, * NoteStoreUrl;
 
 #pragma mark - listNotebooks
 
+// Notes on the flow of this process, because it's somewhat byzantine:
+// 1. Get all of the user's personal notebooks.
+// 2. Get all of the user's linked notebooks. These will include business and/or shared notebooks.
+// 3. If the user is a business user:
+//   a. Get the business's shared notebooks. Some of these may match to personal linked notebooks.
+//   b. Get the business's linked notebooks. Some of these will match to shared notebooks in (a), providing a
+//      complete authorization story for the notebook.
+// 4. For any remaining linked nonbusiness notebooks, auth to each and get authorization information.
+// 5. Sort and return the full result set.
+//
+// For personal users, therefore, this will make 2 + n roundtrips, where n is the number of shared notebooks.
+// For business users, this will make 2 + 2 + n roundtrips, where n is the number of nonbusiness shared notebooks.
+
 - (void)listNotebooksWithHandler:(ENSessionListNotebooksCompletionHandler)completion
 {
     if (!completion) {
@@ -212,17 +226,23 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     }
     ENSessionListNotebooksContext * context = [[ENSessionListNotebooksContext alloc] init];
     context.completion = completion;
+    context.resultNotebooks = [[NSMutableArray alloc] init];
     [self listNotebooks_listNotebooksWithContext:context];
 }
 
 - (void)listNotebooks_listNotebooksWithContext:(ENSessionListNotebooksContext *)context
 {
     [self.primaryNoteStore listNotebooksWithSuccess:^(NSArray * notebooks) {
-        context.personalNotebooks = notebooks;
+        // Populate the result list with personal notebooks.
+        for (EDAMNotebook * notebook in notebooks) {
+            ENNotebook * result = [[ENNotebook alloc] initWithNotebook:notebook];
+            [context.resultNotebooks addObject:result];
+        }
         // Now get any linked notebooks.
         [self listNotebooks_listLinkedNotebooksWithContext:context];
     } failure:^(NSError * error) {
-        [self listNotebooks_completeWithContext:context notebooks:nil error:error];
+        ENSDKLogError(@"Error from listNotebooks in user's store: %@", error);
+        [self listNotebooks_completeWithContext:context error:error];
     }];
 }
 
@@ -232,42 +252,92 @@ static NSString * DeveloperToken, * NoteStoreUrl;
         if (linkedNotebooks.count == 0) {
             [self listNotebooks_prepareResultsWithContext:context];
         } else {
-            context.linkedNotebooks = linkedNotebooks;
-            // We need to figure out privilege levels on all of these notebooks, which is byzantine
-            // at best, but here we go.
-            [self listNotebooks_fetchSharedNotebooksWithContext:context];
+            context.linkedPersonalNotebooks = [NSMutableArray arrayWithArray:linkedNotebooks];
+            if ([self businessNoteStore]) {
+                [self listNotebooks_fetchSharedBusinessNotebooksWithContext:context];
+            } else {
+                [self listNotebooks_fetchSharedNotebooksWithContext:context];
+            }
         }
     } failure:^(NSError *error) {
-        [self listNotebooks_completeWithContext:context notebooks:nil error:error];
+        ENSDKLogError(@"Error from listLinkedNotebooks in user's store: %@", error);
+        [self listNotebooks_completeWithContext:context error:error];
     }];
+}
+
+- (void)listNotebooks_fetchSharedBusinessNotebooksWithContext:(ENSessionListNotebooksContext *)context
+{
+    [self.businessNoteStore listSharedNotebooksWithSuccess:^(NSArray *sharedNotebooks) {
+        // Run through the results, and set each notebook keyed by its shareKey, which
+        // is how we'll find corresponding linked notebooks.
+        context.sharedBusinessNotebooks = [[NSMutableDictionary alloc] init];
+        for (EDAMSharedNotebook * notebook in sharedNotebooks) {
+            [context.sharedBusinessNotebooks setObject:notebook forKey:notebook.shareKey];
+        }
+        
+        // Now continue on to grab all of the linked notebooks for the business.
+        [self listNotebooks_fetchLinkedBusinessNotebooksWithContext:context];
+    } failure:^(NSError *error) {
+        ENSDKLogError(@"Error from listSharedNotebooks in business store: %@", error);
+        [self listNotebooks_completeWithContext:context error:error];
+    }];
+}
+
+- (void)listNotebooks_fetchLinkedBusinessNotebooksWithContext:(ENSessionListNotebooksContext *)context
+{
+    [self.businessNoteStore listNotebooksWithSuccess:^(NSArray *notebooks) {
+        // Run through the results, and set each notebook keyed by its guid, which
+        // is how we'll find it from the shared notebook.
+        context.businessNotebooks = [[NSMutableDictionary alloc] init];
+        for (EDAMNotebook * notebook in notebooks) {
+            [context.businessNotebooks setObject:notebook forKey:notebook.guid];
+        }
+        [self listNotebooks_processBusinessNotebooksWithContext:context];
+    } failure:^(NSError *error) {
+        ENSDKLogError(@"Error from listNotebooks in business store: %@", error);
+        [self listNotebooks_completeWithContext:context error:error];
+    }];
+}
+
+- (void)listNotebooks_processBusinessNotebooksWithContext:(ENSessionListNotebooksContext *)context
+{
+    // Postprocess our notebook sets for business notebooks. For every linked notebook in the personal
+    // account, check for a corresponding business shared notebook (by shareKey). If we find it, also
+    // grab its corresponding notebook object from the business notebook list.
+    for (EDAMLinkedNotebook * linkedNotebook in [context.linkedPersonalNotebooks copy]) {
+        EDAMSharedNotebook * sharedNotebook = [context.sharedBusinessNotebooks objectForKey:linkedNotebook.shareKey];
+        if (sharedNotebook) {
+            // This linked notebook corresponds to a business notebook.
+            EDAMNotebook * businessNotebook = [context.businessNotebooks objectForKey:sharedNotebook.notebookGuid];
+            ENNotebook * result = [[ENNotebook alloc] initWithSharedNotebook:sharedNotebook forLinkedNotebook:linkedNotebook withBusinessNotebook:businessNotebook];
+            [context.resultNotebooks addObject:result];
+            [context.linkedPersonalNotebooks removeObjectIdenticalTo:linkedNotebook]; // OK since we're enumerating a copy.
+        }
+    }
+    
+    // Any remaining linked notebooks are personal shared notebooks. No shared notebooks?
+    // Then go directly to results preparation.
+    if (context.linkedPersonalNotebooks.count == 0) {
+        [self listNotebooks_prepareResultsWithContext:context];
+    } else {
+        [self listNotebooks_fetchSharedNotebooksWithContext:context];
+    }
 }
 
 - (void)listNotebooks_fetchSharedNotebooksWithContext:(ENSessionListNotebooksContext *)context
 {
-    context.pendingSharedNotebooks = context.linkedNotebooks.count;
+    // Fetch shared notebooks for any non-business linked notebooks remaining in the
+    // array in the context. We will have already pulled out the linked notebooks that
+    // were processed for business.
+    context.pendingSharedNotebooks = context.linkedPersonalNotebooks.count;
     NSMutableDictionary * sharedNotebooks = [[NSMutableDictionary alloc] init];
     context.sharedNotebooks = sharedNotebooks;
-    NSMutableDictionary * businessNotebooks = [[NSMutableDictionary alloc] init];
-    context.businessNotebooks = businessNotebooks;
     
-    for (EDAMLinkedNotebook * linkedNotebook in context.linkedNotebooks) {
+    for (EDAMLinkedNotebook * linkedNotebook in context.linkedPersonalNotebooks) {
         ENNoteStoreClient * noteStore = [self noteStoreForLinkedNotebook:linkedNotebook];
         [noteStore getSharedNotebookByAuthWithSuccess:^(EDAMSharedNotebook * sharedNotebook) {
             // Add the shared notebook to the map.
             [sharedNotebooks setObject:sharedNotebook forKey:linkedNotebook.guid];
-            // If the shared notebook shows a group privilege level, we're on the hook for another call to get the actual
-            // notebook object that corresponds to it, which will contain the real privilege level.
-            if (sharedNotebook.privilege == SharedNotebookPrivilegeLevel_GROUP) {
-                ENNoteStoreClient * businessNoteStore = [self businessNoteStore];
-                [businessNoteStore getNotebookWithGuid:sharedNotebook.notebookGuid success:^(EDAMNotebook * correspondingNotebook) {
-                    [businessNotebooks setObject:correspondingNotebook forKey:linkedNotebook.guid];
-                    [self listNotebooks_completePendingSharedNotebookWithContext:context];
-                } failure:^(NSError *error) {
-                    context.error = error;
-                    [self listNotebooks_completePendingSharedNotebookWithContext:context];
-                }];
-                return;
-            }
             [self listNotebooks_completePendingSharedNotebookWithContext:context];
         } failure:^(NSError * error) {
             context.error = error;
@@ -287,8 +357,16 @@ static NSString * DeveloperToken, * NoteStoreUrl;
 {
     if (context.error) {
         // One of the calls failed. Currently we treat this as a hard error, and fail the entire call.
-        [self listNotebooks_completeWithContext:context notebooks:nil error:context.error];
+        ENSDKLogError(@"Error from getSharedNotebookByAuth against a personal linked notebook: %@", context.error);
+        [self listNotebooks_completeWithContext:context error:context.error];
         return;
+    }
+    
+    // Process the results
+    for (EDAMLinkedNotebook * linkedNotebook in context.linkedPersonalNotebooks) {
+        EDAMSharedNotebook * sharedNotebook = [context.sharedNotebooks objectForKey:linkedNotebook.guid];
+        ENNotebook * result = [[ENNotebook alloc] initWithSharedNotebook:sharedNotebook forLinkedNotebook:linkedNotebook];
+        [context.resultNotebooks addObject:result];
     }
     
     [self listNotebooks_prepareResultsWithContext:context];
@@ -296,39 +374,24 @@ static NSString * DeveloperToken, * NoteStoreUrl;
 
 - (void)listNotebooks_prepareResultsWithContext:(ENSessionListNotebooksContext *)context
 {
-    NSMutableArray * result = [NSMutableArray array];
-    
-    // Add all personal notebooks.
+    // Mark the application's default notebook.
     NSString * defaultGuid = [self defaultNotebookGuid];
-    for (EDAMNotebook * personalNotebook in context.personalNotebooks) {
-        ENNotebook * notebook = [[ENNotebook alloc] initWithNotebook:personalNotebook];
-        notebook.isApplicationDefaultNotebook = [defaultGuid isEqualToString:personalNotebook.guid];
-        [result addObject:notebook];
-    }
-    
-    // Add linked notebooks.
-    for (EDAMLinkedNotebook * linkedNotebook in context.linkedNotebooks) {
-        EDAMSharedNotebook * sharedNotebook = [context.sharedNotebooks objectForKey:linkedNotebook.guid];
-        EDAMNotebook * businessNotebook = [context.businessNotebooks objectForKey:linkedNotebook.guid];
-        if (sharedNotebook) {
-            ENNotebook * notebook = [[ENNotebook alloc] initWithSharedNotebook:sharedNotebook forLinkedNotebook:linkedNotebook withBusinessNotebook:businessNotebook];
-            [result addObject:notebook];
-        }
+    for (ENNotebook * notebook in context.resultNotebooks) {
+        notebook.isApplicationDefaultNotebook = [defaultGuid isEqualToString:notebook.guid];
     }
     
     // Sort them by name. This is just an convenience for the caller in case they don't bother to sort them themselves.
-    [result sortUsingComparator:^NSComparisonResult(ENNotebook * obj1, ENNotebook * obj2) {
+    [context.resultNotebooks sortUsingComparator:^NSComparisonResult(ENNotebook * obj1, ENNotebook * obj2) {
         return [obj1.name compare:obj2.name options:NSCaseInsensitiveSearch];
     }];
     
-    [self listNotebooks_completeWithContext:context notebooks:result error:nil];
+    [self listNotebooks_completeWithContext:context error:nil];
 }
 
 - (void)listNotebooks_completeWithContext:(ENSessionListNotebooksContext *)context
-                                notebooks:(NSArray *)notebooks
                                     error:(NSError *)error
 {
-    context.completion(notebooks, error);
+    context.completion(context.resultNotebooks, error);
 }
 
 #pragma mark - uploadNote
@@ -425,6 +488,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
         // None matched. Create it.
         [self uploadNote_createNotebookWithContext:context];
     } failure:^(NSError * error) {
+        ENSDKLogError(@"Failed to listNotebooks for uploadNote: %@", error);
         [self uploadNote_completeWithContext:context resultingNoteRef:nil error:error];
     }];
 }
@@ -438,6 +502,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
         context.note.notebookGuid = resultNotebook.guid;
         [self uploadNote_createWithContext:context];
     } failure:^(NSError * error) {
+        ENSDKLogError(@"Failed to createNotebook for uploadNote: %@", error);
         [self uploadNote_completeWithContext:context resultingNoteRef:nil error:error];
     }];
 }
@@ -461,6 +526,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
                 return;
             }
         }
+        ENSDKLogError(@"Failed to updateNote for uploadNote: %@", error);
         [self uploadNote_completeWithContext:context resultingNoteRef:nil error:error];
     }];
 }
@@ -495,6 +561,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
             [self uploadNote_findDefaultNotebookWithContext:context];
             return;
         }
+        ENSDKLogError(@"Failed to createNote for uploadNote: %@", error);
         [self uploadNote_completeWithContext:context resultingNoteRef:nil error:error];
     }];
 }
@@ -522,6 +589,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
             completion(shareUrl, nil);
         }
     } failure:^(NSError * error) {
+        ENSDKLogError(@"Failed to shareNote: %@", error);
         if (completion) {
             completion(nil, error);
         }
@@ -539,6 +607,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
             completion(nil);
         }
     } failure:^(NSError * error) {
+        ENSDKLogError(@"Failed to deleteNote: %@", error);
         if (completion) {
             completion(error);;
         }
@@ -651,8 +720,7 @@ static NSString * PreferencesPath()
 + (NSString *)userStoreUrl
 {
     // If the host string includes an explict port (e.g., foo.bar.com:8080), use http. Otherwise https.
-    
-    // use a simple regex to check for a colon and port number suffix
+    // Use a simple regex to check for a colon and port number suffix.
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@".*:[0-9]+"
                                                                            options:NSRegularExpressionCaseInsensitive
                                                                              error:nil];

@@ -48,7 +48,7 @@
     
     ENNotebook * notebook = self.notebookList[indexPath.row];
     NSString * displayName = notebook.name;
-    if (self.currentNotebook.isBusinessNotebook) {
+    if (notebook.isBusinessNotebook) {
         displayName = [displayName stringByAppendingString:@" (B)"];
     }
     cell.textLabel.text = displayName;

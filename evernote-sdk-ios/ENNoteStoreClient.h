@@ -50,6 +50,7 @@
                    success:(void(^)(int32_t usn))success
                    failure:(void(^)(NSError *error))failure;
 
-
+- (void)listSharedNotebooksWithSuccess:(void(^)(NSArray *sharedNotebooks))success
+                               failure:(void(^)(NSError *error))failure;
 
 @end
