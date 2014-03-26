@@ -368,6 +368,9 @@
 		BE870ACF18E10D4600154B19 /* NSString+ENScrubbing.h in Headers */ = {isa = PBXBuildFile; fileRef = BE870ACD18E10D4600154B19 /* NSString+ENScrubbing.h */; };
 		BE870AD018E10D4600154B19 /* NSString+ENScrubbing.m in Sources */ = {isa = PBXBuildFile; fileRef = BE870ACE18E10D4600154B19 /* NSString+ENScrubbing.m */; };
 		BE870AD118E110DB00154B19 /* NSString+ENScrubbing.m in Sources */ = {isa = PBXBuildFile; fileRef = BE870ACE18E10D4600154B19 /* NSString+ENScrubbing.m */; };
+		BE870AD418E35A8D00154B19 /* ENLinkedNoteStoreClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BE870AD218E35A8D00154B19 /* ENLinkedNoteStoreClient.h */; };
+		BE870AD518E35A8D00154B19 /* ENLinkedNoteStoreClient.m in Sources */ = {isa = PBXBuildFile; fileRef = BE870AD318E35A8D00154B19 /* ENLinkedNoteStoreClient.m */; };
+		BE870AD618E3745F00154B19 /* ENLinkedNoteStoreClient.m in Sources */ = {isa = PBXBuildFile; fileRef = BE870AD318E35A8D00154B19 /* ENLinkedNoteStoreClient.m */; };
 		BED3F5D618DB7C5C00E68109 /* ENSendToEvernoteViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = BED3F5D318DB7C5C00E68109 /* ENSendToEvernoteViewController.h */; };
 		BED3F5D718DB7C5C00E68109 /* ENSendToEvernoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BED3F5D418DB7C5C00E68109 /* ENSendToEvernoteViewController.m */; };
 		BED3F5D818DB845E00E68109 /* ENSendToEvernoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BED3F5D418DB7C5C00E68109 /* ENSendToEvernoteViewController.m */; };
@@ -642,6 +645,8 @@
 		BE620D9918BD51EF007716B2 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		BE870ACD18E10D4600154B19 /* NSString+ENScrubbing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+ENScrubbing.h"; sourceTree = "<group>"; };
 		BE870ACE18E10D4600154B19 /* NSString+ENScrubbing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+ENScrubbing.m"; sourceTree = "<group>"; };
+		BE870AD218E35A8D00154B19 /* ENLinkedNoteStoreClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENLinkedNoteStoreClient.h; sourceTree = "<group>"; };
+		BE870AD318E35A8D00154B19 /* ENLinkedNoteStoreClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENLinkedNoteStoreClient.m; sourceTree = "<group>"; };
 		BED3F5D318DB7C5C00E68109 /* ENSendToEvernoteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENSendToEvernoteViewController.h; sourceTree = "<group>"; };
 		BED3F5D418DB7C5C00E68109 /* ENSendToEvernoteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENSendToEvernoteViewController.m; sourceTree = "<group>"; };
 		BED3F5D518DB7C5C00E68109 /* ENSendToEvernoteViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ENSendToEvernoteViewController.xib; sourceTree = "<group>"; };
@@ -1206,6 +1211,8 @@
 				BE44483818CE78B0009AAE1B /* ENAuthCache.m */,
 				BE44483C18CF8B17009AAE1B /* ENNoteStoreClient.h */,
 				BE44483D18CF8B17009AAE1B /* ENNoteStoreClient.m */,
+				BE870AD218E35A8D00154B19 /* ENLinkedNoteStoreClient.h */,
+				BE870AD318E35A8D00154B19 /* ENLinkedNoteStoreClient.m */,
 				BE44484118CFD084009AAE1B /* ENStoreClient.h */,
 				BE44484218CFD084009AAE1B /* ENStoreClient.m */,
 				BE47CFE718D254F100D712F3 /* ENLinkedNotebookRef.h */,
@@ -1284,6 +1291,7 @@
 				0B943F711525015500DB20A3 /* TProcessor.h in Headers */,
 				BE47CFEF18D27A7900D712F3 /* ENUserStoreClient.h in Headers */,
 				BED3F5D618DB7C5C00E68109 /* ENSendToEvernoteViewController.h in Headers */,
+				BE870AD418E35A8D00154B19 /* ENLinkedNoteStoreClient.h in Headers */,
 				0B943F721525015500DB20A3 /* TProcessorFactory.h in Headers */,
 				0B943F731525015500DB20A3 /* THTTPClient.h in Headers */,
 				A9BE47D7178200B400471BF7 /* ENEncryptedContentInfo.h in Headers */,
@@ -1435,6 +1443,11 @@
 			attributes = {
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = n/a;
+				TargetAttributes = {
+					BE4C601C18BD53C500A3D170 = {
+						DevelopmentTeam = VL4QMDX28D;
+					};
+				};
 			};
 			buildConfigurationList = 0BB3D1A71524ED96001C4534 /* Build configuration list for PBXProject "evernote-sdk-ios" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1563,6 +1576,7 @@
 				0BB3D23E1524EE62001C4534 /* EDAMNoteStore.m in Sources */,
 				0BB3D2401524EE62001C4534 /* EDAMTypes.m in Sources */,
 				0BB3D2421524EE62001C4534 /* EDAMUserStore.m in Sources */,
+				BE870AD518E35A8D00154B19 /* ENLinkedNoteStoreClient.m in Sources */,
 				0BB3D2441524EE62001C4534 /* EDAMErrors.m in Sources */,
 				0BB3D2461524EE62001C4534 /* EvernoteSession.m in Sources */,
 				0B943F531525015500DB20A3 /* ENGCOAuth.m in Sources */,
@@ -1717,6 +1731,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE870AD618E3745F00154B19 /* ENLinkedNoteStoreClient.m in Sources */,
 				BE870AD118E110DB00154B19 /* NSString+ENScrubbing.m in Sources */,
 				BED3F5D818DB845E00E68109 /* ENSendToEvernoteViewController.m in Sources */,
 				BE0D974418DA517F0004A1C7 /* ENSendToEvernoteActivity.m in Sources */,
@@ -2037,6 +2052,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SampleApp/SampleApp-Prefix.pch";
@@ -2049,6 +2065,7 @@
 				INFOPLIST_FILE = "SampleApp copy-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "SampleApp copy";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -2058,6 +2075,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SampleApp/SampleApp-Prefix.pch";
@@ -2066,6 +2084,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PRODUCT_NAME = "SampleApp copy";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};

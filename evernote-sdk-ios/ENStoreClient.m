@@ -10,9 +10,117 @@
 #import "ENError.h"
 #import "EDAMErrors.h"
 
+@interface ENStoreClient ()
+@property (nonatomic, strong) dispatch_queue_t queue;
+@end
+
 @implementation ENStoreClient
 
-- (ENErrorCode)sanitizedErrorCodeFromEDAMErrorCode:(int)code
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        NSString * queueName = [NSString stringWithFormat:@"com.evernote.sdk.%@", NSStringFromClass([self class])];
+        self.queue = dispatch_queue_create([queueName cStringUsingEncoding:NSASCIIStringEncoding], NULL);
+    }
+    return self;
+}
+
+- (void)invokeAsyncBoolBlock:(BOOL(^)())block
+                     success:(void(^)(BOOL val))success
+                     failure:(void(^)(NSError *error))failure
+{
+    dispatch_async(self.queue, ^(void) {
+        __block BOOL retVal = NO;
+        @try {
+            if (block) {
+                retVal = block();
+                dispatch_async(dispatch_get_main_queue(),
+                               ^{
+                                   if (success) {
+                                       success(retVal);
+                                   }
+                               });
+            }
+        }
+        @catch (NSException *exception) {
+            [self handleException:exception withFailureBlock:failure];
+        }
+    });
+}
+
+- (void)invokeAsyncInt32Block:(int32_t(^)())block
+                      success:(void(^)(int32_t val))success
+                      failure:(void(^)(NSError *error))failure
+{
+    dispatch_async(self.queue, ^(void) {
+        __block int32_t retVal = -1;
+        @try {
+            if (block) {
+                retVal = block();
+                dispatch_async(dispatch_get_main_queue(),
+                               ^{
+                                   if (success) {
+                                       success(retVal);
+                                   }
+                               });
+            }
+        }
+        @catch (NSException *exception) {
+            [self handleException:exception withFailureBlock:failure];
+        }
+    });
+}
+
+// use id instead of NSObject* so block type-checking is happy
+- (void)invokeAsyncIdBlock:(id(^)())block
+                   success:(void(^)(id))success
+                   failure:(void(^)(NSError *error))failure
+{
+    dispatch_async(self.queue, ^(void) {
+        id retVal = nil;
+        @try {
+            if (block) {
+                retVal = block();
+                dispatch_async(dispatch_get_main_queue(),
+                               ^{
+                                   if (success) {
+                                       success(retVal);
+                                   }
+                               });
+            }
+        }
+        @catch (NSException *exception) {
+            [self handleException:exception withFailureBlock:failure];
+        }
+    });
+}
+
+- (void)invokeAsyncVoidBlock:(void(^)())block
+                     success:(void(^)())success
+                     failure:(void(^)(NSError *error))failure
+{
+    dispatch_async(self.queue, ^(void) {
+        @try {
+            if (block) {
+                block();
+                dispatch_async(dispatch_get_main_queue(),
+                               ^{
+                                   if (success) {
+                                       success();
+                                   }
+                               });
+            }
+        }
+        @catch (NSException *exception) {
+            [self handleException:exception withFailureBlock:failure];
+        }
+    });
+}
+
+#pragma mark - Private routines
+
++ (ENErrorCode)sanitizedErrorCodeFromEDAMErrorCode:(int)code
 {
     switch (code) {
         case EDAMErrorCode_BAD_DATA_FORMAT:
@@ -59,7 +167,7 @@
         if ([exception respondsToSelector:@selector(errorCode)]) {
             // Evernote Thrift exception classes have an errorCode property
             int edamErrorCode = [(id)exception errorCode];
-            sanitizedErrorCode = [self sanitizedErrorCodeFromEDAMErrorCode:edamErrorCode];
+            sanitizedErrorCode = [[self class] sanitizedErrorCodeFromEDAMErrorCode:edamErrorCode];
             userInfo[@"EDAMErrorCode"] = @(edamErrorCode); // Put this in the user info in case the caller cares.
         } else if ([exception isKindOfClass:[TException class]]) {
             // treat any Thrift errors as a transport error
@@ -69,7 +177,7 @@
                 userInfo[NSLocalizedDescriptionKey] = exception.description;
             }
         }
-
+        
         if ([exception isKindOfClass:[EDAMSystemException class]] == YES) {
             EDAMSystemException* systemException = (EDAMSystemException*)exception;
             if ([systemException rateLimitDurationIsSet]) {
@@ -90,7 +198,7 @@
                 userInfo[@"parameter"] = parameter;
             }
         }
-
+        
         return [NSError errorWithDomain:ENErrorDomain code:sanitizedErrorCode userInfo:userInfo];
     }
     return nil;
@@ -102,101 +210,5 @@
     if (failure) {
         failure(error);
     }
-}
-
-- (void)invokeAsyncBoolBlock:(BOOL(^)())block
-                     success:(void(^)(BOOL val))success
-                     failure:(void(^)(NSError *error))failure
-{
-    NSAssert(self.storeClientDelegate, @"ENStoreClient delegate not set");
-    dispatch_async([self.storeClientDelegate dispatchQueueForStoreClient:self], ^(void) {
-        __block BOOL retVal = NO;
-        @try {
-            if (block) {
-                retVal = block();
-                dispatch_async(dispatch_get_main_queue(),
-                               ^{
-                                   if (success) {
-                                       success(retVal);
-                                   }
-                               });
-            }
-        }
-        @catch (NSException *exception) {
-            [self handleException:exception withFailureBlock:failure];
-        }
-    });
-}
-
-- (void)invokeAsyncInt32Block:(int32_t(^)())block
-                      success:(void(^)(int32_t val))success
-                      failure:(void(^)(NSError *error))failure
-{
-    NSAssert(self.storeClientDelegate, @"ENStoreClient delegate not set");
-    dispatch_async([self.storeClientDelegate dispatchQueueForStoreClient:self], ^(void) {
-        __block int32_t retVal = -1;
-        @try {
-            if (block) {
-                retVal = block();
-                dispatch_async(dispatch_get_main_queue(),
-                               ^{
-                                   if (success) {
-                                       success(retVal);
-                                   }
-                               });
-            }
-        }
-        @catch (NSException *exception) {
-            [self handleException:exception withFailureBlock:failure];
-        }
-    });
-}
-
-// use id instead of NSObject* so block type-checking is happy
-- (void)invokeAsyncIdBlock:(id(^)())block
-                   success:(void(^)(id))success
-                   failure:(void(^)(NSError *error))failure
-{
-    NSAssert(self.storeClientDelegate, @"ENStoreClient delegate not set");
-    dispatch_async([self.storeClientDelegate dispatchQueueForStoreClient:self], ^(void) {
-        id retVal = nil;
-        @try {
-            if (block) {
-                retVal = block();
-                dispatch_async(dispatch_get_main_queue(),
-                               ^{
-                                   if (success) {
-                                       success(retVal);
-                                   }
-                               });
-            }
-        }
-        @catch (NSException *exception) {
-            [self handleException:exception withFailureBlock:failure];
-        }
-    });
-}
-
-- (void)invokeAsyncVoidBlock:(void(^)())block
-                     success:(void(^)())success
-                     failure:(void(^)(NSError *error))failure
-{
-    NSAssert(self.storeClientDelegate, @"ENStoreClient delegate not set");
-    dispatch_async([self.storeClientDelegate dispatchQueueForStoreClient:self], ^(void) {
-        @try {
-            if (block) {
-                block();
-                dispatch_async(dispatch_get_main_queue(),
-                               ^{
-                                   if (success) {
-                                       success();
-                                   }
-                               });
-            }
-        }
-        @catch (NSException *exception) {
-            [self handleException:exception withFailureBlock:failure];
-        }
-    });
 }
 @end

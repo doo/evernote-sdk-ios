@@ -11,14 +11,13 @@
 #import "EvernoteSDK.h"
 #import "ENLinkedNotebookRef.h"
 
-@protocol ENNoteStoreClientDelegate <NSObject>
-- (NSString *)authenticationTokenForLinkedNotebookRef:(ENLinkedNotebookRef *)linkedNotebookRef;
-@end
-
 @interface ENNoteStoreClient : ENStoreClient
-@property (nonatomic, weak) id<ENNoteStoreClientDelegate> noteStoreDelegate;
-+ (ENNoteStoreClient *)noteStoreClientWithUrl:(NSString *)url authenticationToken:(NSString *)authenticationToken;
-+ (ENNoteStoreClient *)noteStoreClientForLinkedNotebookRef:(ENLinkedNotebookRef *)linkedNotebookRef;
+// This accessor is here to provide a declaration of the override point for subclasses that do
+// nontrivial token management.
+@property (nonatomic, readonly) NSString * authenticationToken;
+
+// This is how you get one of these note store objects.
++ (instancetype)noteStoreClientWithUrl:(NSString *)url authenticationToken:(NSString *)authenticationToken;
 
 // N.B. This method is synchronous and can throw exceptions.
 // Should be called only from within protected code blocks

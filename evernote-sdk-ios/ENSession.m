@@ -10,6 +10,7 @@
 #import "ENSDKPrivate.h"
 #import "ENAuthCache.h"
 #import "ENNoteStoreClient.h"
+#import "ENLinkedNoteStoreClient.h"
 #import "ENUserStoreClient.h"
 #import "ENCredentialStore.h"
 
@@ -41,7 +42,7 @@ static NSString * ENSessionDefaultNotebookGuid = @"ENSessionDefaultNotebookGuid"
 @property (nonatomic, strong) ENSessionUploadNoteCompletionHandler completion;
 @end
 
-@interface ENSession () <ENStoreClientDelegate, ENNoteStoreClientDelegate>
+@interface ENSession () <ENLinkedNoteStoreClientDelegate>
 @property (nonatomic, assign) BOOL isAuthenticated;
 @property (nonatomic, strong) EDAMUser * user;
 @property (nonatomic, strong) ENCredentialStore * credentialStore;
@@ -51,7 +52,6 @@ static NSString * ENSessionDefaultNotebookGuid = @"ENSessionDefaultNotebookGuid"
 @property (nonatomic, strong) ENNoteStoreClient * businessNoteStore;
 @property (nonatomic, strong) NSString * businessShardId;
 @property (nonatomic, strong) ENAuthCache * linkedAuthCache;
-@property (nonatomic, strong) dispatch_queue_t sharedQueue;
 @end
 
 @implementation ENSession
@@ -98,7 +98,6 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     self = [super init];
     if (self) {
         self.logger = [[ENSessionDefaultLogger alloc] init];
-        self.sharedQueue = dispatch_queue_create("com.evernote.sdk.ENSession", NULL);
     }
     return self;
 }
@@ -157,8 +156,6 @@ static NSString * DeveloperToken, * NoteStoreUrl;
             [[self userStore] authenticateToBusinessWithSuccess:^(EDAMAuthenticationResult *authenticationResult) {
                 self.businessShardId = authenticationResult.user.shardId;
                 self.businessNoteStore = [ENNoteStoreClient noteStoreClientWithUrl:authenticationResult.noteStoreUrl authenticationToken:authenticationResult.authenticationToken];
-                self.businessNoteStore.storeClientDelegate = self;
-                self.businessNoteStore.noteStoreDelegate = self;
                 completion(nil);
             } failure:^(NSError * authenticateToBusinessError) {
                 ENSDKLogError(@"Failed to authenticate to business for business user: %@", authenticateToBusinessError);
@@ -633,11 +630,18 @@ static NSString * DeveloperToken, * NoteStoreUrl;
 
 #pragma mark - Private routines
 
+- (ENAuthCache *)linkedAuthCache
+{
+    if (!_linkedAuthCache) {
+        _linkedAuthCache = [[ENAuthCache alloc] init];
+    }
+    return _linkedAuthCache;
+}
+
 - (ENUserStoreClient *)userStore
 {
     if (!_userStore) {
         _userStore = [ENUserStoreClient userStoreClientWithUrl:[[self class] userStoreUrl] authenticationToken:self.primaryAuthenticationToken];
-        _userStore.storeClientDelegate = self;
     }
     return _userStore;
 }
@@ -651,8 +655,6 @@ static NSString * DeveloperToken, * NoteStoreUrl;
             ENCredentials * credentials = [self.credentialStore credentialsForHost:SessionHost];
             _primaryNoteStore = [ENNoteStoreClient noteStoreClientWithUrl:credentials.noteStoreUrl authenticationToken:credentials.authenticationToken];
         }
-        _primaryNoteStore.storeClientDelegate = self;
-        _primaryNoteStore.noteStoreDelegate = self;
     }
     return _primaryNoteStore;
 }
@@ -660,9 +662,8 @@ static NSString * DeveloperToken, * NoteStoreUrl;
 - (ENNoteStoreClient *)noteStoreForLinkedNotebook:(EDAMLinkedNotebook *)linkedNotebook
 {
     ENLinkedNotebookRef * linkedNotebookRef = [ENLinkedNotebookRef linkedNotebookRefFromLinkedNotebook:linkedNotebook];
-    ENNoteStoreClient * linkedClient = [ENNoteStoreClient noteStoreClientForLinkedNotebookRef:linkedNotebookRef];
-    linkedClient.storeClientDelegate = self;
-    linkedClient.noteStoreDelegate = self;
+    ENLinkedNoteStoreClient * linkedClient = [ENLinkedNoteStoreClient noteStoreClientForLinkedNotebookRef:linkedNotebookRef];
+    linkedClient.delegate = self;
     return linkedClient;
 }
 
@@ -673,9 +674,8 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     } else if (noteRef.type == ENNoteRefTypeBusiness) {
         return [self businessNoteStore];
     } else if (noteRef.type == ENNoteRefTypeShared) {
-        ENNoteStoreClient * linkedClient = [ENNoteStoreClient noteStoreClientForLinkedNotebookRef:noteRef.linkedNotebook];
-        linkedClient.storeClientDelegate = self;
-        linkedClient.noteStoreDelegate = self;
+        ENLinkedNoteStoreClient * linkedClient = [ENLinkedNoteStoreClient noteStoreClientForLinkedNotebookRef:noteRef.linkedNotebook];
+        linkedClient.delegate = self;
         return linkedClient;
     }
     return nil;
@@ -749,14 +749,7 @@ static NSString * PreferencesPath()
     return [NSString stringWithFormat:@"%@://%@/edam/user", scheme, SessionHost];
 }
 
-#pragma - ENStoreClientDelegate
-
-- (dispatch_queue_t)dispatchQueueForStoreClient:(ENStoreClient *)client
-{
-    return self.sharedQueue;
-}
-
-#pragma - ENNoteStoreClientDelegate
+#pragma mark - ENLinkedNoteStoreClientDelegate
 
 - (NSString *)authenticationTokenForLinkedNotebookRef:(ENLinkedNotebookRef *)linkedNotebookRef
 {
@@ -768,8 +761,6 @@ static NSString * PreferencesPath()
         // Create a temporary note store client for the linked note store, with our primary auth token,
         // in order to authenticate to the shared notebook.
         ENNoteStoreClient * linkedNoteStore = [ENNoteStoreClient noteStoreClientWithUrl:linkedNotebookRef.noteStoreUrl authenticationToken:self.primaryAuthenticationToken];
-        linkedNoteStore.noteStoreDelegate = self;
-        linkedNoteStore.storeClientDelegate = self;
         auth = [linkedNoteStore authenticateToSharedNotebookWithShareKey:linkedNotebookRef.shareKey];
         [self.linkedAuthCache setAuthenticationResult:auth forLinkedNotebookGuid:linkedNotebookRef.guid];
     }

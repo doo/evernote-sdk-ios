@@ -13,43 +13,22 @@
 
 @interface ENNoteStoreClient ()
 @property (nonatomic, strong) EDAMNoteStoreClient * client;
-@property (nonatomic, strong) NSString * authenticationToken;
-
-// This is a "temporary" property stashed for non-personal note stores
-// which are used to later ask the delegate for corresponding auth token. In a more ideal
-// abstraction, this object wouldn't know anything about linked notebooks, it would
-// house solely the client and auth token. But we want this object to be lightweight and created on the
-// main thread easily, and requiring full auth in these cases would complicate things significantly.
-@property (nonatomic, strong) ENLinkedNotebookRef * linkedNotebookRef;
+@property (nonatomic, copy) NSString * cachedAuthenticationToken;
 @end
 
 @implementation ENNoteStoreClient
-+ (ENNoteStoreClient *)noteStoreClientWithUrl:(NSString *)url authenticationToken:(NSString *)authenticationToken
++ (instancetype)noteStoreClientWithUrl:(NSString *)url authenticationToken:(NSString *)authenticationToken
 {
-    return [[self alloc] initWithNoteStoreUrl:url authenticationToken:authenticationToken];
+    ENNoteStoreClient * client = [[self alloc] initWithNoteStoreUrl:url];
+    client.cachedAuthenticationToken = authenticationToken;
+    return client;
 }
 
-+ (ENNoteStoreClient *)noteStoreClientForLinkedNotebookRef:(ENLinkedNotebookRef *)linkedNotebookRef;
-{
-    return [[self alloc] initWithLinkedNotebookRef:linkedNotebookRef];
-}
-
-- (id)initWithNoteStoreUrl:(NSString *)noteStoreUrl authenticationToken:(NSString *)authenticationToken
+- (id)initWithNoteStoreUrl:(NSString *)noteStoreUrl
 {
     self = [super init];
     if (self) {
         [self createClientForUrl:noteStoreUrl];
-        self.authenticationToken = authenticationToken;
-    }
-    return self;
-}
-
-- (id)initWithLinkedNotebookRef:(ENLinkedNotebookRef *)linkedNotebookRef
-{
-    self = [super init];
-    if (self) {
-        [self createClientForUrl:linkedNotebookRef.noteStoreUrl];
-        self.linkedNotebookRef = linkedNotebookRef;
     }
     return self;
 }
@@ -62,27 +41,20 @@
     self.client = [[EDAMNoteStoreClient alloc] initWithProtocol:protocol];
 }
 
+// Override point for subclasses that handle auth differently. This simple version just
+// returns the cached token.
+- (NSString *)authenticationToken
+{
+    return self.cachedAuthenticationToken;
+}
+
+#pragma mark - EDAM API
+
 - (EDAMAuthenticationResult *)authenticateToSharedNotebookWithShareKey:(NSString *)shareKey
 {
     return [self.client authenticateToSharedNotebook:shareKey authenticationToken:self.authenticationToken];
 }
 
-- (NSString *)authenticationToken
-{
-    if (_authenticationToken) {
-        return _authenticationToken;
-    }
-    
-    if (self.linkedNotebookRef) {
-        NSAssert(self.noteStoreDelegate, @"ENNoteStoreClient delegate not set");
-        _authenticationToken = [self.noteStoreDelegate authenticationTokenForLinkedNotebookRef:self.linkedNotebookRef];
-        self.linkedNotebookRef = nil;
-    }
-    
-    return _authenticationToken;
-}
-
-#pragma mark - EDAM API
 
 - (void)listNotebooksWithSuccess:(void(^)(NSArray *notebooks))success
                          failure:(void(^)(NSError *error))failure
