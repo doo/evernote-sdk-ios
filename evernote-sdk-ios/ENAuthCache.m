@@ -9,6 +9,11 @@
 #import "ENAuthCache.h"
 #import "NSDate+EDAMAdditions.h"
 
+@interface ENAuthCacheEntry : NSObject
+@property (nonatomic, strong) EDAMAuthenticationResult * authResult;
+@property (nonatomic, strong) NSDate * cachedDate;
+@end
+
 @interface ENAuthCache ()
 @property (nonatomic, strong) NSMutableDictionary * cache;
 @end
@@ -25,8 +30,12 @@
 
 - (void)setAuthenticationResult:(EDAMAuthenticationResult *)result forLinkedNotebookGuid:(NSString *)guid
 {
+    ENAuthCacheEntry * entry = [[ENAuthCacheEntry alloc] init];
+    entry.authResult = result;
+    entry.cachedDate = [NSDate date];
+    
     @synchronized (self) {
-        self.cache[guid] = result;
+        self.cache[guid] = entry;
     }
 }
 
@@ -34,13 +43,23 @@
 {
     EDAMAuthenticationResult * result = nil;
     @synchronized (self) {
-        result = self.cache[guid];
-        if (result && [[NSDate endateFromEDAMTimestamp:result.expiration] compare:[NSDate date]] != NSOrderedAscending) {
-            // This auth result has already expired, so evict it.
-            [self.cache removeObjectForKey:guid];
-            result = nil;
+        ENAuthCacheEntry * entry = self.cache[guid];
+        if (entry) {
+            // Check for expiration.
+            NSTimeInterval age = fabs([entry.cachedDate timeIntervalSinceNow]);
+            EDAMTimestamp expirationAge = (entry.authResult.expiration - entry.authResult.currentTime) / 1000;
+            // we're okay if the token is within 90% of the expiration time
+            if (age > (.9 * expirationAge)) {
+                // This auth result has already expired, so evict it.
+                [self.cache removeObjectForKey:guid];
+                entry = nil;
+            }
         }
+        result = entry.authResult;
     }
     return result;
 }
+@end
+
+@implementation ENAuthCacheEntry
 @end
