@@ -16,7 +16,7 @@
 @end
 
 @implementation ENUserStoreClient
-+ (ENUserStoreClient *)userStoreClientWithUrl:(NSString *)url authenticationToken:(NSString *)authenticationToken
++ (instancetype)userStoreClientWithUrl:(NSString *)url authenticationToken:(NSString *)authenticationToken
 {
     return [[self alloc] initWithUserStoreUrl:url authenticationToken:authenticationToken];
 }
@@ -34,11 +34,59 @@
     return self;
 }
 
+#pragma mark - UserStore methods
+
+- (void)checkVersionWithClientName:(NSString *)clientName
+                  edamVersionMajor:(int16_t)edamVersionMajor
+                  edamVersionMinor:(int16_t)edamVersionMinor
+                           success:(void(^)(BOOL versionOK))success
+                           failure:(void(^)(NSError *error))failure
+
+{
+    [self invokeAsyncBoolBlock:^BOOL{
+        return [self.client checkVersion:clientName edamVersionMajor:edamVersionMajor edamVersionMinor:edamVersionMinor];
+    } success:success failure:failure];
+}
+
+- (void)getBootstrapInfoWithLocale:(NSString *)locale
+                           success:(void(^)(EDAMBootstrapInfo *info))success
+                           failure:(void(^)(NSError *error))failure
+{
+    [self invokeAsyncIdBlock:^id {
+        return [self.client getBootstrapInfo:locale];
+    } success:success failure:failure];
+}
+
 - (void)getUserWithSuccess:(void(^)(EDAMUser *user))success
                    failure:(void(^)(NSError *error))failure
 {
     [self invokeAsyncIdBlock:^id {
-        return [self.client getUser:[self authenticationToken]];
+        return [self.client getUser:self.authenticationToken];
+    } success:success failure:failure];
+}
+
+- (void)getPublicUserInfoWithUsername:(NSString *)username
+                              success:(void(^)(EDAMPublicUserInfo *info))success
+                              failure:(void(^)(NSError *error))failure
+{
+    [self invokeAsyncIdBlock:^id {
+        return [self.client getPublicUserInfo:username];
+    } success:success failure:failure];
+}
+
+- (void)getPremiumInfoWithSuccess:(void(^)(EDAMPremiumInfo *info))success
+                          failure:(void(^)(NSError *error))failure
+{
+    [self invokeAsyncIdBlock:^id {
+        return [self.client getPremiumInfo:self.authenticationToken];
+    } success:success failure:failure];
+}
+
+- (void)getNoteStoreUrlWithSuccess:(void(^)(NSString *noteStoreUrl))success
+                           failure:(void(^)(NSError *error))failure
+{
+    [self invokeAsyncIdBlock:^id {
+        return [self.client getNoteStoreUrl:self.authenticationToken];
     } success:success failure:failure];
 }
 
@@ -46,7 +94,15 @@
                                   failure:(void(^)(NSError *error))failure
 {
     [self invokeAsyncIdBlock:^id {
-        return [self.client authenticateToBusiness:[self authenticationToken]];
+        return [self.client authenticateToBusiness:self.authenticationToken];
+    } success:success failure:failure];
+}
+
+- (void)revokeLongSessionWithAuthenticationToken:(NSString*)authenticationToken
+                                         success:(void(^)())success
+                                         failure:(void(^)(NSError *error))failure {
+    [self invokeAsyncVoidBlock:^void {
+        [self.client revokeLongSession:authenticationToken];
     } success:success failure:failure];
 }
 @end
