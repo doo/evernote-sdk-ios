@@ -30,6 +30,7 @@ typedef NS_ENUM(NSInteger, ENSessionUploadPolicy) {
 @property (nonatomic, copy) NSString * sourceApplication;  
 
 @property (nonatomic, readonly) BOOL isAuthenticated;
+@property (nonatomic, readonly) BOOL isAuthenticationInProgress;
 
 @property (nonatomic, readonly) BOOL isPremiumUser;
 @property (nonatomic, readonly) BOOL isBusinessUser;

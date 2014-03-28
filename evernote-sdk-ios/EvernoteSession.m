@@ -66,7 +66,7 @@
 
 @property (nonatomic, strong) EDAMNoteStoreClient *businessNoteStoreClient;
 
-@property(readwrite) ENSessionState state;
+@property(readwrite) ENXSessionState state;
 
 @property (nonatomic, strong) NSDate* startDate;
 
@@ -589,15 +589,15 @@
 - (void)handleDidBecomeActive{
     //Unexpected to calls to app delegate's applicationDidBecomeActive are
     // handled by this method. 
-    const ENSessionState state = self.state;
+    const ENXSessionState state = self.state;
     
-    if (state == ENSessionLoggedOut ||
-        state == ENSessionAuthenticated ||
-        state == ENSessionGotCallback) {
+    if (state == ENXSessionLoggedOut ||
+        state == ENXSessionAuthenticated ||
+        state == ENXSessionGotCallback) {
         return;
     }
     [[EvernoteSession sharedSession] gotCallbackURL:nil];
-    self.state = ENSessionLoggedOut;
+    self.state = ENXSessionLoggedOut;
 }
 
 #pragma mark - NSURLConnectionDataDelegate
@@ -673,7 +673,7 @@
         if ([device respondsToSelector:@selector(isMultitaskingSupported)] &&
             [device isMultitaskingSupported] &&
             self.isMultitaskLoginDisabled==NO) {
-            self.state = ENSessionAuthenticationInProgress;
+            self.state = ENXSessionAuthenticationInProgress;
             NSString* openURL = [NSString stringWithFormat:@"en://link-sdk/consumerKey/%@/profileName/%@/authorization/%@",self.consumerKey,self.currentProfile,parameters[@"oauth_token"]];
             BOOL success = [[UIApplication sharedApplication] openURL:[NSURL URLWithString:openURL]];
             if(success == NO) {
@@ -716,7 +716,7 @@
             // call our callback, without error.
             [self completeAuthenticationWithError:nil];
             // update the auth state
-            self.state = ENSessionAuthenticated;
+            self.state = ENXSessionAuthenticated;
         }
     }
 
@@ -795,7 +795,7 @@
         self.completionHandler(error);
     }
     if(error) {
-        self.state = ENSessionLoggedOut;
+        self.state = ENXSessionLoggedOut;
     }
     self.completionHandler = nil;
     self.viewController = nil;
@@ -926,7 +926,7 @@
         return NO;
     }
     // update state
-    self.state = ENSessionGotCallback;
+    self.state = ENXSessionGotCallback;
     NSString* hostName = [NSString stringWithFormat:@"en-%@",
                           [[EvernoteSession sharedSession] consumerKey]];
     BOOL canHandle = NO;

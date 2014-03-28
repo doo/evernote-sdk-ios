@@ -13,6 +13,7 @@
 #import "ENLinkedNoteStoreClient.h"
 #import "ENUserStoreClient.h"
 #import "ENCredentialStore.h"
+#import "ENAuthenticator.h"
 
 static NSString * ENSEssionPreferencesFilename = @"com.evernote.evernote-sdk-ios.plist";
 
@@ -42,7 +43,8 @@ static NSString * ENSessionDefaultNotebookGuid = @"ENSessionDefaultNotebookGuid"
 @property (nonatomic, strong) ENSessionUploadNoteCompletionHandler completion;
 @end
 
-@interface ENSession () <ENLinkedNoteStoreClientDelegate>
+@interface ENSession () <ENLinkedNoteStoreClientDelegate, ENAuthenticatorDelegate>
+@property (nonatomic, strong) ENAuthenticator * authenticator;
 @property (nonatomic, assign) BOOL isAuthenticated;
 @property (nonatomic, strong) EDAMUser * user;
 @property (nonatomic, strong) ENCredentialStore * credentialStore;
@@ -120,6 +122,19 @@ static NSString * DeveloperToken, * NoteStoreUrl;
         return;
     }
     
+    // Authenticate is idempotent; check if we're already authenticated
+    if (self.isAuthenticated) {
+        completion(nil);
+        return;
+    }
+
+    // What if we're already mid-authenticating? If we have an authenticator object already, then
+    // don't stomp on it.
+    if (self.authenticator) {
+        ENSDKLogInfo(@"Cannot restart authentication while it is still in progress.");
+        completion([NSError errorWithDomain:ENErrorDomain code:ENErrorCodeUnknown userInfo:nil]);
+    }
+    
     // If the developer token is set, then we can short circuit the entire auth flow and just call ourselves authenticated.
     if (DeveloperToken) {
         self.isAuthenticated = YES;
@@ -128,11 +143,12 @@ static NSString * DeveloperToken, * NoteStoreUrl;
         return;
     }
     
-    //XXX: use EvernoteSession to bootstrap this for now...
-    if (SessionHost) {
-        [EvernoteSession setSharedSessionHost:SessionHost consumerKey:ConsumerKey consumerSecret:ConsumerSecret];
-    }
-    [[EvernoteSession sharedSession] authenticateWithViewController:viewController completionHandler:^(NSError * error) {
+    self.authenticator = [[ENAuthenticator alloc] init];
+    self.authenticator.delegate = self;
+    self.authenticator.consumerKey = ConsumerKey;
+    self.authenticator.consumerSecret = ConsumerSecret;
+    self.authenticator.host = SessionHost;
+    [self.authenticator authenticateWithViewController:viewController completion:^(NSError *error) {
         if (error) {
             completion(error);
         } else {
@@ -142,6 +158,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
             self.primaryAuthenticationToken = credentials.authenticationToken;
             [self performPostAuthenticationWithCompletion:completion];
         }
+        self.authenticator = nil;
     }];
 }
 
@@ -169,6 +186,11 @@ static NSString * DeveloperToken, * NoteStoreUrl;
         ENSDKLogError(@"Failed to get user info for user: %@", getUserError);
         completion(nil);
     }];
+}
+
+- (BOOL)isAuthenticationInProgress
+{
+    return self.authenticator != nil;
 }
 
 - (BOOL)isIsPremiumUser
@@ -203,7 +225,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     self.businessNoteStore = nil;
     self.linkedAuthCache = nil;
     [self removeAllPreferences];
-    [[EvernoteSession sharedSession] logout];
+//    [[EvernoteSession sharedSession] logout];
 }
 
 #pragma mark - listNotebooks
@@ -765,6 +787,12 @@ static NSString * PreferencesPath()
         [self.linkedAuthCache setAuthenticationResult:auth forLinkedNotebookGuid:linkedNotebookRef.guid];
     }
     return auth.authenticationToken;
+}
+
+- (ENUserStoreClient *)userStoreClientForBootstrapping
+{
+    // The user store for bootstrapping does not require authenticated access.
+    return [ENUserStoreClient userStoreClientWithUrl:[[self class] userStoreUrl] authenticationToken:nil];
 }
 
 @end

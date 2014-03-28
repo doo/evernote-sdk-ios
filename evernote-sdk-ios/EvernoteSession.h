@@ -61,19 +61,19 @@ typedef enum {
 /*!
  @typedef ENSessionState enum
  
- @abstract Used when authenticating with the Evernote iOS app
+ @abstract Used when self class] with the Evernote iOS app
  
  @discussion
  */
-typedef NS_ENUM(NSInteger, ENSessionState) {
+typedef NS_ENUM(NSInteger, ENXSessionState) {
     /*! Evernote session has been created but not logged in */
-    ENSessionLoggedOut,
+    ENXSessionLoggedOut,
     /*! Authentication is in progress */
-    ENSessionAuthenticationInProgress,
+    ENXSessionAuthenticationInProgress,
     /*! Session has been called back by the Evernote app*/
-    ENSessionGotCallback,
+    ENXSessionGotCallback,
     /*! Session has authenticated successfully*/
-    ENSessionAuthenticated
+    ENXSessionAuthenticated
 };
 
 @protocol ENSessionDelegate <NSObject>
@@ -97,7 +97,7 @@ typedef NS_ENUM(NSInteger, ENSessionState) {
 ///---------------------------------------------------------------------------------------
 
 /*! The detailed state of the session */
-@property(readonly) ENSessionState state;
+@property(readonly) ENXSessionState state;
 
 /** Determines whether this session is authenticated or not. */
 @property (nonatomic, readonly) BOOL isAuthenticated;
