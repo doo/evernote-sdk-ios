@@ -15,7 +15,7 @@
 #import "ENCredentialStore.h"
 #import "ENAuthenticator.h"
 
-static NSString * ENSEssionPreferencesFilename = @"com.evernote.evernote-sdk-ios.plist";
+static NSString * ENSessionPreferencesFilename = @"com.evernote.evernote-sdk-ios.plist";
 
 static NSString * ENSessionDefaultNotebookGuid = @"ENSessionDefaultNotebookGuid";
 
@@ -45,6 +45,9 @@ static NSString * ENSessionDefaultNotebookGuid = @"ENSessionDefaultNotebookGuid"
 
 @interface ENSession () <ENLinkedNoteStoreClientDelegate, ENAuthenticatorDelegate>
 @property (nonatomic, strong) ENAuthenticator * authenticator;
+@property (nonatomic, strong) ENSessionAuthenticateCompletionHandler authenticationCompletion;
+
+@property (nonatomic, copy) NSString * sessionHost;
 @property (nonatomic, assign) BOOL isAuthenticated;
 @property (nonatomic, strong) EDAMUser * user;
 @property (nonatomic, strong) ENCredentialStore * credentialStore;
@@ -58,26 +61,25 @@ static NSString * ENSessionDefaultNotebookGuid = @"ENSessionDefaultNotebookGuid"
 
 @implementation ENSession
 
-static NSString * SessionHost, * ConsumerKey, * ConsumerSecret;
+static NSString * SessionHostOverride;
+static NSString * ConsumerKey, * ConsumerSecret;
 static NSString * DeveloperToken, * NoteStoreUrl;
 
-+ (void)setSharedSessionHost:(NSString *)host
-                 consumerKey:(NSString *)key
-              consumerSecret:(NSString *)secret
++ (void)setSharedSessionConsumerKey:(NSString *)key
+                     consumerSecret:(NSString *)secret
+                       optionalHost:(NSString *)host
 {
-    SessionHost = host;
     ConsumerKey = key;
     ConsumerSecret = secret;
+    SessionHostOverride = host;
     
     DeveloperToken = nil;
     NoteStoreUrl = nil;
 }
 
-+ (void)setSharedSessionHost:(NSString *)host
-              developerToken:(NSString *)token
-                noteStoreUrl:(NSString *)url
++ (void)setSharedSessionDeveloperToken:(NSString *)token
+                          noteStoreUrl:(NSString *)url
 {
-    SessionHost = host;
     DeveloperToken = token;
     NoteStoreUrl = url;
 
@@ -100,6 +102,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     self = [super init];
     if (self) {
         self.logger = [[ENSessionDefaultLogger alloc] init];
+        self.credentialStore = [ENCredentialStore loadCredentials];
     }
     return self;
 }
@@ -135,34 +138,48 @@ static NSString * DeveloperToken, * NoteStoreUrl;
         completion([NSError errorWithDomain:ENErrorDomain code:ENErrorCodeUnknown userInfo:nil]);
     }
     
+    self.authenticationCompletion = completion;
+    
     // If the developer token is set, then we can short circuit the entire auth flow and just call ourselves authenticated.
     if (DeveloperToken) {
         self.isAuthenticated = YES;
         self.primaryAuthenticationToken = DeveloperToken;
-        [self performPostAuthenticationWithCompletion:completion];
+        [self performPostAuthentication];
         return;
+    }
+    
+    // Determine the host to use for this session.
+    if (SessionHostOverride.length > 0) {
+        // Use the override given by the developer. This is optional, and
+        // generally used for the sandbox.
+        self.sessionHost = SessionHostOverride;
+    } else if (NoteStoreUrl) {
+        // If we have a developer key, just get the host from the note store url.
+        NSURL * noteStoreUrl = [NSURL URLWithString:NoteStoreUrl];
+        self.sessionHost = noteStoreUrl.host;
+    } else if ([ENCredentialStore getCurrentProfile] == EVERNOTE_SERVICE_INTERNATIONAL) {
+        self.sessionHost = BootstrapServerBaseURLStringUS;
+    } else if ([ENCredentialStore getCurrentProfile] == EVERNOTE_SERVICE_YINXIANG) {
+        self.sessionHost = BootstrapServerBaseURLStringCN;
+    } else {
+        // Choose the initial host based on locale.
+        NSString * locale = [[NSLocale currentLocale] localeIdentifier];
+        if ([[locale lowercaseString] hasPrefix:@"zh"]) {
+            self.sessionHost = BootstrapServerBaseURLStringCN;
+        } else {
+            self.sessionHost = BootstrapServerBaseURLStringUS;
+        }
     }
     
     self.authenticator = [[ENAuthenticator alloc] init];
     self.authenticator.delegate = self;
     self.authenticator.consumerKey = ConsumerKey;
     self.authenticator.consumerSecret = ConsumerSecret;
-    self.authenticator.host = SessionHost;
-    [self.authenticator authenticateWithViewController:viewController completion:^(NSError *error) {
-        if (error) {
-            completion(error);
-        } else {
-            self.isAuthenticated = YES;
-            self.credentialStore = [ENCredentialStore loadCredentials];
-            ENCredentials * credentials = [self.credentialStore credentialsForHost:SessionHost];
-            self.primaryAuthenticationToken = credentials.authenticationToken;
-            [self performPostAuthenticationWithCompletion:completion];
-        }
-        self.authenticator = nil;
-    }];
+    self.authenticator.host = self.sessionHost;
+    [self.authenticator authenticateWithViewController:viewController];
 }
 
-- (void)performPostAuthenticationWithCompletion:(ENSessionAuthenticateCompletionHandler)completion
+- (void)performPostAuthentication
 {
     [[self userStore] getUserWithSuccess:^(EDAMUser * user) {
         self.user = user;
@@ -173,19 +190,26 @@ static NSString * DeveloperToken, * NoteStoreUrl;
             [[self userStore] authenticateToBusinessWithSuccess:^(EDAMAuthenticationResult *authenticationResult) {
                 self.businessShardId = authenticationResult.user.shardId;
                 self.businessNoteStore = [ENNoteStoreClient noteStoreClientWithUrl:authenticationResult.noteStoreUrl authenticationToken:authenticationResult.authenticationToken];
-                completion(nil);
+                [self completeAuthenticationWithError:nil];
             } failure:^(NSError * authenticateToBusinessError) {
                 ENSDKLogError(@"Failed to authenticate to business for business user: %@", authenticateToBusinessError);
-                completion(nil);
+                [self completeAuthenticationWithError:nil];
             }];
         } else {
             // Not a business user. OK.
-            completion(nil);
+            [self completeAuthenticationWithError:nil];
         }
     } failure:^(NSError * getUserError) {
         ENSDKLogError(@"Failed to get user info for user: %@", getUserError);
-        completion(nil);
+        [self completeAuthenticationWithError:nil];
     }];
+}
+
+- (void)completeAuthenticationWithError:(NSError *)error
+{
+    self.authenticationCompletion(error);
+    self.authenticationCompletion = nil;
+    self.authenticator = nil;
 }
 
 - (BOOL)isAuthenticationInProgress
@@ -620,7 +644,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     ENNoteStoreClient * noteStore = [self noteStoreForNoteRef:noteRef];
     [noteStore shareNoteWithGuid:noteRef.guid success:^(NSString * noteKey) {
         NSString * shardId = [self shardIdForNoteRef:noteRef];
-        NSString * shareUrl = [NSString stringWithFormat:@"http://%@/shard/%@/sh/%@/%@", SessionHost, shardId, noteRef.guid, noteKey];
+        NSString * shareUrl = [NSString stringWithFormat:@"http://%@/shard/%@/sh/%@/%@", self.sessionHost, shardId, noteRef.guid, noteKey];
         if (completion) {
             completion(shareUrl, nil);
         }
@@ -663,7 +687,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
 - (ENUserStoreClient *)userStore
 {
     if (!_userStore) {
-        _userStore = [ENUserStoreClient userStoreClientWithUrl:[[self class] userStoreUrl] authenticationToken:self.primaryAuthenticationToken];
+        _userStore = [ENUserStoreClient userStoreClientWithUrl:[self userStoreUrl] authenticationToken:self.primaryAuthenticationToken];
     }
     return _userStore;
 }
@@ -674,7 +698,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
         if (DeveloperToken) {
             _primaryNoteStore = [ENNoteStoreClient noteStoreClientWithUrl:NoteStoreUrl authenticationToken:DeveloperToken];
         } else {
-            ENCredentials * credentials = [self.credentialStore credentialsForHost:SessionHost];
+            ENCredentials * credentials = [self.credentialStore credentialsForHost:self.sessionHost];
             _primaryNoteStore = [ENNoteStoreClient noteStoreClientWithUrl:credentials.noteStoreUrl authenticationToken:credentials.authenticationToken];
         }
     }
@@ -718,7 +742,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
 static NSString * PreferencesPath()
 {
     NSArray * paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
-    return [[paths[0] stringByAppendingPathComponent:@"Preferences"] stringByAppendingPathComponent:ENSEssionPreferencesFilename];
+    return [[paths[0] stringByAppendingPathComponent:@"Preferences"] stringByAppendingPathComponent:ENSessionPreferencesFilename];
 }
 
 - (id)preferencesObjectForKey:(NSString *)key
@@ -756,19 +780,19 @@ static NSString * PreferencesPath()
     [self setPreferencesObject:guid forKey:ENSessionDefaultNotebookGuid];
 }
 
-+ (NSString *)userStoreUrl
+- (NSString *)userStoreUrl
 {
     // If the host string includes an explict port (e.g., foo.bar.com:8080), use http. Otherwise https.
     // Use a simple regex to check for a colon and port number suffix.
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@".*:[0-9]+"
                                                                            options:NSRegularExpressionCaseInsensitive
                                                                              error:nil];
-    NSUInteger numberOfMatches = [regex numberOfMatchesInString:SessionHost
+    NSUInteger numberOfMatches = [regex numberOfMatchesInString:self.sessionHost
                                                         options:0
-                                                          range:NSMakeRange(0, [SessionHost length])];
+                                                          range:NSMakeRange(0, [self.sessionHost length])];
     BOOL hasPort = (numberOfMatches > 0);
     NSString *scheme = (hasPort) ? @"http" : @"https";
-    return [NSString stringWithFormat:@"%@://%@/edam/user", scheme, SessionHost];
+    return [NSString stringWithFormat:@"%@://%@/edam/user", scheme, self.sessionHost];
 }
 
 #pragma mark - ENLinkedNoteStoreClientDelegate
@@ -789,10 +813,26 @@ static NSString * PreferencesPath()
     return auth.authenticationToken;
 }
 
+#pragma mark - ENAuthenticatorDelegate
+
 - (ENUserStoreClient *)userStoreClientForBootstrapping
 {
     // The user store for bootstrapping does not require authenticated access.
-    return [ENUserStoreClient userStoreClientWithUrl:[[self class] userStoreUrl] authenticationToken:nil];
+    return [ENUserStoreClient userStoreClientWithUrl:[self userStoreUrl] authenticationToken:nil];
+}
+
+- (void)authenticatorDidAuthenticateWithCredentials:(ENCredentials *)credentials forHost:(NSString *)host
+{
+    self.isAuthenticated = YES;
+    [self.credentialStore addCredentials:credentials];
+    self.sessionHost = credentials.host;
+    self.primaryAuthenticationToken = credentials.authenticationToken;
+    [self performPostAuthentication];
+}
+
+- (void)authenticatorDidFailWithError:(NSError *)error
+{
+    [self completeAuthenticationWithError:error];
 }
 
 @end

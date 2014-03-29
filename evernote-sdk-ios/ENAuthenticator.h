@@ -8,11 +8,12 @@
 
 #import <Foundation/Foundation.h>
 #import "ENUserStoreClient.h"
-
-typedef void (^ENAuthenticatorCompletionHandler)(NSError * error);
+#import "ENCredentials.h"
 
 @protocol ENAuthenticatorDelegate <NSObject>
 - (ENUserStoreClient *)userStoreClientForBootstrapping;
+- (void)authenticatorDidAuthenticateWithCredentials:(ENCredentials *)credentials forHost:(NSString *)host;
+- (void)authenticatorDidFailWithError:(NSError *)error;
 @end
 
 @interface ENAuthenticator : NSObject
@@ -21,6 +22,5 @@ typedef void (^ENAuthenticatorCompletionHandler)(NSError * error);
 @property (nonatomic, copy) NSString * consumerSecret;
 @property (nonatomic, copy) NSString * host;
 
-- (void)authenticateWithViewController:(UIViewController *)viewController
-                            completion:(ENAuthenticatorCompletionHandler)completion;
+- (void)authenticateWithViewController:(UIViewController *)viewController;
 @end

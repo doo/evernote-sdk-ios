@@ -23,10 +23,9 @@
  
     
     //XXXX
-    NSString *EVERNOTE_HOST = BootstrapServerBaseURLStringUS;
     NSString *CONSUMER_KEY = @"benvernote";
     NSString *CONSUMER_SECRET = @"bc95de44b3b113a7";
-    [ENSession setSharedSessionHost:EVERNOTE_HOST consumerKey:CONSUMER_KEY consumerSecret:CONSUMER_SECRET];
+    [ENSession setSharedSessionConsumerKey:CONSUMER_KEY consumerSecret:CONSUMER_SECRET optionalHost:nil];
     
     ViewController * vc = [[ViewController alloc] init];
     [self.window setRootViewController:vc];

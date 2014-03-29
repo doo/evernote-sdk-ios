@@ -37,13 +37,12 @@ typedef NS_ENUM(NSInteger, ENSessionUploadPolicy) {
 @property (nonatomic, readonly) NSString * userDisplayName;
 @property (nonatomic, readonly) NSString * businessDisplayName;
 
-+ (void)setSharedSessionHost:(NSString *)host
-                 consumerKey:(NSString *)key
-              consumerSecret:(NSString *)secret;
++ (void)setSharedSessionConsumerKey:(NSString *)key
+                     consumerSecret:(NSString *)secret
+                       optionalHost:(NSString *)host;
 
-+ (void)setSharedSessionHost:(NSString *)host
-              developerToken:(NSString *)token
-                noteStoreUrl:(NSString *)url;
++ (void)setSharedSessionDeveloperToken:(NSString *)token
+                          noteStoreUrl:(NSString *)url;
 
 + (ENSession *)sharedSession;
 

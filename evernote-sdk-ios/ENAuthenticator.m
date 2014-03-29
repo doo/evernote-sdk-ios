@@ -36,7 +36,6 @@ typedef NS_ENUM(NSInteger, ENSessionState) {
 
 @interface ENAuthenticator () <ENOAuthViewControllerDelegate>
 @property (nonatomic, strong) UIViewController * viewController;
-@property (nonatomic, strong) ENAuthenticatorCompletionHandler completion;
 
 @property (nonatomic, assign) ENSessionState state;
 
@@ -77,14 +76,11 @@ typedef NS_ENUM(NSInteger, ENSessionState) {
 }
 
 - (void)authenticateWithViewController:(UIViewController *)viewController
-                            completion:(ENAuthenticatorCompletionHandler)completion
 {
     NSAssert(viewController, @"Must use valid viewController");
-    NSAssert(completion, @"Must use valid completion");
     NSAssert(self.delegate, @"Must set authenticator delegate");
     
     self.viewController = viewController;
-    self.completion = completion;
     
     // remove all cookies from the Evernote service so that the user can log in with
     // different credentials after declining to authorize access
@@ -399,7 +395,6 @@ typedef NS_ENUM(NSInteger, ENSessionState) {
         NSString *noteStoreUrl = [parameters objectForKey:@"edam_noteStoreUrl"];
         NSString *edamUserId = [parameters objectForKey:@"edam_userId"];
         NSString *webApiUrlPrefix = [parameters objectForKey:@"edam_webApiUrlPrefix"];
-        
         NSLog(@"OAuth Step 3 - Time Running is: %f",[self.oauthStartDate timeIntervalSinceNow] * -1);
         // Evernote doesn't use the token secret, so we can ignore it.
         // NSString *oauthTokenSecret = [parameters objectForKey:@"oauth_token_secret"];
@@ -412,12 +407,13 @@ typedef NS_ENUM(NSInteger, ENSessionState) {
                                                                   userInfo:nil]];
         } else {
             // add auth info to our credential store, saving to user defaults and keychain
-            [self saveCredentialsWithEdamUserId:edamUserId
-                                   noteStoreUrl:noteStoreUrl
-                                webApiUrlPrefix:webApiUrlPrefix
-                            authenticationToken:authenticationToken];
+            ENCredentials * credentials = [[ENCredentials alloc] initWithHost:self.host
+                                                                   edamUserId:edamUserId
+                                                                 noteStoreUrl:noteStoreUrl
+                                                              webApiUrlPrefix:webApiUrlPrefix
+                                                          authenticationToken:authenticationToken];
             // call our callback, without error.
-            [self completeAuthenticationWithError:nil];
+            [self completeAuthenticationWithCredentials:credentials];
             // update the auth state
             self.state = ENSessionAuthenticated;
         }
@@ -479,35 +475,17 @@ typedef NS_ENUM(NSInteger, ENSessionState) {
     }
 }
 
-- (void)saveBusinessCredentialsWithEdamUserId:(NSString *)edamUserId
-                                 noteStoreUrl:(NSString *)noteStoreUrl
-                              webApiUrlPrefix:(NSString *)webApiUrlPrefix
-                          authenticationToken:(NSString *)authenticationToken
+- (void)completeAuthenticationWithCredentials:(ENCredentials *)credentials
 {
-    ENCredentials *ec = [[ENCredentials alloc] initWithHost:[NSString stringWithFormat:@"%@%@",self.host,BusinessHostNameSuffix]
-                                                 edamUserId:edamUserId
-                                               noteStoreUrl:noteStoreUrl
-                                            webApiUrlPrefix:webApiUrlPrefix
-                                        authenticationToken:authenticationToken];
-    [self.credentialStore addCredentials:ec];
+    self.viewController = nil;
+    [self.delegate authenticatorDidAuthenticateWithCredentials:credentials forHost:self.host];
 }
 
 - (void)completeAuthenticationWithError:(NSError *)error
 {
-    if(error) {
-        self.state = ENSessionLoggedOut;
-    }
-
-    ENAuthenticator * strongSelf = self;
-    
-    if (self.completion) {
-        self.completion(error);
-    }
-    
-    // Nil these out; the authenticator object can in theory be reused, but in case the completion
-    // is used release the authenticator, set these on a strong ref.
-    strongSelf.completion = nil;
-    strongSelf.viewController = nil;
+    self.state = ENSessionLoggedOut;
+    self.viewController = nil;
+    [self.delegate authenticatorDidFailWithError:error];
 }
 
 - (void) switchProfile {
