@@ -766,7 +766,8 @@
                                                   edamUserId:edamUserId 
                                                 noteStoreUrl:noteStoreUrl 
                                              webApiUrlPrefix:webApiUrlPrefix
-                                         authenticationToken:authenticationToken];
+                                         authenticationToken:authenticationToken
+                                             expirationDate:nil];
     [self.credentialStore addCredentials:ec];
     if([self.currentProfile isEqualToString:ENBootstrapProfileNameChina]) {
         [ENCredentialStore saveCurrentProfile:EVERNOTE_SERVICE_YINXIANG];
@@ -785,7 +786,8 @@
                                                   edamUserId:edamUserId
                                                 noteStoreUrl:noteStoreUrl
                                              webApiUrlPrefix:webApiUrlPrefix
-                                         authenticationToken:authenticationToken];
+                                         authenticationToken:authenticationToken
+                                             expirationDate:nil];
     [self.credentialStore addCredentials:ec];
 }
 

@@ -129,7 +129,12 @@
 
 - (ENCredentials *)credentialsForHost:(NSString *)host
 {
-    return [self.store objectForKey:host];
+    ENCredentials * credentials = [self.store objectForKey:host];
+    if (![credentials areValid]) {
+        [self removeCredentials:credentials];
+        return nil;
+    }
+    return credentials;
 }
 
 - (void)removeCredentials:(ENCredentials *)credentials

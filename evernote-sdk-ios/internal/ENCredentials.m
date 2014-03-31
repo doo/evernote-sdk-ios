@@ -41,12 +41,14 @@
 @synthesize noteStoreUrl = _noteStoreUrl;
 @synthesize webApiUrlPrefix = _webApiUrlPrefix;
 @synthesize authenticationToken = _authenticationToken;
+@synthesize expirationDate = _expirationDate;
 
 - (id)initWithHost:(NSString *)host
         edamUserId:(NSString *)edamUserId
       noteStoreUrl:(NSString *)noteStoreUrl
    webApiUrlPrefix:(NSString *)webApiUrlPrefix
 authenticationToken:(NSString *)authenticationToken
+    expirationDate:(NSDate *)expirationDate
 {
     self = [super init];
     if (self) {
@@ -55,6 +57,7 @@ authenticationToken:(NSString *)authenticationToken
         self.noteStoreUrl = noteStoreUrl;
         self.webApiUrlPrefix = webApiUrlPrefix;
         self.authenticationToken = authenticationToken;
+        self.expirationDate = expirationDate;
     }
     return self;
 }
@@ -89,6 +92,22 @@ authenticationToken:(NSString *)authenticationToken
     return token;
 }
 
+- (BOOL)areValid
+{
+    // Not all credentials are guaranteed to have a valid expiration. If none is present,
+    // then assume it's valid.
+    if (!self.expirationDate) {
+        return YES;
+    }
+    
+    // Check the expiration date.
+    if ([[NSDate date] compare:self.expirationDate] != NSOrderedAscending) {
+        return NO;
+    }
+    
+    return YES;
+}
+
 #pragma mark - NSCoding
 
 - (void)encodeWithCoder:(NSCoder *)encoder {
@@ -96,6 +115,7 @@ authenticationToken:(NSString *)authenticationToken
     [encoder encodeObject:self.edamUserId forKey:@"edamUserId"];
     [encoder encodeObject:self.noteStoreUrl forKey:@"noteStoreUrl"];
     [encoder encodeObject:self.webApiUrlPrefix forKey:@"webApiUrlPrefix"];
+    [encoder encodeObject:self.expirationDate forKey:@"expirationDate"];
 }
 
 - (id)initWithCoder:(NSCoder *)decoder {
@@ -104,6 +124,7 @@ authenticationToken:(NSString *)authenticationToken
         self.edamUserId = [decoder decodeObjectForKey:@"edamUserId"];
         self.noteStoreUrl = [decoder decodeObjectForKey:@"noteStoreUrl"];
         self.webApiUrlPrefix = [decoder decodeObjectForKey:@"webApiUrlPrefix"];
+        self.expirationDate = [decoder decodeObjectForKey:@"expirationDate"];
     }
     return self;
 }

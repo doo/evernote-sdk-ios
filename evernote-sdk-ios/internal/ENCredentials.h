@@ -36,14 +36,17 @@
 @property (nonatomic, copy) NSString *noteStoreUrl;
 @property (nonatomic, copy) NSString *webApiUrlPrefix;
 @property (nonatomic, copy) NSString *authenticationToken;
+@property (nonatomic, strong) NSDate *expirationDate;
 
 - (id)initWithHost:(NSString *)host
         edamUserId:(NSString *)edamUserId
       noteStoreUrl:(NSString *)noteStoreUrl   
    webApiUrlPrefix:(NSString *)webApiUrlPrefix
-authenticationToken:(NSString *)authenticationToken;
+authenticationToken:(NSString *)authenticationToken
+    expirationDate:(NSDate *)expirationDate;
 
 - (BOOL)saveToKeychain;
 - (void)deleteFromKeychain;
 
+- (BOOL)areValid;
 @end

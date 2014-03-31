@@ -395,6 +395,9 @@ typedef NS_ENUM(NSInteger, ENSessionState) {
         NSString *noteStoreUrl = [parameters objectForKey:@"edam_noteStoreUrl"];
         NSString *edamUserId = [parameters objectForKey:@"edam_userId"];
         NSString *webApiUrlPrefix = [parameters objectForKey:@"edam_webApiUrlPrefix"];
+        NSString *expiration = [parameters objectForKey:@"edam_expires"];
+        NSDate * expirationDate = [NSDate dateWithTimeIntervalSince1970:([expiration doubleValue] / 1000)];
+        
         NSLog(@"OAuth Step 3 - Time Running is: %f",[self.oauthStartDate timeIntervalSinceNow] * -1);
         // Evernote doesn't use the token secret, so we can ignore it.
         // NSString *oauthTokenSecret = [parameters objectForKey:@"oauth_token_secret"];
@@ -411,7 +414,15 @@ typedef NS_ENUM(NSInteger, ENSessionState) {
                                                                    edamUserId:edamUserId
                                                                  noteStoreUrl:noteStoreUrl
                                                               webApiUrlPrefix:webApiUrlPrefix
-                                                          authenticationToken:authenticationToken];
+                                                          authenticationToken:authenticationToken
+                                                               expirationDate:expirationDate];
+            if([self.currentProfile isEqualToString:ENBootstrapProfileNameChina]) {
+                [ENCredentialStore saveCurrentProfile:EVERNOTE_SERVICE_YINXIANG];
+            }
+            else if([self.currentProfile isEqualToString:ENBootstrapProfileNameInternational]) {
+                [ENCredentialStore saveCurrentProfile:EVERNOTE_SERVICE_INTERNATIONAL];
+            }
+
             // call our callback, without error.
             [self completeAuthenticationWithCredentials:credentials];
             // update the auth state
@@ -453,25 +464,6 @@ typedef NS_ENUM(NSInteger, ENSessionState) {
         [self.oauthViewController updateUIForNewProfile:self.currentProfile withAuthorizationURL:authorizationURL];
         self.isSwitchingInProgress = NO;
         
-    }
-}
-
-- (void)saveCredentialsWithEdamUserId:(NSString *)edamUserId
-                         noteStoreUrl:(NSString *)noteStoreUrl
-                      webApiUrlPrefix:(NSString *)webApiUrlPrefix
-                  authenticationToken:(NSString *)authenticationToken
-{
-    ENCredentials  *ec = [[ENCredentials alloc] initWithHost:self.host
-                                                 edamUserId:edamUserId
-                                               noteStoreUrl:noteStoreUrl
-                                            webApiUrlPrefix:webApiUrlPrefix
-                                        authenticationToken:authenticationToken];
-    [self.credentialStore addCredentials:ec];
-    if([self.currentProfile isEqualToString:ENBootstrapProfileNameChina]) {
-        [ENCredentialStore saveCurrentProfile:EVERNOTE_SERVICE_YINXIANG];
-    }
-    else if([self.currentProfile isEqualToString:ENBootstrapProfileNameInternational]) {
-        [ENCredentialStore saveCurrentProfile:EVERNOTE_SERVICE_INTERNATIONAL];
     }
 }
 
