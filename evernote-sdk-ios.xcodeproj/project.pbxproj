@@ -101,25 +101,6 @@
 		A9B1E87B16C2259F00D54760 /* NSString+XMLAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B1E87916C2259F00D54760 /* NSString+XMLAdditions.m */; };
 		A9B1E88B16C2F99A00D54760 /* NSDataBase64Additions.h in Headers */ = {isa = PBXBuildFile; fileRef = A9B1E88916C2F99A00D54760 /* NSDataBase64Additions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A9B1E88C16C2F99A00D54760 /* NSDataBase64Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B1E88A16C2F99A00D54760 /* NSDataBase64Additions.m */; };
-		A9B1E8A716C3265300D54760 /* ENApplicationBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = A9B1E89416C3265300D54760 /* ENApplicationBridge.h */; };
-		A9B1E8A816C3265300D54760 /* ENApplicationBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B1E89516C3265300D54760 /* ENApplicationBridge.m */; };
-		A9B1E8AA16C3265300D54760 /* ENApplicationBridge_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = A9B1E89616C3265300D54760 /* ENApplicationBridge_Private.h */; };
-		A9B1E8AB16C3265300D54760 /* ENApplicationRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = A9B1E89716C3265300D54760 /* ENApplicationRequest.h */; };
-		A9B1E8AC16C3265300D54760 /* ENAuthenticationRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = A9B1E89816C3265300D54760 /* ENAuthenticationRequest.h */; };
-		A9B1E8AD16C3265300D54760 /* ENAuthenticationRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B1E89916C3265300D54760 /* ENAuthenticationRequest.m */; };
-		A9B1E8AF16C3265300D54760 /* ENLinkNotebookRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = A9B1E89A16C3265300D54760 /* ENLinkNotebookRequest.h */; };
-		A9B1E8B016C3265300D54760 /* ENLinkNotebookRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B1E89B16C3265300D54760 /* ENLinkNotebookRequest.m */; };
-		A9B1E8B216C3265300D54760 /* ENNewNoteRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = A9B1E89C16C3265300D54760 /* ENNewNoteRequest.h */; };
-		A9B1E8B316C3265300D54760 /* ENNewNoteRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B1E89D16C3265300D54760 /* ENNewNoteRequest.m */; };
-		A9B1E8B516C3265300D54760 /* ENNoteImportRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = A9B1E89E16C3265300D54760 /* ENNoteImportRequest.h */; };
-		A9B1E8B616C3265300D54760 /* ENNoteImportRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B1E89F16C3265300D54760 /* ENNoteImportRequest.m */; };
-		A9B1E8B816C3265300D54760 /* ENNoteViewRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = A9B1E8A016C3265300D54760 /* ENNoteViewRequest.h */; };
-		A9B1E8B916C3265300D54760 /* ENNoteViewRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B1E8A116C3265300D54760 /* ENNoteViewRequest.m */; };
-		A9B1E8BB16C3265300D54760 /* ENResourceAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = A9B1E8A216C3265300D54760 /* ENResourceAttachment.h */; };
-		A9B1E8BC16C3265300D54760 /* ENResourceAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B1E8A316C3265300D54760 /* ENResourceAttachment.m */; };
-		A9B1E8BE16C3265300D54760 /* ENSearchRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = A9B1E8A416C3265300D54760 /* ENSearchRequest.h */; };
-		A9B1E8BF16C3265300D54760 /* ENSearchRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B1E8A516C3265300D54760 /* ENSearchRequest.m */; };
-		A9B1E8C116C3265300D54760 /* EvernoteBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = A9B1E8A616C3265300D54760 /* EvernoteBridge.h */; };
 		A9BE47D7178200B400471BF7 /* ENEncryptedContentInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A9BE47C4178200B400471BF7 /* ENEncryptedContentInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A9BE47D8178200B400471BF7 /* ENEncryptedContentInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A9BE47C5178200B400471BF7 /* ENEncryptedContentInfo.m */; };
 		A9BE47DA178200B400471BF7 /* ENMIMEUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = A9BE47C6178200B400471BF7 /* ENMIMEUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -205,14 +186,6 @@
 		BE4C604718BD53C500A3D170 /* KSXMLWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B1E86416C2242200D54760 /* KSXMLWriter.m */; };
 		BE4C604818BD53C500A3D170 /* NSString+XMLAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B1E87916C2259F00D54760 /* NSString+XMLAdditions.m */; };
 		BE4C604918BD53C500A3D170 /* NSDataBase64Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B1E88A16C2F99A00D54760 /* NSDataBase64Additions.m */; };
-		BE4C604B18BD53C500A3D170 /* ENApplicationBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B1E89516C3265300D54760 /* ENApplicationBridge.m */; };
-		BE4C604C18BD53C500A3D170 /* ENAuthenticationRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B1E89916C3265300D54760 /* ENAuthenticationRequest.m */; };
-		BE4C604D18BD53C500A3D170 /* ENLinkNotebookRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B1E89B16C3265300D54760 /* ENLinkNotebookRequest.m */; };
-		BE4C604E18BD53C500A3D170 /* ENNewNoteRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B1E89D16C3265300D54760 /* ENNewNoteRequest.m */; };
-		BE4C604F18BD53C500A3D170 /* ENNoteImportRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B1E89F16C3265300D54760 /* ENNoteImportRequest.m */; };
-		BE4C605018BD53C500A3D170 /* ENNoteViewRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B1E8A116C3265300D54760 /* ENNoteViewRequest.m */; };
-		BE4C605118BD53C500A3D170 /* ENResourceAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B1E8A316C3265300D54760 /* ENResourceAttachment.m */; };
-		BE4C605218BD53C500A3D170 /* ENSearchRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = A9B1E8A516C3265300D54760 /* ENSearchRequest.m */; };
 		BE4C605818BD53C500A3D170 /* ENEncryptedContentInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A9BE47C5178200B400471BF7 /* ENEncryptedContentInfo.m */; };
 		BE4C605918BD53C500A3D170 /* ENMIMEUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = A9BE47C7178200B400471BF7 /* ENMIMEUtils.m */; };
 		BE4C605A18BD53C500A3D170 /* ENMLWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = A9BE47C9178200B400471BF7 /* ENMLWriter.m */; };
@@ -410,25 +383,6 @@
 		A9B1E87916C2259F00D54760 /* NSString+XMLAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+XMLAdditions.m"; sourceTree = "<group>"; };
 		A9B1E88916C2F99A00D54760 /* NSDataBase64Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSDataBase64Additions.h; sourceTree = "<group>"; };
 		A9B1E88A16C2F99A00D54760 /* NSDataBase64Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSDataBase64Additions.m; sourceTree = "<group>"; };
-		A9B1E89416C3265300D54760 /* ENApplicationBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENApplicationBridge.h; sourceTree = "<group>"; };
-		A9B1E89516C3265300D54760 /* ENApplicationBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENApplicationBridge.m; sourceTree = "<group>"; };
-		A9B1E89616C3265300D54760 /* ENApplicationBridge_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENApplicationBridge_Private.h; sourceTree = "<group>"; };
-		A9B1E89716C3265300D54760 /* ENApplicationRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENApplicationRequest.h; sourceTree = "<group>"; };
-		A9B1E89816C3265300D54760 /* ENAuthenticationRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENAuthenticationRequest.h; sourceTree = "<group>"; };
-		A9B1E89916C3265300D54760 /* ENAuthenticationRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENAuthenticationRequest.m; sourceTree = "<group>"; };
-		A9B1E89A16C3265300D54760 /* ENLinkNotebookRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENLinkNotebookRequest.h; sourceTree = "<group>"; };
-		A9B1E89B16C3265300D54760 /* ENLinkNotebookRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENLinkNotebookRequest.m; sourceTree = "<group>"; };
-		A9B1E89C16C3265300D54760 /* ENNewNoteRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENNewNoteRequest.h; sourceTree = "<group>"; };
-		A9B1E89D16C3265300D54760 /* ENNewNoteRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENNewNoteRequest.m; sourceTree = "<group>"; };
-		A9B1E89E16C3265300D54760 /* ENNoteImportRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENNoteImportRequest.h; sourceTree = "<group>"; };
-		A9B1E89F16C3265300D54760 /* ENNoteImportRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENNoteImportRequest.m; sourceTree = "<group>"; };
-		A9B1E8A016C3265300D54760 /* ENNoteViewRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENNoteViewRequest.h; sourceTree = "<group>"; };
-		A9B1E8A116C3265300D54760 /* ENNoteViewRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENNoteViewRequest.m; sourceTree = "<group>"; };
-		A9B1E8A216C3265300D54760 /* ENResourceAttachment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENResourceAttachment.h; sourceTree = "<group>"; };
-		A9B1E8A316C3265300D54760 /* ENResourceAttachment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENResourceAttachment.m; sourceTree = "<group>"; };
-		A9B1E8A416C3265300D54760 /* ENSearchRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENSearchRequest.h; sourceTree = "<group>"; };
-		A9B1E8A516C3265300D54760 /* ENSearchRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENSearchRequest.m; sourceTree = "<group>"; };
-		A9B1E8A616C3265300D54760 /* EvernoteBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EvernoteBridge.h; sourceTree = "<group>"; };
 		A9BE476B1781FAFA00471BF7 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		A9BE47C4178200B400471BF7 /* ENEncryptedContentInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENEncryptedContentInfo.h; sourceTree = "<group>"; };
 		A9BE47C5178200B400471BF7 /* ENEncryptedContentInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENEncryptedContentInfo.m; sourceTree = "<group>"; };
@@ -639,7 +593,6 @@
 			isa = PBXGroup;
 			children = (
 				A9BF371B1787406000680B34 /* DTDs */,
-				A9B1E89316C3265200D54760 /* Bridge */,
 				A96E28DD165593F00031EC63 /* Resources */,
 				0B98592415432592007D7D37 /* ENCredentials.h */,
 				0B98592515432592007D7D37 /* ENCredentials.m */,
@@ -844,32 +797,6 @@
 				A9B1E86516C2242200D54760 /* LICENSE.txt */,
 			);
 			path = KSHTMLWriter;
-			sourceTree = "<group>";
-		};
-		A9B1E89316C3265200D54760 /* Bridge */ = {
-			isa = PBXGroup;
-			children = (
-				A9B1E89416C3265300D54760 /* ENApplicationBridge.h */,
-				A9B1E89516C3265300D54760 /* ENApplicationBridge.m */,
-				A9B1E89616C3265300D54760 /* ENApplicationBridge_Private.h */,
-				A9B1E89716C3265300D54760 /* ENApplicationRequest.h */,
-				A9B1E89816C3265300D54760 /* ENAuthenticationRequest.h */,
-				A9B1E89916C3265300D54760 /* ENAuthenticationRequest.m */,
-				A9B1E89A16C3265300D54760 /* ENLinkNotebookRequest.h */,
-				A9B1E89B16C3265300D54760 /* ENLinkNotebookRequest.m */,
-				A9B1E89C16C3265300D54760 /* ENNewNoteRequest.h */,
-				A9B1E89D16C3265300D54760 /* ENNewNoteRequest.m */,
-				A9B1E89E16C3265300D54760 /* ENNoteImportRequest.h */,
-				A9B1E89F16C3265300D54760 /* ENNoteImportRequest.m */,
-				A9B1E8A016C3265300D54760 /* ENNoteViewRequest.h */,
-				A9B1E8A116C3265300D54760 /* ENNoteViewRequest.m */,
-				A9B1E8A216C3265300D54760 /* ENResourceAttachment.h */,
-				A9B1E8A316C3265300D54760 /* ENResourceAttachment.m */,
-				A9B1E8A416C3265300D54760 /* ENSearchRequest.h */,
-				A9B1E8A516C3265300D54760 /* ENSearchRequest.m */,
-				A9B1E8A616C3265300D54760 /* EvernoteBridge.h */,
-			);
-			path = Bridge;
 			sourceTree = "<group>";
 		};
 		A9BE47C3178200B400471BF7 /* ENMLWriter */ = {
@@ -1094,20 +1021,9 @@
 				BE870ACF18E10D4600154B19 /* NSString+ENScrubbing.h in Headers */,
 				BE44483E18CF8B17009AAE1B /* ENNoteStoreClient.h in Headers */,
 				A9B1E87A16C2259F00D54760 /* NSString+XMLAdditions.h in Headers */,
-				A9B1E8A716C3265300D54760 /* ENApplicationBridge.h in Headers */,
-				A9B1E8AA16C3265300D54760 /* ENApplicationBridge_Private.h in Headers */,
 				BE47CFE418D2487600D712F3 /* ENError.h in Headers */,
 				BE870AD918E39E4500154B19 /* ENOAuthAuthenticator.h in Headers */,
-				A9B1E8AB16C3265300D54760 /* ENApplicationRequest.h in Headers */,
-				A9B1E8AC16C3265300D54760 /* ENAuthenticationRequest.h in Headers */,
-				A9B1E8AF16C3265300D54760 /* ENLinkNotebookRequest.h in Headers */,
-				A9B1E8B216C3265300D54760 /* ENNewNoteRequest.h in Headers */,
-				A9B1E8B516C3265300D54760 /* ENNoteImportRequest.h in Headers */,
 				BED3F5E118DB8CB400E68109 /* ENNotebookChooserViewController.h in Headers */,
-				A9B1E8B816C3265300D54760 /* ENNoteViewRequest.h in Headers */,
-				A9B1E8BB16C3265300D54760 /* ENResourceAttachment.h in Headers */,
-				A9B1E8BE16C3265300D54760 /* ENSearchRequest.h in Headers */,
-				A9B1E8C116C3265300D54760 /* EvernoteBridge.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1321,18 +1237,10 @@
 				A9B1E87B16C2259F00D54760 /* NSString+XMLAdditions.m in Sources */,
 				A9B1E88C16C2F99A00D54760 /* NSDataBase64Additions.m in Sources */,
 				BE0D974318DA48320004A1C7 /* ENSendToEvernoteActivity.m in Sources */,
-				A9B1E8A816C3265300D54760 /* ENApplicationBridge.m in Sources */,
-				A9B1E8AD16C3265300D54760 /* ENAuthenticationRequest.m in Sources */,
 				BEDCCEB818BD5A660090803C /* ENNote.m in Sources */,
 				BED3F5D718DB7C5C00E68109 /* ENSendToEvernoteViewController.m in Sources */,
 				BED3F5E218DB8CB400E68109 /* ENNotebookChooserViewController.m in Sources */,
 				BE44483018CA822A009AAE1B /* ENNoteRef.m in Sources */,
-				A9B1E8B016C3265300D54760 /* ENLinkNotebookRequest.m in Sources */,
-				A9B1E8B316C3265300D54760 /* ENNewNoteRequest.m in Sources */,
-				A9B1E8B616C3265300D54760 /* ENNoteImportRequest.m in Sources */,
-				A9B1E8B916C3265300D54760 /* ENNoteViewRequest.m in Sources */,
-				A9B1E8BC16C3265300D54760 /* ENResourceAttachment.m in Sources */,
-				A9B1E8BF16C3265300D54760 /* ENSearchRequest.m in Sources */,
 				A9BE47D8178200B400471BF7 /* ENEncryptedContentInfo.m in Sources */,
 				A9BE47DB178200B400471BF7 /* ENMIMEUtils.m in Sources */,
 				BE44483F18CF8B17009AAE1B /* ENNoteStoreClient.m in Sources */,
@@ -1410,15 +1318,7 @@
 				BE4C604818BD53C500A3D170 /* NSString+XMLAdditions.m in Sources */,
 				BE870ADB18E39E4500154B19 /* ENOAuthAuthenticator.m in Sources */,
 				BE4C604918BD53C500A3D170 /* NSDataBase64Additions.m in Sources */,
-				BE4C604B18BD53C500A3D170 /* ENApplicationBridge.m in Sources */,
-				BE4C604C18BD53C500A3D170 /* ENAuthenticationRequest.m in Sources */,
-				BE4C604D18BD53C500A3D170 /* ENLinkNotebookRequest.m in Sources */,
-				BE4C604E18BD53C500A3D170 /* ENNewNoteRequest.m in Sources */,
 				BE44482B18C5111C009AAE1B /* ENXMLSaxParser.m in Sources */,
-				BE4C604F18BD53C500A3D170 /* ENNoteImportRequest.m in Sources */,
-				BE4C605018BD53C500A3D170 /* ENNoteViewRequest.m in Sources */,
-				BE4C605118BD53C500A3D170 /* ENResourceAttachment.m in Sources */,
-				BE4C605218BD53C500A3D170 /* ENSearchRequest.m in Sources */,
 				BE4C605818BD53C500A3D170 /* ENEncryptedContentInfo.m in Sources */,
 				BE4C605918BD53C500A3D170 /* ENMIMEUtils.m in Sources */,
 				BE44483118CA822A009AAE1B /* ENNoteRef.m in Sources */,
