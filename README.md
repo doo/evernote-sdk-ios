@@ -1,30 +1,30 @@
-Evernote SDK for iOS version 1.3.1
+Evernote SDK for iOS version 2.0 (alpha!)
 =========================================
+
+**HEADS-UP!** This "2.0" fork of the SDK is currently unofficial and a work in progress. (That's why it's on my GitHub and not the Evernote one right now. :-) ) Although most of the "public" objects are fairly stable, changes are being made overall quite frequently. Some things might well not work as you expect. Your feedback is very valuable. 
 
 What this is
 ------------
-A pleasant iOS-wrapper around the Evernote Cloud API (v1.25), using OAuth for authentication. 
-
-Required reading
-----------------
-Please check out the [Evernote Developers portal page](http://dev.evernote.com/documentation/cloud/).
-Apple style docs are [here](http://dev.evernote.com/documentation/reference/ios/).
+A simple, workflow-oriented library built on the Evernote Cloud API. It's designed to make common tasks a piece of cake!
 
 Installing 
 ----------
 
-### Register for an Evernote API key (and secret)
+### Register for an Evernote API key (and secret)...
 
 You can do this on the [Evernote Developers portal page](http://dev.evernote.com/documentation/cloud/).
+
+### ...OR get a Developer Token
+
+You can also just test-drive the SDK against your personal production Evernote account, if you're afraid of commitment and don't like sandboxes. [Get a developer token here](https://www.evernote.com/api/DeveloperToken.action). Make sure to use the alternate setup instructions given in the "Modify Your App Delegate" section below. 
 
 ### Include the code
 
 You have a few options:
 
 - Copy the evernote-sdk-ios folder into your Xcode project.
-- Build the evernote-sdk-ios as a static library and include the .h's and .a. (Make sure to add the `-ObjC` flag to your "Other Linker flags" if you choose this option). 
+- [I DON'T KNOW IF THIS WORKS RIGHT NOW] Build the evernote-sdk-ios as a static library and include the .h's and .a. (Make sure to add the `-ObjC` flag to your "Other Linker flags" if you choose this option). 
 More info [here](http://developer.apple.com/library/ios/#technotes/iOSStaticLibraries/Articles/configuration.html#/apple_ref/doc/uid/TP40012554-CH3-SW2). 
-- Use [cocoapods](http://cocoapods.org), a nice Objective-C dependency manager. Our pod name is "Evernote-SDK-iOS".
 
 ### Link with frameworks
 
@@ -32,7 +32,6 @@ evernote-sdk-ios depends on some frameworks, so you'll need to add them to any t
 Add the following frameworks in the "Link Binary With Libraries" phase
 
 - Security.framework
-- StoreKit.framework
 - MobileCoreServices.framework
 - libxml2.dylib
 
@@ -63,37 +62,39 @@ Create an array key called URL types with a single array sub-item called URL Sch
 	
 ### Add the header file to any file that uses the Evernote SDK
 
-    #import "EvernoteSDK.h"
+    #import "ENSDK.h"
 
 ### Modify your AppDelegate
 
-First you set up the shared EvernoteSession, configuring it with your consumer key and secret. 
+First you set up the ENSession, configuring it with your consumer key and secret. 
 
-The SDK now supports the Yinxiang Biji service by default. Please make sure your consumer key has been [activated](http://dev.evernote.com/support/) for the China service.
+The SDK supports the Yinxiang Biji (Evernote China) service by default. Please make sure your consumer key has been [activated](http://dev.evernote.com/support/) for the China service.
 
 Do something like this in your AppDelegate's `application:didFinishLaunchingWithOptions:` method.
 
 	- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 	{
 		// Initial development is done on the sandbox service
-		// Change this to BootstrapServerBaseURLStringUS to use the production Evernote service
-		// Change this to BootstrapServerBaseURLStringCN to use the Yinxiang Biji production service
-		// Bootstrapping is supported by default with either BootstrapServerBaseURLStringUS or BootstrapServerBaseURLStringCN
-		// BootstrapServerBaseURLStringSandbox does not support the  Yinxiang Biji service
-		NSString *EVERNOTE_HOST = BootstrapServerBaseURLStringSandbox;
+		// When you want to connect to production, just pass "nil" for "optionalHost"
+		NSString *SANDBOX_HOST = BootstrapServerBaseURLStringSandbox;
     
 		// Fill in the consumer key and secret with the values that you received from Evernote
 		// To get an API key, visit http://dev.evernote.com/documentation/cloud/
 		NSString *CONSUMER_KEY = @"your key";
 		NSString *CONSUMER_SECRET = @"your secret";
     
-		// set up Evernote session singleton
-		[EvernoteSession setSharedSessionHost:EVERNOTE_HOST
-					  consumerKey:CONSUMER_KEY  
-				       consumerSecret:CONSUMER_SECRET];
+		[ENSession setSharedSessionConsumerKey:CONSUMER_KEY
+		  						consumerSecret:CONSUMER_SECRET
+							      optionalHost:SANDBOX_HOST];		
 	}
 
-Do something like this in your AppDelegate's `application:openURL:sourceApplication:annotation:` method
+ALTERNATE: If you are using a Developer Token to access *only* your personal, production account, then *don't* set a consumer key/secret (or the sandbox environment). Instead, give the SDK your developer token and Note Store URL (both personalized and available from [this page](https://www.evernote.com/api/DeveloperToken.action)). Replace the setup call above with the following. 
+
+        [ENSession setSharedSessionDeveloperToken:@"the token string"
+                                     noteStoreUrl:@"the url that you got from us"];
+
+
+[NEEDS UPDATE] Do something like this in your AppDelegate's `application:openURL:sourceApplication:annotation:` method
 
 	- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
 		BOOL canHandle = NO;
@@ -103,7 +104,8 @@ Do something like this in your AppDelegate's `application:openURL:sourceApplicat
 		return canHandle;
 	}
 
-Do something like this in your AppDelegate's `applicationDidBecomeActive:` method
+
+[NEEDS UPDATE] Then, do something like this in your AppDelegate's `applicationDidBecomeActive:` method
 	
 	- (void)applicationDidBecomeActive:(UIApplication *)application
 	{
@@ -113,18 +115,18 @@ Do something like this in your AppDelegate's `applicationDidBecomeActive:` metho
 
 Now you're good to go.
 
-Using the Evernote SDK from your code
--------------------------------------
+Using the Evernote SDK
+----------------------
 
 ### Authenticate
 
-Somewhere in your code, you'll need to authenticate the `EvernoteSession`, passing in your view controller.
+You'll need to authenticate the `ENSession`, passing in your view controller.
 
 A normal place to do this would be a "link to Evernote" button action.
 
-    EvernoteSession *session = [EvernoteSession sharedSession];
-    [session authenticateWithViewController:self completionHandler:^(NSError *error) {
-        if (error || !session.isAuthenticated) {
+    ENSession *session = [ENSession sharedSession];
+    [session authenticateWithViewController:self completion:^(NSError *error) {
+        if (error) {
             // authentication failed :(
             // show an alert, etc
             // ...
@@ -135,123 +137,76 @@ A normal place to do this would be a "link to Evernote" button action.
         } 
     }];
 
-Calling authenticateWithViewController:completionHandler: will start the OAuth process. EvernoteSession will open a new modal view controller, to display Evernote's OAuth web page and handle all the back-and-forth OAuth handshaking. When the user finishes this process, Evernote's modal view controller will be dismissed.
+Calling authenticateWithViewController:completion: will start the OAuth process. ENSession will open a new modal view controller, to display Evernote's OAuth web page and handle all the back-and-forth OAuth handshaking. When the user finishes this process, Evernote's modal view controller will be dismissed.
 
-### Use EvernoteNoteStore and EvernoteUserStore for asynchronous calls to the Evernote API
+### Hello, world.
 
-Both `EvernoteNoteStore` and `EvernoteUserStore` have a convenience constructor that uses the shared `EvernoteSession`.  
-All API calls are asynchronous, occurring on a background GCD queue. You provide the success and failure callback blocks.
-E.g.,
+To create a new note with no user interface, you can just do this:
 
-    EvernoteNoteStore *noteStore = [EvernoteNoteStore noteStore];
-    [noteStore listNotebooksWithSuccess:^(NSArray *notebooks) {
-                                    // success... so do something with the returned objects
-                                    NSLog(@"notebooks: %@", notebooks);
-                                }
-                                failure:^(NSError *error) {
-                                    // failure... show error notification, etc
-                                    if([EvernoteSession isTokenExpiredWithError:error]) {
-                                        // trigger auth again
-                                        // auth code is shown in the Authenticate section
-                                    }
-                                    NSLog(@"error %@", error);                                            
-                                }];
-                                
-Full information on the Evernote NoteStore and UserStore API is available on the [Evernote Developers portal page](http://dev.evernote.com/documentation/cloud/).
+    ENNote * note = [[ENNote alloc] initWithString:@"Hello, Evernote!"];
+	note.title = @"My First Note";
+    [[ENSession sharedSession] uploadNote:note completion:^(ENNoteRef * noteRef, NSError * uploadNoteError) {
+		if (noteRef) {
+			// It worked! You can use this note ref to share the note or otherwise find it again.
+			...
+		} else {
+			NSLog(@"Couldn't upload note. Error: %@", error);
+		}
+	}];
 
-### Creating note content
+This creates a new, plaintext note, with a title, and uploads it to the user's default notebook. 
 
-The SDK includes an ENML writer that helps you write notes. This is useful to write styled notes,supports adding resources like images to the note and also supports writing encrypted fields to Evernote.
-E.g.,
+### Adding Resources
 
-    ENMLWriter* myWriter = [[ENMLWriter alloc] init];
-    [myWriter startDocument];
-    [myWriter startElement:@"span"];
-    [myWriter startElement:@"br"];
-    [myWriter endElement];
-    [myWriter writeResource:resource];
-    [myWriter endElement];
-    [myWriter endDocument];
-    EDAMNote *newNote = [[EDAMNote alloc] init];
-    newNote.content = myWriter.contents;
-    newNote.title = "Test note";
-    newNote.contentLength = myWriter.contents.length;
+Let's say you'd like to create a note with an image that you have. That's easy too. You just need to create an `ENResource` that represents the image data, and attach it to the note before uploading:
 
-`resource` is of type EDAMResource. For more examples, please see the sample app code.
+	ENNote * note = [[ENNote alloc] initWithString:@"This note has an image in it."];
+	note.title = @"My Image Note";
+	ENResource * resource = [[ENResource alloc] initWithImage:myImage]; // myImage is a UIImage object.
+	[note addResource:resource]
+	[[ENSession sharedSession] uploadNote:note completion:^(ENNoteRef * noteRef, NSError * uploadNoteError) {
+		// same as above...
+	}];
 
-### Prompting the user to install the Evernote for iOS app
+You aren't restricted to images; you can use any kind of file. Just use the appropriate initializer for `ENResource`. You'll need to know the data's MIME type to pass along.
 
-If you need to check if the Evernote for iOS app is installed, you can use the following :
+### Sending To Evernote with UIActivityViewController
 
-    [[EvernoteSession sharedSession] isEvernoteInstalled]
+[This object works when a session is authenticated already. Note that it's a big work in progress with crummy UI for right now!]
 
-If you need to prompt the user to install the Evernote for iOS app, you can use the following :
+iOS provides a handy system `UIActivityViewController` that you can create and use when a user taps an "action" or "share" button in your app. The Evernote SDK provides a drop-in `UIActivity` subclass (`ENSendToEvernoteActivity`) that you can use. This will do the work of creating resources and note contents (based on the activity items), and presents a view controller that lets the user choose a notebook, add tags, edit the title, etc. Just do this:
 
-    [[EvernoteSession sharedSession] installEvernoteAppUsingViewController:self]
+	ENSendToEvernoteActivity * evernoteActivity = [[ENSendToEvernoteActivity alloc] init];
+	activity.noteTitle = @"Default Note Title";
+	//...
+	UIActivityViewController * avc = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:@[evernoteActivity]];
+    [self presentViewController:avc animated:YES completion:nil];
+    // etc
+    
+### What else is in here?
 
-The preferred way for using any of the Evernote for iOS related functions is :
+The high level functions include those on `ENSession`, and you can look at `ENNote`, `ENResource`, `ENNotebook` for simple models of these objects as well. 
 
-    if([[EvernoteSession sharedSession] isEvernoteInstalled]) {
-    // Invoke Evernote for iOS related function
-    }
-    else {
-    // Prompt user to install the app
-    [[EvernoteSession sharedSession] installEvernoteAppUsingViewController:self];
-    }
-
-
-### Use the Evernote for iOS App to create/view Notes
-
-For this to work, the latest Evernote for iOS app needs to be installed. You can send text/html or text/plain types of content. You can also send attachments.
-
-To make a new note:
-
-    EDAMNote *note = <create a new note here>
-    [[EvernoteSession sharedSession] setDelegate:self];
-    [[EvernoteNoteStore noteStore] saveNewNoteToEvernoteApp:note withType:@"text/html"];
-
-To view a note:
-
-    EDAMNote *noteToBeViewed : <Get the note that you want to view>
-    [[EvernoteNoteStore noteStore] viewNoteInEvernote:noteToBeViewed];
-
-You can also see sample for this in the sample app.
-
-
-### Viewing notes
-
-You can use this to view notes within your app. You will need to include `ENMLUtitlity.h`
-
-Here is an example. The example requires you to setup a web view or any other html renderer. 
-
-    [[EvernoteNoteStore noteStore] getNoteWithGuid:<guid of note to be displayed> withContent:YES withResourcesData:YES withResourcesRecognition:NO withResourcesAlternateData:NO success:^(EDAMNote *note) {
-                ENMLUtility *utltility = [[ENMLUtility alloc] init];
-                [utltility convertENMLToHTML:note.content withResources:note.resources completionBlock:^(NSString *html, NSError *error) {
-                    if(error == nil) {
-                        [self.webView loadHTMLString:html baseURL:nil];
-                    }
-                }];
-            } failure:^(NSError *error) {
-                NSLog(@"Failed to get note : %@",error);
-            }];
-Check the Note browser in the sample app for some sample code.
-
-### Handling expired Authentication tokens
-
-You should check for expired auth tokens and trigger authentication again if the authentication token is expired or revoked by the user.
-
-You can check for expired using `if(EvernoteSession isTokenExpiredWithError:error])` in the error block. 
+Coming soon: discussion of "Advanced" access to underlying "EDAM" object layer.
 
 FAQ
 ---
 
+### What iOS versions are supported?
+
+This version of the SDK is designed for iOS 7 (and above). The current public version of the SDK in Evernote's repo supports back to iOS 5.
+
 ### Does the Evernote SDK support ARC?
 
-Yes. To use the SDK in a non-ARC project, please use the -fobjc-arc compiler flag on all the files in the Evernote SDK.
+Obvi. (To use the SDK in a non-ARC project, please use the -fobjc-arc compiler flag on all the files in the Evernote SDK.)
 
-### What if I want to do my own Evernote Thrift coding?
+### What if I want to do more than the meager few functions offered on ENSession?
 
-`EvernoteNoteStore` and `EvernoteUserStore` are an abstraction layer on top of Thrift, and try to keep some of that nastiness out of your hair.
-You can still get access to the underlying Thrift client objects, though: check out EvernoteSession's userStore and noteStore properties.
+ENSession is a really broad, workflow-oriented abstraction layer. It's currently optimized for the creation and upload of new notes, but not a whole lot more. You can get closer to the metal, but it will require a fair bit of understanding of Evernote's object model and API. 
 
+The SDK includes primitive access to the entire API. Start by asking an authenticated session for its `-primaryNoteStore`. You can look at the header for `ENNoteStoreClient` to see all the methods offered on it, with block-based completion parameters. Knock yourself out. This note store won't work with a user's business data or shared notebook data directly. More info is current beyond the scope of this README but check out the full developer docs. *Note to self: add a lot more here.*
 
+### Where can I find out more about the Evernote service, API, and object model for my more sophisticated integration?
+
+Please check out the [Evernote Developers portal page](http://dev.evernote.com/documentation/cloud/).
+Apple style docs are [here](http://dev.evernote.com/documentation/reference/ios/).
