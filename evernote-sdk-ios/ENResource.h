@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @interface ENResource : NSObject
 - (id)initWithData:(NSData *)data mimeType:(NSString *)mimeType filename:(NSString *)filename;

@@ -128,13 +128,6 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     return self;
 }
 
-- (void)dealloc
-{
-#if !OS_OBJECT_USE_OBJC
-    dispatch_release(_sharedQueue);
-#endif
-}
-
 - (void)startup
 {
     self.logger = [[ENSessionDefaultLogger alloc] init];
