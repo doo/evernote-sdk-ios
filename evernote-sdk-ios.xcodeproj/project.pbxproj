@@ -14,8 +14,6 @@
 		0B943F531525015500DB20A3 /* ENGCOAuth.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B943F271525015500DB20A3 /* ENGCOAuth.m */; };
 		0B943F551525015500DB20A3 /* NSData+ENBase64.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B943F281525015500DB20A3 /* NSData+ENBase64.h */; };
 		0B943F561525015500DB20A3 /* NSData+ENBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B943F291525015500DB20A3 /* NSData+ENBase64.m */; };
-		0B943F591525015500DB20A3 /* NSString+URLEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B943F2C1525015500DB20A3 /* NSString+URLEncoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		0B943F5A1525015500DB20A3 /* NSString+URLEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B943F2D1525015500DB20A3 /* NSString+URLEncoding.m */; };
 		0B943F5C1525015500DB20A3 /* TBinaryProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B943F301525015500DB20A3 /* TBinaryProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0B943F5D1525015500DB20A3 /* TBinaryProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B943F311525015500DB20A3 /* TBinaryProtocol.m */; };
 		0B943F5F1525015500DB20A3 /* TProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B943F321525015500DB20A3 /* TProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -159,7 +157,6 @@
 		BE4C602318BD53C500A3D170 /* EDAMErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BB3D2371524EE62001C4534 /* EDAMErrors.m */; settings = {COMPILER_FLAGS = "-w"; }; };
 		BE4C602718BD53C500A3D170 /* ENGCOAuth.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B943F271525015500DB20A3 /* ENGCOAuth.m */; };
 		BE4C602818BD53C500A3D170 /* NSData+ENBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B943F291525015500DB20A3 /* NSData+ENBase64.m */; };
-		BE4C602918BD53C500A3D170 /* NSString+URLEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B943F2D1525015500DB20A3 /* NSString+URLEncoding.m */; };
 		BE4C602A18BD53C500A3D170 /* TBinaryProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B943F311525015500DB20A3 /* TBinaryProtocol.m */; settings = {COMPILER_FLAGS = "-w"; }; };
 		BE4C602B18BD53C500A3D170 /* TProtocolException.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B943F341525015500DB20A3 /* TProtocolException.m */; settings = {COMPILER_FLAGS = "-w"; }; };
 		BE4C602C18BD53C500A3D170 /* TProtocolUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B943F371525015500DB20A3 /* TProtocolUtil.m */; settings = {COMPILER_FLAGS = "-w"; }; };
@@ -280,8 +277,6 @@
 		0B943F271525015500DB20A3 /* ENGCOAuth.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENGCOAuth.m; sourceTree = "<group>"; };
 		0B943F281525015500DB20A3 /* NSData+ENBase64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+ENBase64.h"; sourceTree = "<group>"; };
 		0B943F291525015500DB20A3 /* NSData+ENBase64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+ENBase64.m"; sourceTree = "<group>"; };
-		0B943F2C1525015500DB20A3 /* NSString+URLEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+URLEncoding.h"; sourceTree = "<group>"; };
-		0B943F2D1525015500DB20A3 /* NSString+URLEncoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+URLEncoding.m"; sourceTree = "<group>"; };
 		0B943F301525015500DB20A3 /* TBinaryProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TBinaryProtocol.h; sourceTree = "<group>"; };
 		0B943F311525015500DB20A3 /* TBinaryProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TBinaryProtocol.m; sourceTree = "<group>"; };
 		0B943F321525015500DB20A3 /* TProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TProtocol.h; sourceTree = "<group>"; };
@@ -346,7 +341,6 @@
 		0BF0CF7F152E25E1003D6115 /* SSKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSKeychain.h; sourceTree = "<group>"; };
 		0BF0CF80152E25E1003D6115 /* SSKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSKeychain.m; sourceTree = "<group>"; };
 		0BF0CF84152E2601003D6115 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
-		0BF0CF93152E53E0003D6115 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		A92602BD1672B6DD00F01E63 /* NSData+EvernoteSDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+EvernoteSDK.h"; sourceTree = "<group>"; };
 		A92602BE1672B6DD00F01E63 /* NSData+EvernoteSDK.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+EvernoteSDK.m"; sourceTree = "<group>"; };
 		A92602C216740D5700F01E63 /* ENMLUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENMLUtility.h; sourceTree = "<group>"; };
@@ -513,7 +507,6 @@
 				A9B1E85A16C2242200D54760 /* KSHTMLWriter */,
 				A96FE4EB16A0A3DB00F1AD8C /* AFNetworking */,
 				0B943F251525015500DB20A3 /* cocoa-oauth */,
-				0B943F2B1525015500DB20A3 /* NSString+URLEncoding */,
 				0BF0CF7D152E25E1003D6115 /* SSKeychain */,
 				0B943F2E1525015500DB20A3 /* Thrift */,
 			);
@@ -530,16 +523,6 @@
 				0B943F291525015500DB20A3 /* NSData+ENBase64.m */,
 			);
 			path = "cocoa-oauth";
-			sourceTree = "<group>";
-		};
-		0B943F2B1525015500DB20A3 /* NSString+URLEncoding */ = {
-			isa = PBXGroup;
-			children = (
-				0BF0CF93152E53E0003D6115 /* LICENSE */,
-				0B943F2C1525015500DB20A3 /* NSString+URLEncoding.h */,
-				0B943F2D1525015500DB20A3 /* NSString+URLEncoding.m */,
-			);
-			path = "NSString+URLEncoding";
 			sourceTree = "<group>";
 		};
 		0B943F2E1525015500DB20A3 /* Thrift */ = {
@@ -993,7 +976,6 @@
 				BE44484318CFD084009AAE1B /* ENStoreClient.h in Headers */,
 				A9C554FC16712F17006E0020 /* NSDate+EDAMAdditions.h in Headers */,
 				A96FE4D816A0958600F1AD8C /* EDAMNoteStoreClient+Utilities.h in Headers */,
-				0B943F591525015500DB20A3 /* NSString+URLEncoding.h in Headers */,
 				BE620D6218BD3656007716B2 /* ENSession.h in Headers */,
 				BEDCCEB718BD5A660090803C /* ENNote.h in Headers */,
 				A92602C416740D5700F01E63 /* ENMLUtility.h in Headers */,
@@ -1198,7 +1180,6 @@
 				0BB3D2441524EE62001C4534 /* EDAMErrors.m in Sources */,
 				0B943F531525015500DB20A3 /* ENGCOAuth.m in Sources */,
 				0B943F561525015500DB20A3 /* NSData+ENBase64.m in Sources */,
-				0B943F5A1525015500DB20A3 /* NSString+URLEncoding.m in Sources */,
 				0B943F5D1525015500DB20A3 /* TBinaryProtocol.m in Sources */,
 				0B943F611525015500DB20A3 /* TProtocolException.m in Sources */,
 				0B943F651525015500DB20A3 /* TProtocolUtil.m in Sources */,
@@ -1287,7 +1268,6 @@
 				BE4C602718BD53C500A3D170 /* ENGCOAuth.m in Sources */,
 				BEDCCEB918BD5A660090803C /* ENNote.m in Sources */,
 				BE4C602818BD53C500A3D170 /* NSData+ENBase64.m in Sources */,
-				BE4C602918BD53C500A3D170 /* NSString+URLEncoding.m in Sources */,
 				BE4C602A18BD53C500A3D170 /* TBinaryProtocol.m in Sources */,
 				BE4C602B18BD53C500A3D170 /* TProtocolException.m in Sources */,
 				BE4C602C18BD53C500A3D170 /* TProtocolUtil.m in Sources */,
