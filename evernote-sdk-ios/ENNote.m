@@ -20,6 +20,8 @@
 @property (nonatomic, copy) NSString * stringContent;
 @end
 
+// This is currently hidden because it's not really implementated properly yet.
+// Correct path is attrstring -> full html -> enml
 @interface ENAttributedStringNote : ENNote
 @property (nonatomic, copy) NSAttributedString * stringContent;
 @end
@@ -70,14 +72,12 @@
     return note;
 }
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 70000
 - (id)initWithAttributedString:(NSAttributedString *)string
 {
     ENAttributedStringNote * note = [[ENAttributedStringNote alloc] init];
     note.stringContent = string;
     return note;
 }
-#endif
 
 - (void)setTitle:(NSString *)title
 {

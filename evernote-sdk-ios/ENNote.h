@@ -11,16 +11,13 @@
 @class ENResource;
 @class ENNotebook;
 
-@interface ENNote : NSObject // <NSCoding>
+@interface ENNote : NSObject
 @property (nonatomic, copy) NSString * title;
 @property (nonatomic, strong) ENNotebook * notebook;
 @property (nonatomic, copy) NSArray * tagNames;
 - (id)initWithString:(NSString *)string;
 - (id)initWithSanitizedHTML:(NSString *)html;
 - (id)initWithENML:(NSString *)enml;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 70000
-- (id)initWithAttributedString:(NSAttributedString *)string;
-#endif
 - (NSArray *)resources;
 - (void)addResource:(ENResource *)resource;
 @end
