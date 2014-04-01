@@ -7,7 +7,7 @@
 //
 
 #import "ENNoteStoreClient.h"
-#import "EvernoteSDK.h"
+#import "ENSDK.h"
 #import "Thrift.h"
 #import "ENAuthCache.h"
 

@@ -7,8 +7,7 @@
 //
 
 #import "AppDelegate.h"
-#import "EvernoteSDK.h"
-#import "ENSession.h"
+#import "ENSDK.h"
 
 #import "ViewController.h"
 

@@ -11,7 +11,6 @@
 
 #import "ENSDK.h"
 #import "ENSDKAdvanced.h"
-#import "EvernoteSDK.h"
 #import "ENLinkedNotebookRef.h"
 #import "ENNoteRefInternal.h"
 

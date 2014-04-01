@@ -20,5 +20,6 @@ typedef NS_ENUM(NSInteger, ENErrorCode) {
     ENErrorCodeQuotaReached,
     ENErrorCodeDataConflict,
     ENErrorCodeENMLInvalid,
-    ENErrorCodeRateLimitReached
+    ENErrorCodeRateLimitReached,
+    ENErrorCodeCancelled
 };

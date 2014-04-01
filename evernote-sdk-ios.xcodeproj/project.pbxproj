@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		0B0DE6A61571978C00D7347A /* ENOAuthViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B0DE6A41571978C00D7347A /* ENOAuthViewController.h */; };
-		0B2B9D6815449AEE00E5BD44 /* EvernoteSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B2B9D6615449AEE00E5BD44 /* EvernoteSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		0B2B9D6915449AEE00E5BD44 /* EvernoteSDK.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B2B9D6715449AEE00E5BD44 /* EvernoteSDK.m */; };
 		0B943F521525015500DB20A3 /* ENGCOAuth.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B943F261525015500DB20A3 /* ENGCOAuth.h */; };
 		0B943F531525015500DB20A3 /* ENGCOAuth.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B943F271525015500DB20A3 /* ENGCOAuth.m */; };
 		0B943F551525015500DB20A3 /* NSData+ENBase64.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B943F281525015500DB20A3 /* NSData+ENBase64.h */; };
@@ -168,7 +166,6 @@
 		BE4C603218BD53C500A3D170 /* SSKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BF0CF80152E25E1003D6115 /* SSKeychain.m */; };
 		BE4C603418BD53C500A3D170 /* ENCredentials.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B98592515432592007D7D37 /* ENCredentials.m */; };
 		BE4C603518BD53C500A3D170 /* ENCredentialStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B98592715432592007D7D37 /* ENCredentialStore.m */; };
-		BE4C603818BD53C500A3D170 /* EvernoteSDK.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B2B9D6715449AEE00E5BD44 /* EvernoteSDK.m */; };
 		BE4C603918BD53C500A3D170 /* ENOAuthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A96E28EC165597C90031EC63 /* ENOAuthViewController.m */; };
 		BE4C603A18BD53C500A3D170 /* ENConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = A9FDF717165C5C7100DC7E4B /* ENConstants.m */; };
 		BE4C603B18BD53C500A3D170 /* NSDate+EDAMAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C554FB16712F17006E0020 /* NSDate+EDAMAdditions.m */; };
@@ -271,8 +268,6 @@
 
 /* Begin PBXFileReference section */
 		0B0DE6A41571978C00D7347A /* ENOAuthViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENOAuthViewController.h; sourceTree = "<group>"; };
-		0B2B9D6615449AEE00E5BD44 /* EvernoteSDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EvernoteSDK.h; sourceTree = "<group>"; };
-		0B2B9D6715449AEE00E5BD44 /* EvernoteSDK.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EvernoteSDK.m; sourceTree = "<group>"; };
 		0B943F261525015500DB20A3 /* ENGCOAuth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENGCOAuth.h; sourceTree = "<group>"; };
 		0B943F271525015500DB20A3 /* ENGCOAuth.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENGCOAuth.m; sourceTree = "<group>"; };
 		0B943F281525015500DB20A3 /* NSData+ENBase64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+ENBase64.h"; sourceTree = "<group>"; };
@@ -635,8 +630,6 @@
 				BE44482018C50F47009AAE1B /* ENSDK */,
 				A9C554F416712E8D006E0020 /* Utilities */,
 				0BBA34A71537B09300DC7DD5 /* LICENSE */,
-				0B2B9D6615449AEE00E5BD44 /* EvernoteSDK.h */,
-				0B2B9D6715449AEE00E5BD44 /* EvernoteSDK.m */,
 				A9FDF716165C5C7100DC7E4B /* ENConstants.h */,
 				A9FDF717165C5C7100DC7E4B /* ENConstants.m */,
 				A96FE4D616A0958600F1AD8C /* EDAMNoteStoreClient+Utilities.h */,
@@ -972,7 +965,6 @@
 				A9FDF718165C5C7200DC7E4B /* ENConstants.h in Headers */,
 				BEDCCEBC18BD8DD80090803C /* ENResource.h in Headers */,
 				BE620D6618BD43C1007716B2 /* ENNotebook.h in Headers */,
-				0B2B9D6815449AEE00E5BD44 /* EvernoteSDK.h in Headers */,
 				BE44484318CFD084009AAE1B /* ENStoreClient.h in Headers */,
 				A9C554FC16712F17006E0020 /* NSDate+EDAMAdditions.h in Headers */,
 				A96FE4D816A0958600F1AD8C /* EDAMNoteStoreClient+Utilities.h in Headers */,
@@ -1194,7 +1186,6 @@
 				BE44482518C50F6F009AAE1B /* ENHTMLtoENMLConverter.m in Sources */,
 				0B98592F15432592007D7D37 /* ENCredentialStore.m in Sources */,
 				BE620D6718BD43C1007716B2 /* ENNotebook.m in Sources */,
-				0B2B9D6915449AEE00E5BD44 /* EvernoteSDK.m in Sources */,
 				A96E28ED165597CA0031EC63 /* ENOAuthViewController.m in Sources */,
 				A9FDF719165C5C7200DC7E4B /* ENConstants.m in Sources */,
 				BE870AD018E10D4600154B19 /* NSString+ENScrubbing.m in Sources */,
@@ -1280,7 +1271,6 @@
 				BE4C603218BD53C500A3D170 /* SSKeychain.m in Sources */,
 				BE4C603418BD53C500A3D170 /* ENCredentials.m in Sources */,
 				BE4C603518BD53C500A3D170 /* ENCredentialStore.m in Sources */,
-				BE4C603818BD53C500A3D170 /* EvernoteSDK.m in Sources */,
 				BE4C603918BD53C500A3D170 /* ENOAuthViewController.m in Sources */,
 				BED3F5E318DB8CB400E68109 /* ENNotebookChooserViewController.m in Sources */,
 				BE4C603A18BD53C500A3D170 /* ENConstants.m in Sources */,

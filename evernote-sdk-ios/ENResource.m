@@ -7,7 +7,6 @@
 //
 
 #import "ENSDKPrivate.h"
-#import "EvernoteSDK.h"
 #import "NSData+EvernoteSDK.h"
 
 @interface ENResource ()

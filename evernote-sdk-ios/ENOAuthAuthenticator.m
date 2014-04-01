@@ -15,6 +15,7 @@
 #import "ENGCOAuth.h"
 
 #import "NSRegularExpression+ENAGRegex.h"
+#import "ENConstants.h"
 
 #define OAUTH_PROTOCOL_SCHEME @"https"
 
@@ -131,8 +132,8 @@ typedef NS_ENUM(NSInteger, ENOAuthAuthenticatorState) {
     NSURLConnection * connection = [NSURLConnection connectionWithRequest:tempTokenRequest delegate:self];
     if (!connection) {
         // can't make connection, so immediately fail.
-        [self completeAuthenticationWithError:[NSError errorWithDomain:EvernoteSDKErrorDomain
-                                                                  code:EvernoteSDKErrorCode_TRANSPORT_ERROR
+        [self completeAuthenticationWithError:[NSError errorWithDomain:ENErrorDomain
+                                                                  code:ENErrorCodeConnectionFailed
                                                               userInfo:nil]];
     }
 }
@@ -283,8 +284,8 @@ typedef NS_ENUM(NSInteger, ENOAuthAuthenticatorState) {
         NSURLConnection * connection = [NSURLConnection connectionWithRequest:authTokenRequest delegate:self];
         if (!connection) {
             // can't make connection, so immediately fail.
-            [self completeAuthenticationWithError:[NSError errorWithDomain:EvernoteSDKErrorDomain
-                                                                      code:EvernoteSDKErrorCode_TRANSPORT_ERROR
+            [self completeAuthenticationWithError:[NSError errorWithDomain:ENErrorDomain
+                                                                      code:ENErrorCodeConnectionFailed
                                                                   userInfo:nil]];
         };
     }];
@@ -348,8 +349,8 @@ typedef NS_ENUM(NSInteger, ENOAuthAuthenticatorState) {
                 userInfo = @{@"statusCode": statusCodeNumber};
             }
             [self completeAuthenticationWithError:
-             [NSError errorWithDomain:EvernoteSDKErrorDomain
-                                 code:EvernoteSDKErrorCode_TRANSPORT_ERROR
+             [NSError errorWithDomain:ENErrorDomain
+                                 code:ENErrorCodeConnectionFailed
                              userInfo:userInfo]];
             self.receivedData = nil;
             self.response = nil;
@@ -414,8 +415,8 @@ typedef NS_ENUM(NSInteger, ENOAuthAuthenticatorState) {
         // If any of the fields are nil, we can't continue.
         // Assume an invalid response from the server.
         if (!authenticationToken || !noteStoreUrl || !edamUserId || !webApiUrlPrefix) {
-            [self completeAuthenticationWithError:[NSError errorWithDomain:EvernoteSDKErrorDomain
-                                                                      code:EDAMErrorCode_INTERNAL_ERROR
+            [self completeAuthenticationWithError:[NSError errorWithDomain:ENErrorDomain
+                                                                      code:ENErrorCodeUnknown
                                                                   userInfo:nil]];
         } else {
             // add auth info to our credential store, saving to user defaults and keychain
@@ -581,7 +582,7 @@ typedef NS_ENUM(NSInteger, ENOAuthAuthenticatorState) {
 - (void)oauthViewControllerDidCancel:(ENOAuthViewController *)sender
 {
     [self.viewController dismissViewControllerAnimated:YES completion:^{
-        NSError* error = [NSError errorWithDomain:EvernoteSDKErrorDomain code:EvernoteSDKErrorCode_USER_CANCELLED userInfo:nil];
+        NSError* error = [NSError errorWithDomain:ENErrorDomain code:ENErrorCodeCancelled userInfo:nil];
         [self completeAuthenticationWithError:error];
     }];
 }
@@ -671,8 +672,8 @@ typedef NS_ENUM(NSInteger, ENOAuthAuthenticatorState) {
     NSURLConnection * connection = [NSURLConnection connectionWithRequest:authTokenRequest delegate:self];
     if (!connection) {
         // can't make connection, so immediately fail.
-        [self completeAuthenticationWithError:[NSError errorWithDomain:EvernoteSDKErrorDomain
-                                                                  code:EvernoteSDKErrorCode_TRANSPORT_ERROR
+        [self completeAuthenticationWithError:[NSError errorWithDomain:ENErrorDomain
+                                                                  code:ENErrorCodeConnectionFailed
                                                               userInfo:nil]];
     };
 }

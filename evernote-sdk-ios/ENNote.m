@@ -6,7 +6,6 @@
 //  Copyright (c) 2014 n/a. All rights reserved.
 //
 
-#import "EvernoteSDK.h"
 #import "ENSDKPrivate.h"
 #import "ENHTMLtoENMLConverter.h"
 #import "NSString+ENScrubbing.h"

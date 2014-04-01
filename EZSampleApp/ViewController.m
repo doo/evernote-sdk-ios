@@ -55,9 +55,7 @@
 
 - (void)uploadTestNote
 {
-    NSMutableAttributedString * attrString = [[NSMutableAttributedString alloc] initWithString:@"The quick brown fox jumps over the lazy doge."];
-    [attrString addAttribute:NSForegroundColorAttributeName value:[UIColor orangeColor] range:NSMakeRange(0, attrString.length)];
-    ENNote * note = [[ENNote alloc] initWithAttributedString:attrString];
+    ENNote * note = [[ENNote alloc] initWithString:@"The quick brown fox jumps over the lazy doge."];
     note.title = @"Noteref test!";
     ENResource * image = [[ENResource alloc] initWithImage:[UIImage imageNamed:@"quantizetexture.png"]];
     [note addResource:image];
