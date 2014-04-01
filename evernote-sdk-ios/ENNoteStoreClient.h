@@ -12,16 +12,8 @@
 #import "ENLinkedNotebookRef.h"
 
 @interface ENNoteStoreClient : ENStoreClient
-// This accessor is here to provide a declaration of the override point for subclasses that do
-// nontrivial token management.
-@property (nonatomic, readonly) NSString * authenticationToken;
 
-// This is how you get one of these note store objects.
-+ (instancetype)noteStoreClientWithUrl:(NSString *)url authenticationToken:(NSString *)authenticationToken;
-
-// N.B. This method is synchronous and can throw exceptions.
-// Should be called only from within protected code blocks
-- (EDAMAuthenticationResult *)authenticateToSharedNotebookWithShareKey:(NSString *)shareKey;
+// ! DO NOT INSTANTIATE THIS OBJECT DIRECTLY. GET ONE FROM AN AUTHENTICATED ENSESSION !
 
 ///---------------------------------------------------------------------------------------
 /// @name NoteStore sync methods

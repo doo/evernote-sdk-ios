@@ -30,6 +30,7 @@
 #import <UIKit/UIKit.h>
 #import "ENCredentials.h"
 #import "ENSDKAdvanced.h"
+#import "EvernoteService.h"
 
 // Permanent store of Evernote credentials.
 // Credentials are unique per (host,consumer key) tuple.

@@ -7,6 +7,7 @@
 //
 
 #import "ENLinkedNoteStoreClient.h"
+#import "ENSDKPrivate.h"
 
 @interface ENLinkedNoteStoreClient ()
 @property (nonatomic, strong) ENLinkedNotebookRef * linkedNotebookRef;

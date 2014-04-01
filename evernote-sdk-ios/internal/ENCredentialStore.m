@@ -28,6 +28,7 @@
  */
 
 #import "ENCredentialStore.h"
+#import "ENSDKPrivate.h"
 
 #define DEFAULTS_CREDENTIAL_STORE_KEY @"EvernoteCredentials"
 

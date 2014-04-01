@@ -1,7 +1,9 @@
-Evernote SDK for iOS version 2.0 (alpha!)
+"Simple" Evernote SDK for iOS version 2.0 
 =========================================
 
-**HEADS-UP!** This "2.0" fork of the SDK is currently unofficial and a work in progress. (That's why it's on my GitHub and not the Evernote one right now. :-) ) Although most of the "public" objects are fairly stable, changes are being made overall quite frequently. Some things might well not work as you expect. Your feedback is very valuable. 
+**HEADS-UP!** This fork of the SDK is unofficial and a work in progress. Although most of the "public" objects are fairly stable, changes are being made overall quite frequently. Some things might well not work as you expect. Your feedback is very valued. 
+
+Also note: the "Sample App" in this SDK bundle isn't actually a sample app. Please don't bother with it. Thanks!
 
 What this is
 ------------
@@ -94,23 +96,12 @@ ALTERNATE: If you are using a Developer Token to access *only* your personal, pr
                                      noteStoreUrl:@"the url that you got from us"];
 
 
-[NEEDS UPDATE] Do something like this in your AppDelegate's `application:openURL:sourceApplication:annotation:` method
+Do something like this in your AppDelegate's `application:openURL:sourceApplication:annotation:` method
 
 	- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
-		BOOL canHandle = NO;
-		if ([[NSString stringWithFormat:@"en-%@", [[EvernoteSession sharedSession] consumerKey]] isEqualToString:[url scheme]] == YES) {
-		canHandle = [[EvernoteSession sharedSession] canHandleOpenURL:url];
-		}
+		BOOL canHandle = [[EvernoteSession sharedSession] canHandleOpenURL:url];
+		// ... 
 		return canHandle;
-	}
-
-
-[NEEDS UPDATE] Then, do something like this in your AppDelegate's `applicationDidBecomeActive:` method
-	
-	- (void)applicationDidBecomeActive:(UIApplication *)application
-	{
-    		// Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-    		[[EvernoteSession sharedSession] handleDidBecomeActive];
 	}
 
 Now you're good to go.
@@ -204,7 +195,7 @@ Obvi. (To use the SDK in a non-ARC project, please use the -fobjc-arc compiler f
 
 ENSession is a really broad, workflow-oriented abstraction layer. It's currently optimized for the creation and upload of new notes, but not a whole lot more. You can get closer to the metal, but it will require a fair bit of understanding of Evernote's object model and API. 
 
-The SDK includes primitive access to the entire API. Start by asking an authenticated session for its `-primaryNoteStore`. You can look at the header for `ENNoteStoreClient` to see all the methods offered on it, with block-based completion parameters. Knock yourself out. This note store won't work with a user's business data or shared notebook data directly. More info is current beyond the scope of this README but check out the full developer docs. *Note to self: add a lot more here.*
+First off, import `ENSDKAdvanced.h` instead of (or in addition to `ENSDK.h`). Then ask an authenticated session for its `-primaryNoteStore`. You can look at the header for `ENNoteStoreClient` to see all the methods offered on it, with block-based completion parameters. Knock yourself out. This note store client won't work with a user's business data or shared notebook data directly; you can get note store clients for those destinations by asking for `-businessNoteStore` and `-noteStoreForLinkedNotebook:`  More info is currently beyond the scope of this README but check out the full developer docs. 
 
 ### Where can I find out more about the Evernote service, API, and object model for my more sophisticated integration?
 

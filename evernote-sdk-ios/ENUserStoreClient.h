@@ -10,7 +10,8 @@
 #import "ENSDKAdvanced.h"
 
 @interface ENUserStoreClient : ENStoreClient
-+ (instancetype)userStoreClientWithUrl:(NSString *)url authenticationToken:(NSString *)authenticationToken;
+
+// ! DO NOT INSTANTIATE THIS OBJECT DIRECTLY. GET ONE FROM AN AUTHENTICATED ENSESSION !
 
 ///---------------------------------------------------------------------------------------
 /// @name UserStore methods

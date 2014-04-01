@@ -15,6 +15,7 @@
 #import "ENOAuthAuthenticator.h"
 
 #import "ENConstants.h"
+#import "EvernoteService.h"
 
 static NSString * ENSessionPreferencesFilename = @"com.evernote.evernote-sdk-ios.plist";
 
@@ -308,6 +309,14 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     self.businessNoteStore = nil;
     self.linkedAuthCache = [[ENAuthCache alloc] init];
     [self removeAllPreferences];
+}
+
+- (BOOL)canHandleOpenURL:(NSURL *)url
+{
+    if (self.authenticator) {
+        return [self.authenticator canHandleOpenURL:url];
+    }
+    return NO;
 }
 
 #pragma mark - listNotebooks

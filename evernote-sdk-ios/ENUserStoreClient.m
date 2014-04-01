@@ -7,7 +7,7 @@
 //
 
 #import "ENUserStoreClient.h"
-#import "ENSDK.h"
+#import "ENSDKPrivate.h"
 #import "Thrift.h"
 
 @interface ENUserStoreClient ()

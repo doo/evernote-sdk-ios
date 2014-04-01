@@ -121,7 +121,7 @@
 - (void)testActivity:(id)sender
 {
     ENSendToEvernoteActivity * activity = [[ENSendToEvernoteActivity alloc] init];
-    activity.noteTitle = @"Medium Cheddar Cheese";
+    activity.noteTitle = @"A Note Title";
     
     NSString * content1 = @"This is some content";
     NSString * content2 = @"This is some other content!";

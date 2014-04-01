@@ -23,4 +23,6 @@
 @property (nonatomic, copy) NSString * host;
 
 - (void)authenticateWithViewController:(UIViewController *)viewController;
+
+- (BOOL)canHandleOpenURL:(NSURL *)url;
 @end

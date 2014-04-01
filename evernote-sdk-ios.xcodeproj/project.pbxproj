@@ -377,6 +377,7 @@
 		BE0D974118DA48320004A1C7 /* ENSendToEvernoteActivity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENSendToEvernoteActivity.m; sourceTree = "<group>"; };
 		BE2E226518EA3BD200BD7E6E /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		BE2E226718EA3C8000BD7E6E /* ENSDKAdvanced.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ENSDKAdvanced.h; sourceTree = "<group>"; };
+		BE2E226918EB750100BD7E6E /* EvernoteService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EvernoteService.h; sourceTree = "<group>"; };
 		BE44482218C50F6E009AAE1B /* ENHTMLtoENMLConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENHTMLtoENMLConverter.h; sourceTree = "<group>"; };
 		BE44482318C50F6E009AAE1B /* ENHTMLtoENMLConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENHTMLtoENMLConverter.m; sourceTree = "<group>"; };
 		BE44482718C5111B009AAE1B /* ENXMLSaxParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENXMLSaxParser.h; sourceTree = "<group>"; };
@@ -594,8 +595,6 @@
 				0BBA34A71537B09300DC7DD5 /* LICENSE */,
 				A9FDF716165C5C7100DC7E4B /* ENConstants.h */,
 				A9FDF717165C5C7100DC7E4B /* ENConstants.m */,
-				A96FE4D616A0958600F1AD8C /* EDAMNoteStoreClient+Utilities.h */,
-				A96FE4D716A0958600F1AD8C /* EDAMNoteStoreClient+Utilities.m */,
 				0B98592115432592007D7D37 /* internal */,
 				0BB3D22C1524EE62001C4534 /* EDAM */,
 				0B943F241525015500DB20A3 /* 3rdParty */,
@@ -742,13 +741,25 @@
 			path = Utilities;
 			sourceTree = "<group>";
 		};
+		BE2E226818EB681100BD7E6E /* Advanced */ = {
+			isa = PBXGroup;
+			children = (
+				BE2E226718EA3C8000BD7E6E /* ENSDKAdvanced.h */,
+				BE44483C18CF8B17009AAE1B /* ENNoteStoreClient.h */,
+				BE44483D18CF8B17009AAE1B /* ENNoteStoreClient.m */,
+				BE47CFED18D27A7900D712F3 /* ENUserStoreClient.h */,
+				BE47CFEE18D27A7900D712F3 /* ENUserStoreClient.m */,
+			);
+			name = Advanced;
+			sourceTree = "<group>";
+		};
 		BE44482018C50F47009AAE1B /* ENSDK */ = {
 			isa = PBXGroup;
 			children = (
+				BED3F5CA18DB6DE900E68109 /* SendToEvernoteActivity */,
+				BE2E226818EB681100BD7E6E /* Advanced */,
 				BE44482C18C51CEE009AAE1B /* ENSDK.h */,
 				BED3F5E518DBAA4F00E68109 /* ENSDKLogging.h */,
-				BED3F5CA18DB6DE900E68109 /* SendToEvernoteActivity */,
-				BE620D6818BD459E007716B2 /* ENSDKPrivate.h */,
 				BE620D6018BD3656007716B2 /* ENSession.h */,
 				BE620D6118BD3656007716B2 /* ENSession.m */,
 				BE620D6418BD43C1007716B2 /* ENNotebook.h */,
@@ -761,23 +772,23 @@
 				BE44482E18CA822A009AAE1B /* ENNoteRef.m */,
 				BE47CFE218D2487600D712F3 /* ENError.h */,
 				BE47CFE318D2487600D712F3 /* ENError.m */,
-				BE44482118C50F5F009AAE1B /* Internal */,
-				BE2E226718EA3C8000BD7E6E /* ENSDKAdvanced.h */,
+				BE44482118C50F5F009AAE1B /* Private */,
 			);
 			name = ENSDK;
 			sourceTree = "<group>";
 		};
-		BE44482118C50F5F009AAE1B /* Internal */ = {
+		BE44482118C50F5F009AAE1B /* Private */ = {
 			isa = PBXGroup;
 			children = (
+				BE620D6818BD459E007716B2 /* ENSDKPrivate.h */,
 				BE44482218C50F6E009AAE1B /* ENHTMLtoENMLConverter.h */,
 				BE44482318C50F6E009AAE1B /* ENHTMLtoENMLConverter.m */,
 				BE44482718C5111B009AAE1B /* ENXMLSaxParser.h */,
 				BE44482818C5111B009AAE1B /* ENXMLSaxParser.m */,
+				A96FE4D616A0958600F1AD8C /* EDAMNoteStoreClient+Utilities.h */,
+				A96FE4D716A0958600F1AD8C /* EDAMNoteStoreClient+Utilities.m */,
 				BE44483718CE78B0009AAE1B /* ENAuthCache.h */,
 				BE44483818CE78B0009AAE1B /* ENAuthCache.m */,
-				BE44483C18CF8B17009AAE1B /* ENNoteStoreClient.h */,
-				BE44483D18CF8B17009AAE1B /* ENNoteStoreClient.m */,
 				BE870AD218E35A8D00154B19 /* ENLinkedNoteStoreClient.h */,
 				BE870AD318E35A8D00154B19 /* ENLinkedNoteStoreClient.m */,
 				BE44484118CFD084009AAE1B /* ENStoreClient.h */,
@@ -785,14 +796,13 @@
 				BE47CFE718D254F100D712F3 /* ENLinkedNotebookRef.h */,
 				BE47CFE818D254F200D712F3 /* ENLinkedNotebookRef.m */,
 				BE47CFEC18D258D400D712F3 /* ENNoteRefInternal.h */,
-				BE47CFED18D27A7900D712F3 /* ENUserStoreClient.h */,
-				BE47CFEE18D27A7900D712F3 /* ENUserStoreClient.m */,
 				BE870ACD18E10D4600154B19 /* NSString+ENScrubbing.h */,
 				BE870ACE18E10D4600154B19 /* NSString+ENScrubbing.m */,
 				BE870AD718E39E4500154B19 /* ENOAuthAuthenticator.h */,
 				BE870AD818E39E4500154B19 /* ENOAuthAuthenticator.m */,
+				BE2E226918EB750100BD7E6E /* EvernoteService.h */,
 			);
-			name = Internal;
+			name = Private;
 			sourceTree = "<group>";
 		};
 		BE620D7118BD5134007716B2 /* EZSampleApp */ = {

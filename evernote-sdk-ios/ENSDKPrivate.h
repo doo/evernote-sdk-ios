@@ -6,13 +6,12 @@
 //  Copyright (c) 2014 n/a. All rights reserved.
 //
 
-#ifndef evernote_sdk_ios_ENSDKPrivate_h
-#define evernote_sdk_ios_ENSDKPrivate_h
-
 #import "ENSDK.h"
 #import "ENSDKAdvanced.h"
 #import "ENLinkedNotebookRef.h"
 #import "ENNoteRefInternal.h"
+#import "ENNoteStoreClient.h"
+#import "ENUserStoreClient.h"
 
 @interface ENNotebook (Private)
 @property (nonatomic, readonly) NSString * guid;
@@ -39,6 +38,23 @@
 - (BOOL)validateForLimits;
 @end
 
+@interface ENNoteStoreClient (Private)
+// This accessor is here to provide a declaration of the override point for subclasses that do
+// nontrivial token management.
+@property (nonatomic, readonly) NSString * authenticationToken;
+
+// This is how you get one of these note store objects.
++ (instancetype)noteStoreClientWithUrl:(NSString *)url authenticationToken:(NSString *)authenticationToken;
+
+// N.B. This method is synchronous and can throw exceptions.
+// Should be called only from within protected code blocks
+- (EDAMAuthenticationResult *)authenticateToSharedNotebookWithShareKey:(NSString *)shareKey;
+@end
+
+@interface ENUserStoreClient (Private)
++ (instancetype)userStoreClientWithUrl:(NSString *)url authenticationToken:(NSString *)authenticationToken;
+@end
+
 // Logging utility macros.
 #define ENSDKLogInfo(...) \
     do { \
@@ -48,5 +64,3 @@
     do { \
         [[ENSession sharedSession].logger logErrorString:[NSString stringWithFormat:__VA_ARGS__]]; \
     } while(0);
-
-#endif // evernote_sdk_ios_ENSDKPrivate_h

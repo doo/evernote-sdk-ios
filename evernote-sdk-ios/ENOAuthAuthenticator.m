@@ -16,6 +16,7 @@
 
 #import "NSRegularExpression+ENAGRegex.h"
 #import "ENConstants.h"
+#import "EvernoteService.h"
 
 #define OAUTH_PROTOCOL_SCHEME @"https"
 
@@ -63,9 +64,14 @@ typedef NS_ENUM(NSInteger, ENOAuthAuthenticatorState) {
 {
     self = [super init];
     if (self) {
-        //XXX: state default?
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDidBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
     }
     return self;
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)emptyCookieJar

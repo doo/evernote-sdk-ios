@@ -50,9 +50,20 @@ typedef NS_ENUM(NSInteger, ENSessionUploadPolicy) {
 
 + (ENSession *)sharedSession;
 
+//
+// Authentication functions.
+//
+
 - (void)authenticateWithViewController:(UIViewController *)viewController
                             completion:(ENSessionAuthenticateCompletionHandler)completion;
 - (void)unauthenticate;
+
+// To be called from your AppDelegate's -application:openURL:sourceApplication:annotation:
+- (BOOL)canHandleOpenURL:(NSURL *)url;
+
+//
+// Evernote functions.
+//
 
 - (void)listNotebooksWithHandler:(ENSessionListNotebooksCompletionHandler)completion;
 
