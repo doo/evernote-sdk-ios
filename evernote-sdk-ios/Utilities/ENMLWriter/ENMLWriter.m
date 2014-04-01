@@ -37,7 +37,7 @@
 #import "NSData+EvernoteSDK.h"
 #import "NSRegularExpression+ENAGRegex.h"
 #import "NSString+EDAMNilAdditions.h"
-#import "EvernoteSDK.h"
+#import "ENSDKAdvanced.h"
 
 @implementation ENMLWriter
 

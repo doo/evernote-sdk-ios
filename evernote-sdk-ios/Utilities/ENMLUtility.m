@@ -29,7 +29,8 @@
 
 #import "ENMLUtility.h"
 #import "NSData+EvernoteSDK.h"
-#import "EvernoteSDK.h"
+#import "ENSDKAdvanced.h"
+#import "ENConstants.h"
 #import "KSHTMLWriter.h"
 #import "NSDataBase64Additions.h"
 

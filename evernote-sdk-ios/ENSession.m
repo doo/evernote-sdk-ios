@@ -173,7 +173,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
         [self performPostAuthentication];
         return;
     }
-
+    
     // We'll restore an existing session if there was one. Check to see if we have valid
     // primary credentials stashed away already.
     ENCredentials * credentials = [self.credentialStore credentialsForHost:self.sessionHost];

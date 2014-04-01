@@ -29,7 +29,7 @@
 
 #import <UIKit/UIKit.h>
 #import "ENCredentials.h"
-#import "EvernoteSession.h"
+#import "ENSDKAdvanced.h"
 
 // Permanent store of Evernote credentials.
 // Credentials are unique per (host,consumer key) tuple.
@@ -63,13 +63,7 @@
 // Save the current selected boostrap profile.
 + (void)saveCurrentProfile:(EvernoteService)code;
 
-// Save the expiration date for the business authentication token
-+ (void)saveBusinessTokenExpiration:(NSTimeInterval)expirationTimeStamp;
-
 // Look up the currently selected bootstrap profile
 + (NSInteger)getCurrentProfile;
-
-// Look up the currently saved business auth token expiration date
-+ (NSTimeInterval)getBusinessTokenExpiration;
 
 @end

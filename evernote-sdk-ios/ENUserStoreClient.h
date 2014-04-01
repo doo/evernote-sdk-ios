@@ -7,7 +7,7 @@
 //
 
 #import "ENStoreClient.h"
-#import "EvernoteSDK.h"
+#import "ENSDKAdvanced.h"
 
 @interface ENUserStoreClient : ENStoreClient
 + (instancetype)userStoreClientWithUrl:(NSString *)url authenticationToken:(NSString *)authenticationToken;

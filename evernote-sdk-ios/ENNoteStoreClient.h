@@ -7,8 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "ENSDKAdvanced.h"
 #import "ENStoreClient.h"
-#import "EvernoteSDK.h"
 #import "ENLinkedNotebookRef.h"
 
 @interface ENNoteStoreClient : ENStoreClient

@@ -606,14 +606,13 @@ typedef NS_ENUM(NSInteger, ENOAuthAuthenticatorState) {
     }
     // update state
     self.state = ENOAuthAuthenticatorStateGotCallback;
-    NSString* hostName = [NSString stringWithFormat:@"en-%@",
-                          [[EvernoteSession sharedSession] consumerKey]];
+    NSString* hostName = [NSString stringWithFormat:@"en-%@", self.consumerKey];
     BOOL canHandle = NO;
     // Check if we got back the oauth token
     if ([hostName isEqualToString:[url scheme]] == YES
         && [@"oauth" isEqualToString:[url host]] == YES) {
         canHandle = YES;
-        NSString* oAuthPrefix = [NSString stringWithFormat:@"en-%@://oauth/",[[EvernoteSession sharedSession] consumerKey]];
+        NSString* oAuthPrefix = [NSString stringWithFormat:@"en-%@://oauth/", self.consumerKey];
         NSString *callback = [url.absoluteString stringByReplacingOccurrencesOfString:oAuthPrefix withString:@""];
         [[self class] gotCallbackURL:callback];
     }
@@ -638,7 +637,7 @@ typedef NS_ENUM(NSInteger, ENOAuthAuthenticatorState) {
         NSLog(@"URL:%@ has invalid component count: %lu", url, (unsigned long)[components count]);
         return NO;
     }
-    [[EvernoteSession sharedSession] updateCurrentBootstrapProfileWithName:components[1]];
+    [self updateCurrentBootstrapProfileWithName:components[1]];
     return YES;
 }
 

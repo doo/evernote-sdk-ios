@@ -30,7 +30,8 @@
 
 #import "ENMIMEUtils.h"
 
-#import "EvernoteSDK.h"
+#import "ENSDKAdvanced.h"
+#import "ENConstants.h"
 
 #if TARGET_OS_IPHONE
 # import <MobileCoreServices/MobileCoreServices.h>
