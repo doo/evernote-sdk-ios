@@ -1,32 +1,32 @@
 //
-//  ENAuthenticator.m
+//  ENOAuthAuthenticator.m
 //  evernote-sdk-ios
 //
 //  Created by Ben Zotto on 3/26/14.
 //  Copyright (c) 2014 n/a. All rights reserved.
 //
 
-#import "ENAuthenticator.h"
+#import "ENOAuthAuthenticator.h"
 #import "ENUserStoreClient.h"
 #import "ENOAuthViewController.h"
 #import "ENCredentials.h"
 #import "ENCredentialStore.h"
-
+#import "ENSDKPrivate.h"
 #import "ENGCOAuth.h"
 
 #import "NSRegularExpression+ENAGRegex.h"
 
 #define OAUTH_PROTOCOL_SCHEME @"https"
 
-typedef NS_ENUM(NSInteger, ENSessionState) {
+typedef NS_ENUM(NSInteger, ENOAuthAuthenticatorState) {
     /*! Evernote session has been created but not logged in */
-    ENSessionLoggedOut,
+    ENOAuthAuthenticatorStateLoggedOut,
     /*! Authentication is in progress */
-    ENSessionAuthenticationInProgress,
+    ENOAuthAuthenticatorStateInProgress,
     /*! Session has been called back by the Evernote app*/
-    ENSessionGotCallback,
+    ENOAuthAuthenticatorStateGotCallback,
     /*! Session has authenticated successfully*/
-    ENSessionAuthenticated
+    ENOAuthAuthenticatorStateAuthenticated
 };
 
 @interface NSString (ENURLEncoding)
@@ -34,10 +34,12 @@ typedef NS_ENUM(NSInteger, ENSessionState) {
 - (NSString *)en_stringByUrlDecoding;
 @end
 
-@interface ENAuthenticator () <ENOAuthViewControllerDelegate>
+@interface ENOAuthAuthenticator () <ENOAuthViewControllerDelegate>
+@property (nonatomic, assign) BOOL inProgress;
+
 @property (nonatomic, strong) UIViewController * viewController;
 
-@property (nonatomic, assign) ENSessionState state;
+@property (nonatomic, assign) ENOAuthAuthenticatorState state;
 
 @property (nonatomic, strong) NSArray * profiles;
 @property (nonatomic, copy) NSString * currentProfile;
@@ -55,7 +57,7 @@ typedef NS_ENUM(NSInteger, ENSessionState) {
 @property (nonatomic, strong) NSURLResponse * response;
 @end
 
-@implementation ENAuthenticator
+@implementation ENOAuthAuthenticator
 - (id)init
 {
     self = [super init];
@@ -77,9 +79,16 @@ typedef NS_ENUM(NSInteger, ENSessionState) {
 
 - (void)authenticateWithViewController:(UIViewController *)viewController
 {
+    NSAssert(!self.inProgress, @"Authenticator is a single-use-only object!");
     NSAssert(viewController, @"Must use valid viewController");
     NSAssert(self.delegate, @"Must set authenticator delegate");
     
+    if (self.inProgress) {
+        ENSDKLogError(@"Cannot reuse single instance of %@", [self class]);
+        return;
+    }
+    
+    self.inProgress = YES;
     self.viewController = viewController;
     
     // remove all cookies from the Evernote service so that the user can log in with
@@ -288,15 +297,15 @@ typedef NS_ENUM(NSInteger, ENSessionState) {
 - (void)handleDidBecomeActive{
     //Unexpected to calls to app delegate's applicationDidBecomeActive are
     // handled by this method.
-    const ENSessionState state = self.state;
+    const ENOAuthAuthenticatorState state = self.state;
     
-    if (state == ENSessionLoggedOut ||
-        state == ENSessionAuthenticated ||
-        state == ENSessionGotCallback) {
+    if (state == ENOAuthAuthenticatorStateLoggedOut ||
+        state == ENOAuthAuthenticatorStateAuthenticated ||
+        state == ENOAuthAuthenticatorStateGotCallback) {
         return;
     }
     [self gotCallbackURL:nil];
-    self.state = ENSessionLoggedOut;
+    self.state = ENOAuthAuthenticatorStateLoggedOut;
 }
 
 #pragma mark - NSURLConnectionDataDelegate
@@ -372,7 +381,7 @@ typedef NS_ENUM(NSInteger, ENSessionState) {
         if ([device respondsToSelector:@selector(isMultitaskingSupported)] &&
             [device isMultitaskingSupported] &&
             self.isMultitaskLoginDisabled==NO) {
-            self.state = ENSessionAuthenticationInProgress;
+            self.state = ENOAuthAuthenticatorStateInProgress;
             NSString* openURL = [NSString stringWithFormat:@"en://link-sdk/consumerKey/%@/profileName/%@/authorization/%@",self.consumerKey,self.currentProfile,parameters[@"oauth_token"]];
             BOOL success = [[UIApplication sharedApplication] openURL:[NSURL URLWithString:openURL]];
             if(success == NO) {
@@ -396,7 +405,7 @@ typedef NS_ENUM(NSInteger, ENSessionState) {
         NSString *edamUserId = [parameters objectForKey:@"edam_userId"];
         NSString *webApiUrlPrefix = [parameters objectForKey:@"edam_webApiUrlPrefix"];
         NSString *expiration = [parameters objectForKey:@"edam_expires"];
-        NSDate * expirationDate = [NSDate dateWithTimeIntervalSince1970:([expiration doubleValue] / 1000)];
+        NSDate *expirationDate = [NSDate dateWithTimeIntervalSince1970:([expiration doubleValue] / 1000.0f)];
         
         NSLog(@"OAuth Step 3 - Time Running is: %f",[self.oauthStartDate timeIntervalSinceNow] * -1);
         // Evernote doesn't use the token secret, so we can ignore it.
@@ -426,7 +435,7 @@ typedef NS_ENUM(NSInteger, ENSessionState) {
             // call our callback, without error.
             [self completeAuthenticationWithCredentials:credentials];
             // update the auth state
-            self.state = ENSessionAuthenticated;
+            self.state = ENOAuthAuthenticatorStateAuthenticated;
         }
     }
     
@@ -475,7 +484,7 @@ typedef NS_ENUM(NSInteger, ENSessionState) {
 
 - (void)completeAuthenticationWithError:(NSError *)error
 {
-    self.state = ENSessionLoggedOut;
+    self.state = ENOAuthAuthenticatorStateLoggedOut;
     self.viewController = nil;
     [self.delegate authenticatorDidFailWithError:error];
 }
@@ -596,7 +605,7 @@ typedef NS_ENUM(NSInteger, ENSessionState) {
         return NO;
     }
     // update state
-    self.state = ENSessionGotCallback;
+    self.state = ENOAuthAuthenticatorStateGotCallback;
     NSString* hostName = [NSString stringWithFormat:@"en-%@",
                           [[EvernoteSession sharedSession] consumerKey]];
     BOOL canHandle = NO;

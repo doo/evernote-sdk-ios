@@ -62,6 +62,17 @@ authenticationToken:(NSString *)authenticationToken
     return self;
 }
 
+- (id)initWithHost:(NSString *)host
+authenticationResult:(EDAMAuthenticationResult *)authenticationResult
+{
+    return [self initWithHost:host
+                   edamUserId:[NSString stringWithFormat:@"%d", authenticationResult.user.id]
+                 noteStoreUrl:authenticationResult.noteStoreUrl
+              webApiUrlPrefix:authenticationResult.webApiUrlPrefix
+          authenticationToken:authenticationResult.authenticationToken
+               expirationDate:[NSDate dateWithTimeIntervalSince1970:((double)authenticationResult.expiration / 1000.0f)]];
+}
+
 - (BOOL)saveToKeychain
 {
     // auth token gets saved to the keychain

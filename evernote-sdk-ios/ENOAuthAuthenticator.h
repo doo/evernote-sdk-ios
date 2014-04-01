@@ -1,5 +1,5 @@
 //
-//  ENAuthenticator.h
+//  ENOAuthAuthenticator.h
 //  evernote-sdk-ios
 //
 //  Created by Ben Zotto on 3/26/14.
@@ -10,14 +10,14 @@
 #import "ENUserStoreClient.h"
 #import "ENCredentials.h"
 
-@protocol ENAuthenticatorDelegate <NSObject>
+@protocol ENOAuthAuthenticatorDelegate <NSObject>
 - (ENUserStoreClient *)userStoreClientForBootstrapping;
 - (void)authenticatorDidAuthenticateWithCredentials:(ENCredentials *)credentials forHost:(NSString *)host;
 - (void)authenticatorDidFailWithError:(NSError *)error;
 @end
 
-@interface ENAuthenticator : NSObject
-@property (nonatomic, weak) id<ENAuthenticatorDelegate> delegate;
+@interface ENOAuthAuthenticator : NSObject
+@property (nonatomic, weak) id<ENOAuthAuthenticatorDelegate> delegate;
 @property (nonatomic, copy) NSString * consumerKey;
 @property (nonatomic, copy) NSString * consumerSecret;
 @property (nonatomic, copy) NSString * host;

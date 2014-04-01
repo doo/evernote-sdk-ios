@@ -13,7 +13,7 @@
 #import "ENLinkedNoteStoreClient.h"
 #import "ENUserStoreClient.h"
 #import "ENCredentialStore.h"
-#import "ENAuthenticator.h"
+#import "ENOAuthAuthenticator.h"
 
 static NSString * ENSessionPreferencesFilename = @"com.evernote.evernote-sdk-ios.plist";
 
@@ -43,8 +43,8 @@ static NSString * ENSessionDefaultNotebookGuid = @"ENSessionDefaultNotebookGuid"
 @property (nonatomic, strong) ENSessionUploadNoteCompletionHandler completion;
 @end
 
-@interface ENSession () <ENLinkedNoteStoreClientDelegate, ENAuthenticatorDelegate>
-@property (nonatomic, strong) ENAuthenticator * authenticator;
+@interface ENSession () <ENLinkedNoteStoreClientDelegate, ENOAuthAuthenticatorDelegate>
+@property (nonatomic, strong) ENOAuthAuthenticator * authenticator;
 @property (nonatomic, strong) ENSessionAuthenticateCompletionHandler authenticationCompletion;
 
 @property (nonatomic, copy) NSString * sessionHost;
@@ -87,6 +87,21 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     ConsumerSecret = nil;
 }
 
++ (BOOL)checkSharedSessionSettings
+{
+    if (DeveloperToken && NoteStoreUrl) {
+        return YES;
+    }
+    
+    if (ConsumerKey && ![ConsumerKey isEqualToString:@"your key"] &&
+        ConsumerSecret && ![ConsumerSecret isEqualToString:@"your secret"]) {
+        return YES;
+    }
+    
+    ENSDKLogError(@"Cannot create shared Evernote session without either a valid consumer key/secret pair, or a developer token set");
+    return NO;
+}
+
 + (ENSession *)sharedSession
 {
     static ENSession * session = nil;
@@ -101,8 +116,14 @@ static NSString * DeveloperToken, * NoteStoreUrl;
 {
     self = [super init];
     if (self) {
-        self.logger = [[ENSessionDefaultLogger alloc] init];
-        self.credentialStore = [ENCredentialStore loadCredentials];
+        // Check to see if the app's setup parameters are set and look reasonable.
+        // If this test fails, we'll essentially set a singleton to nil and never be able
+        // to fix it, which is the desired development-time behavior.
+        if (![[self class] checkSharedSessionSettings]) {
+            return nil;
+        }
+        
+        [self startup];
     }
     return self;
 }
@@ -114,40 +135,14 @@ static NSString * DeveloperToken, * NoteStoreUrl;
 #endif
 }
 
-- (void)authenticateWithViewController:(UIViewController *)viewController
-                            completion:(ENSessionAuthenticateCompletionHandler)completion
+- (void)startup
 {
-    self.isAuthenticated = NO;
-    self.user = nil;
-    
-    if (!completion) {
-        [NSException raise:NSInvalidArgumentException format:@"handler required"];
-        return;
-    }
-    
-    // Authenticate is idempotent; check if we're already authenticated
-    if (self.isAuthenticated) {
-        completion(nil);
-        return;
+    self.logger = [[ENSessionDefaultLogger alloc] init];
+    self.credentialStore = [ENCredentialStore loadCredentials];
+    if (!self.credentialStore) {
+        self.credentialStore = [[ENCredentialStore alloc] init];
     }
 
-    // What if we're already mid-authenticating? If we have an authenticator object already, then
-    // don't stomp on it.
-    if (self.authenticator) {
-        ENSDKLogInfo(@"Cannot restart authentication while it is still in progress.");
-        completion([NSError errorWithDomain:ENErrorDomain code:ENErrorCodeUnknown userInfo:nil]);
-    }
-    
-    self.authenticationCompletion = completion;
-    
-    // If the developer token is set, then we can short circuit the entire auth flow and just call ourselves authenticated.
-    if (DeveloperToken) {
-        self.isAuthenticated = YES;
-        self.primaryAuthenticationToken = DeveloperToken;
-        [self performPostAuthentication];
-        return;
-    }
-    
     // Determine the host to use for this session.
     if (SessionHostOverride.length > 0) {
         // Use the override given by the developer. This is optional, and
@@ -171,7 +166,66 @@ static NSString * DeveloperToken, * NoteStoreUrl;
         }
     }
     
-    self.authenticator = [[ENAuthenticator alloc] init];
+    // If the developer token is set, then we can short circuit the entire auth flow and just call ourselves authenticated.
+    if (DeveloperToken) {
+        self.isAuthenticated = YES;
+        self.primaryAuthenticationToken = DeveloperToken;
+        [self performPostAuthentication];
+        return;
+    }
+
+    // We'll restore an existing session if there was one. Check to see if we have valid
+    // primary credentials stashed away already.
+    ENCredentials * credentials = [self.credentialStore credentialsForHost:self.sessionHost];
+    if (!credentials || ![credentials areValid]) {
+        self.isAuthenticated = NO;
+        [self removeAllPreferences];
+        return;
+    }
+    
+    self.isAuthenticated = YES;
+    self.primaryAuthenticationToken = credentials.authenticationToken;
+    
+    // We appear to have valid personal credentials, so populate the user object from cache,
+    // and pull up business credentials. Refresh the business credentials if necessary, and the user
+    // object always.
+    self.user = [self preferencesObjectForKey:@"user"];
+    [self performPostAuthentication];
+}
+
+- (void)authenticateWithViewController:(UIViewController *)viewController
+                            completion:(ENSessionAuthenticateCompletionHandler)completion
+{
+    if (!completion) {
+        [NSException raise:NSInvalidArgumentException format:@"handler required"];
+        return;
+    }
+    
+    // Authenticate is idempotent; check if we're already authenticated
+    if (self.isAuthenticated) {
+        completion(nil);
+        return;
+    }
+
+    // What if we're already mid-authenticating? If we have an authenticator object already, then
+    // don't stomp on it.
+    if (self.authenticator) {
+        ENSDKLogInfo(@"Cannot restart authentication while it is still in progress.");
+        completion([NSError errorWithDomain:ENErrorDomain code:ENErrorCodeUnknown userInfo:nil]);
+    }
+
+    self.user = nil;
+    self.authenticationCompletion = completion;
+    
+    // If the developer token is set, then we can short circuit the entire auth flow and just call ourselves authenticated.
+    if (DeveloperToken) {
+        self.isAuthenticated = YES;
+        self.primaryAuthenticationToken = DeveloperToken;
+        [self performPostAuthentication];
+        return;
+    }
+    
+    self.authenticator = [[ENOAuthAuthenticator alloc] init];
     self.authenticator.delegate = self;
     self.authenticator.consumerKey = ConsumerKey;
     self.authenticator.consumerSecret = ConsumerSecret;
@@ -183,32 +237,42 @@ static NSString * DeveloperToken, * NoteStoreUrl;
 {
     [[self userStore] getUserWithSuccess:^(EDAMUser * user) {
         self.user = user;
-        // If we know this user is a business user, authenticate to their business store as well.
-        // XXX We should keep business credentials in the credential store and use them as
-        // appropriate. Currently we'll do the roundtrip every time.
-        if (user.accounting.businessId != 0) {
-            [[self userStore] authenticateToBusinessWithSuccess:^(EDAMAuthenticationResult *authenticationResult) {
-                self.businessShardId = authenticationResult.user.shardId;
-                self.businessNoteStore = [ENNoteStoreClient noteStoreClientWithUrl:authenticationResult.noteStoreUrl authenticationToken:authenticationResult.authenticationToken];
-                [self completeAuthenticationWithError:nil];
-            } failure:^(NSError * authenticateToBusinessError) {
-                ENSDKLogError(@"Failed to authenticate to business for business user: %@", authenticateToBusinessError);
-                [self completeAuthenticationWithError:nil];
-            }];
+        [self setPreferencesObject:user forKey:@"user"];
+        // If this is a business user, check to see whether we already have valid business credentials set.
+        // If we don't have valid credentials for the business, then get them.
+        if (self.user.accounting.businessIdIsSet) {
+            ENCredentials * businessCredentials = [self businessCredentials];
+            if (!businessCredentials) {
+                [[self userStore] authenticateToBusinessWithSuccess:^(EDAMAuthenticationResult *authenticationResult) {
+                    ENCredentials * credentials = [[ENCredentials alloc] initWithHost:[NSString stringWithFormat:@"%@-business", self.sessionHost]
+                                                                 authenticationResult:authenticationResult];
+                    [self.credentialStore addCredentials:credentials];
+                    self.businessShardId = authenticationResult.user.shardId;
+                    [self completeAuthenticationWithError:nil];
+                } failure:^(NSError * authenticateToBusinessError) {
+                    ENSDKLogError(@"Failed to authenticate to business for business user: %@", authenticateToBusinessError);
+                    [self completeAuthenticationWithError:authenticateToBusinessError];
+                }];
+            }
         } else {
             // Not a business user. OK.
             [self completeAuthenticationWithError:nil];
         }
     } failure:^(NSError * getUserError) {
         ENSDKLogError(@"Failed to get user info for user: %@", getUserError);
-        [self completeAuthenticationWithError:nil];
+        [self completeAuthenticationWithError:getUserError];
     }];
 }
 
 - (void)completeAuthenticationWithError:(NSError *)error
 {
-    self.authenticationCompletion(error);
-    self.authenticationCompletion = nil;
+    if (error) {
+        [self unauthenticate];
+    }
+    if (self.authenticationCompletion) {
+        self.authenticationCompletion(error);
+        self.authenticationCompletion = nil;
+    }
     self.authenticator = nil;
 }
 
@@ -240,16 +304,16 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     return nil;
 }
 
-- (void)logout
+- (void)unauthenticate
 {
     self.isAuthenticated = NO;
     self.user = nil;
     self.primaryAuthenticationToken = nil;
+    self.userStore = nil;
     self.primaryNoteStore = nil;
     self.businessNoteStore = nil;
-    self.linkedAuthCache = nil;
+    self.linkedAuthCache = [[ENAuthCache alloc] init];
     [self removeAllPreferences];
-//    [[EvernoteSession sharedSession] logout];
 }
 
 #pragma mark - listNotebooks
@@ -676,6 +740,18 @@ static NSString * DeveloperToken, * NoteStoreUrl;
 
 #pragma mark - Private routines
 
+- (ENCredentials *)primaryCredentials
+{
+    //XXX: Is here a good place to check for no credentials and trigger an unauthed state?
+    return [self.credentialStore credentialsForHost:self.sessionHost];
+}
+
+- (ENCredentials *)businessCredentials
+{
+    //XXX This -business suffix could be something cleaner on the credential store. But for now...
+    return [self.credentialStore credentialsForHost:[NSString stringWithFormat:@"%@-business", self.sessionHost]];
+}
+
 - (ENAuthCache *)linkedAuthCache
 {
     if (!_linkedAuthCache) {
@@ -698,11 +774,24 @@ static NSString * DeveloperToken, * NoteStoreUrl;
         if (DeveloperToken) {
             _primaryNoteStore = [ENNoteStoreClient noteStoreClientWithUrl:NoteStoreUrl authenticationToken:DeveloperToken];
         } else {
-            ENCredentials * credentials = [self.credentialStore credentialsForHost:self.sessionHost];
-            _primaryNoteStore = [ENNoteStoreClient noteStoreClientWithUrl:credentials.noteStoreUrl authenticationToken:credentials.authenticationToken];
+            ENCredentials * credentials = [self primaryCredentials];
+            if (credentials) {
+                _primaryNoteStore = [ENNoteStoreClient noteStoreClientWithUrl:credentials.noteStoreUrl authenticationToken:credentials.authenticationToken];
+            }
         }
     }
     return _primaryNoteStore;
+}
+
+- (ENNoteStoreClient *)businessNoteStore
+{
+    if (!_businessNoteStore) {
+        ENCredentials * credentials = [self businessCredentials];
+        if (credentials) {
+            _businessNoteStore = [ENNoteStoreClient noteStoreClientWithUrl:credentials.noteStoreUrl authenticationToken:credentials.authenticationToken];
+        }
+    }
+    return _businessNoteStore;
 }
 
 - (ENNoteStoreClient *)noteStoreForLinkedNotebook:(EDAMLinkedNotebook *)linkedNotebook
@@ -745,24 +834,39 @@ static NSString * PreferencesPath()
     return [[paths[0] stringByAppendingPathComponent:@"Preferences"] stringByAppendingPathComponent:ENSessionPreferencesFilename];
 }
 
+- (NSMutableDictionary *)preferencesDictionary
+{
+    NSDictionary * prefs = nil;
+    @try {
+        prefs = [NSKeyedUnarchiver unarchiveObjectWithFile:PreferencesPath()];
+    } @catch (id e) {
+        // Delete anything at this path if we couldn't open it. This prevents corrupt files from
+        // wedging the app.
+        [[NSFileManager defaultManager] removeItemAtPath:PreferencesPath() error:NULL];
+    }
+    if (prefs) {
+        return [prefs mutableCopy];
+    } else {
+        return [[NSMutableDictionary alloc] init];
+    }
+}
+
 - (id)preferencesObjectForKey:(NSString *)key
 {
-    NSDictionary * prefs = [NSDictionary dictionaryWithContentsOfFile:PreferencesPath()];
-    return [prefs objectForKey:key];
+    return [[self preferencesDictionary] objectForKey:key];
 }
 
 - (void)setPreferencesObject:(id)obj forKey:(NSString *)key
 {
-    NSMutableDictionary * prefs = [NSMutableDictionary dictionaryWithContentsOfFile:PreferencesPath()];
-    if (!prefs) {
-        prefs = [NSMutableDictionary dictionary];
-    }
+    NSMutableDictionary * prefs = [self preferencesDictionary];
     if (obj) {
         [prefs setObject:obj forKey:key];
     } else {
         [prefs removeObjectForKey:key];
     }
-    [prefs writeToFile:PreferencesPath() atomically:YES];
+    if (![NSKeyedArchiver archiveRootObject:prefs toFile:PreferencesPath()]) {
+        ENSDKLogError(@"Failed to write Evernote preferences to disk");
+    }
 }
 
 - (void)removeAllPreferences

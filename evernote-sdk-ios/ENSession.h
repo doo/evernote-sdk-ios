@@ -37,6 +37,10 @@ typedef NS_ENUM(NSInteger, ENSessionUploadPolicy) {
 @property (nonatomic, readonly) NSString * userDisplayName;
 @property (nonatomic, readonly) NSString * businessDisplayName;
 
+// One of the two methods below MUST be called, BEFORE the shared session is accessed.
+// In your AppDelegate startup code is appropriate. There's no reason to change these
+// values at runtime once the Evernote functionality has been used, and in fact doing so
+// will have no effect.
 + (void)setSharedSessionConsumerKey:(NSString *)key
                      consumerSecret:(NSString *)secret
                        optionalHost:(NSString *)host;
@@ -48,7 +52,7 @@ typedef NS_ENUM(NSInteger, ENSessionUploadPolicy) {
 
 - (void)authenticateWithViewController:(UIViewController *)viewController
                             completion:(ENSessionAuthenticateCompletionHandler)completion;
-- (void)logout;
+- (void)unauthenticate;
 
 - (void)listNotebooksWithHandler:(ENSessionListNotebooksCompletionHandler)completion;
 

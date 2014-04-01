@@ -28,6 +28,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "EDAM.h"
 
 @interface ENCredentials : NSObject <NSCoding>
 
@@ -44,6 +45,9 @@
    webApiUrlPrefix:(NSString *)webApiUrlPrefix
 authenticationToken:(NSString *)authenticationToken
     expirationDate:(NSDate *)expirationDate;
+
+- (id)initWithHost:(NSString *)host
+authenticationResult:(EDAMAuthenticationResult *)authenticationResult;
 
 - (BOOL)saveToKeychain;
 - (void)deleteFromKeychain;

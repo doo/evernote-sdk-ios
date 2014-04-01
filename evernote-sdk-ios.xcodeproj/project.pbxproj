@@ -371,9 +371,9 @@
 		BE870AD418E35A8D00154B19 /* ENLinkedNoteStoreClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BE870AD218E35A8D00154B19 /* ENLinkedNoteStoreClient.h */; };
 		BE870AD518E35A8D00154B19 /* ENLinkedNoteStoreClient.m in Sources */ = {isa = PBXBuildFile; fileRef = BE870AD318E35A8D00154B19 /* ENLinkedNoteStoreClient.m */; };
 		BE870AD618E3745F00154B19 /* ENLinkedNoteStoreClient.m in Sources */ = {isa = PBXBuildFile; fileRef = BE870AD318E35A8D00154B19 /* ENLinkedNoteStoreClient.m */; };
-		BE870AD918E39E4500154B19 /* ENAuthenticator.h in Headers */ = {isa = PBXBuildFile; fileRef = BE870AD718E39E4500154B19 /* ENAuthenticator.h */; };
-		BE870ADA18E39E4500154B19 /* ENAuthenticator.m in Sources */ = {isa = PBXBuildFile; fileRef = BE870AD818E39E4500154B19 /* ENAuthenticator.m */; };
-		BE870ADB18E39E4500154B19 /* ENAuthenticator.m in Sources */ = {isa = PBXBuildFile; fileRef = BE870AD818E39E4500154B19 /* ENAuthenticator.m */; };
+		BE870AD918E39E4500154B19 /* ENOAuthAuthenticator.h in Headers */ = {isa = PBXBuildFile; fileRef = BE870AD718E39E4500154B19 /* ENOAuthAuthenticator.h */; };
+		BE870ADA18E39E4500154B19 /* ENOAuthAuthenticator.m in Sources */ = {isa = PBXBuildFile; fileRef = BE870AD818E39E4500154B19 /* ENOAuthAuthenticator.m */; };
+		BE870ADB18E39E4500154B19 /* ENOAuthAuthenticator.m in Sources */ = {isa = PBXBuildFile; fileRef = BE870AD818E39E4500154B19 /* ENOAuthAuthenticator.m */; };
 		BED3F5D618DB7C5C00E68109 /* ENSendToEvernoteViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = BED3F5D318DB7C5C00E68109 /* ENSendToEvernoteViewController.h */; };
 		BED3F5D718DB7C5C00E68109 /* ENSendToEvernoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BED3F5D418DB7C5C00E68109 /* ENSendToEvernoteViewController.m */; };
 		BED3F5D818DB845E00E68109 /* ENSendToEvernoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BED3F5D418DB7C5C00E68109 /* ENSendToEvernoteViewController.m */; };
@@ -650,8 +650,8 @@
 		BE870ACE18E10D4600154B19 /* NSString+ENScrubbing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+ENScrubbing.m"; sourceTree = "<group>"; };
 		BE870AD218E35A8D00154B19 /* ENLinkedNoteStoreClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENLinkedNoteStoreClient.h; sourceTree = "<group>"; };
 		BE870AD318E35A8D00154B19 /* ENLinkedNoteStoreClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENLinkedNoteStoreClient.m; sourceTree = "<group>"; };
-		BE870AD718E39E4500154B19 /* ENAuthenticator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENAuthenticator.h; sourceTree = "<group>"; };
-		BE870AD818E39E4500154B19 /* ENAuthenticator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENAuthenticator.m; sourceTree = "<group>"; };
+		BE870AD718E39E4500154B19 /* ENOAuthAuthenticator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENOAuthAuthenticator.h; sourceTree = "<group>"; };
+		BE870AD818E39E4500154B19 /* ENOAuthAuthenticator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENOAuthAuthenticator.m; sourceTree = "<group>"; };
 		BED3F5D318DB7C5C00E68109 /* ENSendToEvernoteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENSendToEvernoteViewController.h; sourceTree = "<group>"; };
 		BED3F5D418DB7C5C00E68109 /* ENSendToEvernoteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENSendToEvernoteViewController.m; sourceTree = "<group>"; };
 		BED3F5D518DB7C5C00E68109 /* ENSendToEvernoteViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ENSendToEvernoteViewController.xib; sourceTree = "<group>"; };
@@ -1227,8 +1227,8 @@
 				BE47CFEE18D27A7900D712F3 /* ENUserStoreClient.m */,
 				BE870ACD18E10D4600154B19 /* NSString+ENScrubbing.h */,
 				BE870ACE18E10D4600154B19 /* NSString+ENScrubbing.m */,
-				BE870AD718E39E4500154B19 /* ENAuthenticator.h */,
-				BE870AD818E39E4500154B19 /* ENAuthenticator.m */,
+				BE870AD718E39E4500154B19 /* ENOAuthAuthenticator.h */,
+				BE870AD818E39E4500154B19 /* ENOAuthAuthenticator.m */,
 			);
 			name = Internal;
 			sourceTree = "<group>";
@@ -1355,7 +1355,7 @@
 				A9B1E8A716C3265300D54760 /* ENApplicationBridge.h in Headers */,
 				A9B1E8AA16C3265300D54760 /* ENApplicationBridge_Private.h in Headers */,
 				BE47CFE418D2487600D712F3 /* ENError.h in Headers */,
-				BE870AD918E39E4500154B19 /* ENAuthenticator.h in Headers */,
+				BE870AD918E39E4500154B19 /* ENOAuthAuthenticator.h in Headers */,
 				A9B1E8AB16C3265300D54760 /* ENApplicationRequest.h in Headers */,
 				A9B1E8AC16C3265300D54760 /* ENAuthenticationRequest.h in Headers */,
 				A9B1E8AF16C3265300D54760 /* ENLinkNotebookRequest.h in Headers */,
@@ -1611,7 +1611,7 @@
 				A96E28ED165597CA0031EC63 /* ENOAuthViewController.m in Sources */,
 				A9FDF719165C5C7200DC7E4B /* ENConstants.m in Sources */,
 				BE870AD018E10D4600154B19 /* NSString+ENScrubbing.m in Sources */,
-				BE870ADA18E39E4500154B19 /* ENAuthenticator.m in Sources */,
+				BE870ADA18E39E4500154B19 /* ENOAuthAuthenticator.m in Sources */,
 				A9C554FD16712F17006E0020 /* NSDate+EDAMAdditions.m in Sources */,
 				BEDCCEBD18BD8DD80090803C /* ENResource.m in Sources */,
 				A9C55502167149B1006E0020 /* EvernoteNoteStore+Extras.m in Sources */,
@@ -1798,7 +1798,7 @@
 				BE4C604618BD53C500A3D170 /* KSXMLAttributes.m in Sources */,
 				BE4C604718BD53C500A3D170 /* KSXMLWriter.m in Sources */,
 				BE4C604818BD53C500A3D170 /* NSString+XMLAdditions.m in Sources */,
-				BE870ADB18E39E4500154B19 /* ENAuthenticator.m in Sources */,
+				BE870ADB18E39E4500154B19 /* ENOAuthAuthenticator.m in Sources */,
 				BE4C604918BD53C500A3D170 /* NSDataBase64Additions.m in Sources */,
 				BE4C604B18BD53C500A3D170 /* ENApplicationBridge.m in Sources */,
 				BE4C604C18BD53C500A3D170 /* ENAuthenticationRequest.m in Sources */,

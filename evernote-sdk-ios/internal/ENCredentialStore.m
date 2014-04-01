@@ -130,7 +130,7 @@
 - (ENCredentials *)credentialsForHost:(NSString *)host
 {
     ENCredentials * credentials = [self.store objectForKey:host];
-    if (![credentials areValid]) {
+    if (credentials && ![credentials areValid]) {
         [self removeCredentials:credentials];
         return nil;
     }
