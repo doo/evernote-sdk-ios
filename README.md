@@ -96,10 +96,10 @@ ALTERNATE: If you are using a Developer Token to access *only* your personal, pr
                                      noteStoreUrl:@"the url that you got from us"];
 
 
-Do something like this in your AppDelegate's `application:openURL:sourceApplication:annotation:` method
+Do something like this in your AppDelegate's `application:openURL:sourceApplication:annotation:` method. If the method doesn't exist, add it.
 
 	- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
-		BOOL canHandle = [[EvernoteSession sharedSession] canHandleOpenURL:url];
+		BOOL didHandle = [[ENSession sharedSession] handleOpenURL:url];
 		// ... 
 		return canHandle;
 	}
@@ -141,7 +141,7 @@ To create a new note with no user interface, you can just do this:
 			// It worked! You can use this note ref to share the note or otherwise find it again.
 			...
 		} else {
-			NSLog(@"Couldn't upload note. Error: %@", error);
+			NSLog(@"Couldn't upload note. Error: %@", uploadNoteError);
 		}
 	}];
 

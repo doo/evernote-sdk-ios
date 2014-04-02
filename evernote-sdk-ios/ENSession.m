@@ -311,7 +311,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     [self removeAllPreferences];
 }
 
-- (BOOL)canHandleOpenURL:(NSURL *)url
+- (BOOL)handleOpenURL:(NSURL *)url
 {
     if (self.authenticator) {
         return [self.authenticator canHandleOpenURL:url];

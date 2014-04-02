@@ -59,7 +59,7 @@ typedef NS_ENUM(NSInteger, ENSessionUploadPolicy) {
 - (void)unauthenticate;
 
 // To be called from your AppDelegate's -application:openURL:sourceApplication:annotation:
-- (BOOL)canHandleOpenURL:(NSURL *)url;
+- (BOOL)handleOpenURL:(NSURL *)url;
 
 //
 // Evernote functions.
