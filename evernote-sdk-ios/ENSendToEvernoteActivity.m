@@ -33,7 +33,7 @@
 
 - (UIImage *)activityImage
 {
-    return [UIImage imageNamed:@"quantizetexture.png"];
+    return nil; //XXX
 }
 
 - (BOOL)canPerformWithActivityItems:(NSArray *)activityItems

@@ -252,7 +252,7 @@
 
 - (NSString *)generateENMLContent
 {
-    // TODO: pull out text attachments that can be resources and process those.
+    // XXX: pull out text attachments that can be resources and process those.
     
     // First convert to HTML
     NSDictionary * documentAttributes = [NSDictionary dictionaryWithObjectsAndKeys:NSHTMLTextDocumentType, NSDocumentTypeDocumentAttribute, nil];

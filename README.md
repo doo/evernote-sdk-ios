@@ -3,7 +3,7 @@
 
 **HEADS-UP!** This fork of the SDK is unofficial and a work in progress. Although most of the "public" objects are fairly stable, changes are being made overall quite frequently. Some things might well not work as you expect. Your feedback is very valued. 
 
-Also note: the "Sample App" in this SDK bundle isn't actually a sample app. Please don't bother with it. Thanks!
+NB: There currently is no "sample app" in the actual Xcode project. There will be one soon. Until then, you can just grab the files directly.
 
 What this is
 ------------
