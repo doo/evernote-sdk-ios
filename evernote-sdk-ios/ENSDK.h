@@ -6,7 +6,6 @@
 //  Copyright (c) 2014 n/a. All rights reserved.
 //
 
-#import "ENConstants.h"
 #import "ENNotebook.h"
 #import "ENNoteRef.h"
 #import "ENNote.h"

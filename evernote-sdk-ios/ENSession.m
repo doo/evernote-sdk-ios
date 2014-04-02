@@ -947,12 +947,12 @@ static NSString * PreferencesPath()
 #pragma mark - Default logger
 
 @implementation ENSessionDefaultLogger
-- (void)logInfoString:(NSString *)str
+- (void)evernoteLogInfoString:(NSString *)str;
 {
     NSLog(@"ENSDK: %@", str);
 }
 
-- (void)logErrorString:(NSString *)str
+- (void)evernoteLogErrorString:(NSString *)str;
 {
     NSLog(@"ENSDK ERROR: %@", str);
 }

@@ -58,9 +58,9 @@
 // Logging utility macros.
 #define ENSDKLogInfo(...) \
     do { \
-        [[ENSession sharedSession].logger logInfoString:[NSString stringWithFormat:__VA_ARGS__]]; \
+        [[ENSession sharedSession].logger evernoteLogInfoString:[NSString stringWithFormat:__VA_ARGS__]]; \
     } while(0);
 #define ENSDKLogError(...) \
     do { \
-        [[ENSession sharedSession].logger logErrorString:[NSString stringWithFormat:__VA_ARGS__]]; \
+        [[ENSession sharedSession].logger evernoteLogErrorString:[NSString stringWithFormat:__VA_ARGS__]]; \
     } while(0);
