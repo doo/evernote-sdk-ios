@@ -230,6 +230,11 @@ static NSString * DeveloperToken, * NoteStoreUrl;
 
 - (void)performPostAuthentication
 {
+    // During an initial authentication, a failure in getUser or authenticateToBusiness is considered fatal.
+    // But when refreshing a session, eg on app restart, we don't want to sign out users just for network
+    // errors, or transient problems.
+    BOOL failuresAreFatal = (self.authenticationCompletion != nil);
+    
     [[self userStore] getUserWithSuccess:^(EDAMUser * user) {
         self.user = user;
         [self setPreferencesObject:user forKey:@"user"];
@@ -246,7 +251,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
                     [self completeAuthenticationWithError:nil];
                 } failure:^(NSError * authenticateToBusinessError) {
                     ENSDKLogError(@"Failed to authenticate to business for business user: %@", authenticateToBusinessError);
-                    [self completeAuthenticationWithError:authenticateToBusinessError];
+                    [self completeAuthenticationWithError:(failuresAreFatal ? authenticateToBusinessError : nil)];
                 }];
             }
         } else {
@@ -255,7 +260,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
         }
     } failure:^(NSError * getUserError) {
         ENSDKLogError(@"Failed to get user info for user: %@", getUserError);
-        [self completeAuthenticationWithError:getUserError];
+        [self completeAuthenticationWithError:(failuresAreFatal ? getUserError : nil)];
     }];
 }
 
