@@ -101,7 +101,7 @@ Do something like this in your AppDelegate's `application:openURL:sourceApplicat
 	- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
 		BOOL didHandle = [[ENSession sharedSession] handleOpenURL:url];
 		// ... 
-		return canHandle;
+		return didHandle;
 	}
 
 Now you're good to go.
@@ -129,6 +129,8 @@ A normal place to do this would be a "link to Evernote" button action.
     }];
 
 Calling authenticateWithViewController:completion: will start the OAuth process. ENSession will open a new modal view controller, to display Evernote's OAuth web page and handle all the back-and-forth OAuth handshaking. When the user finishes this process, Evernote's modal view controller will be dismissed.
+
+Authentication credentials are saved on the device once the user grants access, so this step is only necessary as part of an explicit linking. Subsequent access to the shared session will automatically restore the existing session for you. You can ask a session if it's already authenticated using the `-isAuthenticated` property.
 
 ### Hello, world.
 
