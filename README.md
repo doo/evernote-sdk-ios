@@ -195,7 +195,7 @@ Obvi. (To use the SDK in a non-ARC project, please use the -fobjc-arc compiler f
 
 ENSession is a really broad, workflow-oriented abstraction layer. It's currently optimized for the creation and upload of new notes, but not a whole lot more. You can get closer to the metal, but it will require a fair bit of understanding of Evernote's object model and API. 
 
-First off, import `ENSDKAdvanced.h` instead of (or in addition to `ENSDK.h`). Then ask an authenticated session for its `-primaryNoteStore`. You can look at the header for `ENNoteStoreClient` to see all the methods offered on it, with block-based completion parameters. Knock yourself out. This note store client won't work with a user's business data or shared notebook data directly; you can get note store clients for those destinations by asking for `-businessNoteStore` and `-noteStoreForLinkedNotebook:`  More info is currently beyond the scope of this README but check out the full developer docs. 
+First off, import `ENSDKAdvanced.h` instead of (or in addition to) `ENSDK.h`. Then ask an authenticated session for its `-primaryNoteStore`. You can look at the header for `ENNoteStoreClient` to see all the methods offered on it, with block-based completion parameters. Knock yourself out. This note store client won't work with a user's business data or shared notebook data directly; you can get note store clients for those destinations by asking for `-businessNoteStore` and `-noteStoreForLinkedNotebook:`  More info is currently beyond the scope of this README but check out the full developer docs. 
 
 ### Where can I find out more about the Evernote service, API, and object model for my more sophisticated integration?
 
