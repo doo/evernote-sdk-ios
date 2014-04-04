@@ -140,7 +140,55 @@
 		BE2E24DF18EBA5D500BD7E6E /* ENSendToEvernoteActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = BE2E245B18EBA5D500BD7E6E /* ENSendToEvernoteActivity.m */; };
 		BE2E24E018EBA5D500BD7E6E /* ENSendToEvernoteViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = BE2E245C18EBA5D500BD7E6E /* ENSendToEvernoteViewController.h */; };
 		BE2E24E118EBA5D500BD7E6E /* ENSendToEvernoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BE2E245D18EBA5D500BD7E6E /* ENSendToEvernoteViewController.m */; };
+		BE2E24E718EDD4A300BD7E6E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BB3D1B01524ED96001C4534 /* Foundation.framework */; };
+		BE2E24E918EDD4A300BD7E6E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE2E24E818EDD4A300BD7E6E /* CoreGraphics.framework */; };
+		BE2E24EA18EDD4A300BD7E6E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BB3D24D1524EEF3001C4534 /* UIKit.framework */; };
+		BE2E24F018EDD4A400BD7E6E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = BE2E24EE18EDD4A400BD7E6E /* InfoPlist.strings */; };
+		BE2E24F218EDD4A400BD7E6E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BE2E24F118EDD4A400BD7E6E /* main.m */; };
+		BE2E24F618EDD4A400BD7E6E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BE2E24F518EDD4A400BD7E6E /* AppDelegate.m */; };
+		BE2E24FF18EDD4A400BD7E6E /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BE2E24FE18EDD4A400BD7E6E /* ViewController.m */; };
+		BE2E250118EDD4A400BD7E6E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BE2E250018EDD4A400BD7E6E /* Images.xcassets */; };
+		BE2E250818EDD4A400BD7E6E /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE2E250718EDD4A400BD7E6E /* XCTest.framework */; };
+		BE2E250918EDD4A400BD7E6E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BB3D1B01524ED96001C4534 /* Foundation.framework */; };
+		BE2E250A18EDD4A400BD7E6E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BB3D24D1524EEF3001C4534 /* UIKit.framework */; };
+		BE2E251218EDD4A400BD7E6E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = BE2E251018EDD4A400BD7E6E /* InfoPlist.strings */; };
+		BE2E251418EDD4A400BD7E6E /* SampleNoteAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE2E251318EDD4A400BD7E6E /* SampleNoteAppTests.m */; };
+		BE2E25AD18EDDA6D00BD7E6E /* libevernote-sdk-ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BB3D1AD1524ED96001C4534 /* libevernote-sdk-ios.a */; };
+		BE2E25AE18EDDA7500BD7E6E /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BF0CF84152E2601003D6115 /* Security.framework */; };
+		BE2E25AF18EDDA7C00BD7E6E /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A9BE476B1781FAFA00471BF7 /* libxml2.dylib */; };
+		BE2E25B118EDE1C100BD7E6E /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE2E25B018EDE1C100BD7E6E /* MobileCoreServices.framework */; };
+		BE2E25B218EF4B8600BD7E6E /* enml2.dtd in CopyFiles */ = {isa = PBXBuildFile; fileRef = BE2E243118EBA5D500BD7E6E /* enml2.dtd */; };
+		BE2E25B318EF4B8600BD7E6E /* evernote-export.dtd in CopyFiles */ = {isa = PBXBuildFile; fileRef = BE2E243218EBA5D500BD7E6E /* evernote-export.dtd */; };
+		BE2E25B418EF4B8600BD7E6E /* promotions.dtd in CopyFiles */ = {isa = PBXBuildFile; fileRef = BE2E243318EBA5D500BD7E6E /* promotions.dtd */; };
+		BE2E25B518EF4B8600BD7E6E /* recoIndex.dtd in CopyFiles */ = {isa = PBXBuildFile; fileRef = BE2E243418EBA5D500BD7E6E /* recoIndex.dtd */; };
+		BE2E25B618EF4B8600BD7E6E /* xhtml-lat1.ent in CopyFiles */ = {isa = PBXBuildFile; fileRef = BE2E243518EBA5D500BD7E6E /* xhtml-lat1.ent */; };
+		BE2E25B718EF4B8600BD7E6E /* xhtml-special.ent in CopyFiles */ = {isa = PBXBuildFile; fileRef = BE2E243618EBA5D500BD7E6E /* xhtml-special.ent */; };
+		BE2E25B818EF4B8600BD7E6E /* xhtml-symbol.ent in CopyFiles */ = {isa = PBXBuildFile; fileRef = BE2E243718EBA5D500BD7E6E /* xhtml-symbol.ent */; };
+		BE2E25B918EF4B8600BD7E6E /* xhtml1-strict.dtd in CopyFiles */ = {isa = PBXBuildFile; fileRef = BE2E243818EBA5D500BD7E6E /* xhtml1-strict.dtd */; };
+		BE2E25BA18EF4B8600BD7E6E /* xhtml1-transitional.dtd in CopyFiles */ = {isa = PBXBuildFile; fileRef = BE2E243918EBA5D500BD7E6E /* xhtml1-transitional.dtd */; };
+		BE2E25BB18EF4D5400BD7E6E /* enml2.dtd in Resources */ = {isa = PBXBuildFile; fileRef = BE2E243118EBA5D500BD7E6E /* enml2.dtd */; };
+		BE2E25BC18EF4D5500BD7E6E /* evernote-export.dtd in Resources */ = {isa = PBXBuildFile; fileRef = BE2E243218EBA5D500BD7E6E /* evernote-export.dtd */; };
+		BE2E25BD18EF4D5500BD7E6E /* promotions.dtd in Resources */ = {isa = PBXBuildFile; fileRef = BE2E243318EBA5D500BD7E6E /* promotions.dtd */; };
+		BE2E25BE18EF4D5500BD7E6E /* recoIndex.dtd in Resources */ = {isa = PBXBuildFile; fileRef = BE2E243418EBA5D500BD7E6E /* recoIndex.dtd */; };
+		BE2E25BF18EF4D5500BD7E6E /* xhtml-lat1.ent in Resources */ = {isa = PBXBuildFile; fileRef = BE2E243518EBA5D500BD7E6E /* xhtml-lat1.ent */; };
+		BE2E25C018EF4D5500BD7E6E /* xhtml-special.ent in Resources */ = {isa = PBXBuildFile; fileRef = BE2E243618EBA5D500BD7E6E /* xhtml-special.ent */; };
+		BE2E25C118EF4D5500BD7E6E /* xhtml-symbol.ent in Resources */ = {isa = PBXBuildFile; fileRef = BE2E243718EBA5D500BD7E6E /* xhtml-symbol.ent */; };
+		BE2E25C218EF4D5500BD7E6E /* xhtml1-strict.dtd in Resources */ = {isa = PBXBuildFile; fileRef = BE2E243818EBA5D500BD7E6E /* xhtml1-strict.dtd */; };
+		BE2E25C318EF4D5500BD7E6E /* xhtml1-transitional.dtd in Resources */ = {isa = PBXBuildFile; fileRef = BE2E243918EBA5D500BD7E6E /* xhtml1-transitional.dtd */; };
+		BE2E25C418EF5C2100BD7E6E /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BE2E24F718EDD4A400BD7E6E /* Main_iPhone.storyboard */; };
+		BE2E25C518EF5C2100BD7E6E /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BE2E24FA18EDD4A400BD7E6E /* Main_iPad.storyboard */; };
+		BE2E25C618EF5C3700BD7E6E /* ENSendToEvernoteViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE2E245E18EBA5D500BD7E6E /* ENSendToEvernoteViewController.xib */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		BE2E250B18EDD4A400BD7E6E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0BB3D1A41524ED96001C4534 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BE2E24E518EDD4A300BD7E6E;
+			remoteInfo = SampleNoteApp;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		A9BF37341787497F00680B34 /* CopyFiles */ = {
@@ -149,6 +197,15 @@
 			dstPath = "";
 			dstSubfolderSpec = 7;
 			files = (
+				BE2E25B218EF4B8600BD7E6E /* enml2.dtd in CopyFiles */,
+				BE2E25B318EF4B8600BD7E6E /* evernote-export.dtd in CopyFiles */,
+				BE2E25B418EF4B8600BD7E6E /* promotions.dtd in CopyFiles */,
+				BE2E25B518EF4B8600BD7E6E /* recoIndex.dtd in CopyFiles */,
+				BE2E25B618EF4B8600BD7E6E /* xhtml-lat1.ent in CopyFiles */,
+				BE2E25B718EF4B8600BD7E6E /* xhtml-special.ent in CopyFiles */,
+				BE2E25B818EF4B8600BD7E6E /* xhtml-symbol.ent in CopyFiles */,
+				BE2E25B918EF4B8600BD7E6E /* xhtml1-strict.dtd in CopyFiles */,
+				BE2E25BA18EF4B8600BD7E6E /* xhtml1-transitional.dtd in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -307,6 +364,25 @@
 		BE2E245C18EBA5D500BD7E6E /* ENSendToEvernoteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENSendToEvernoteViewController.h; sourceTree = "<group>"; };
 		BE2E245D18EBA5D500BD7E6E /* ENSendToEvernoteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENSendToEvernoteViewController.m; sourceTree = "<group>"; };
 		BE2E245E18EBA5D500BD7E6E /* ENSendToEvernoteViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ENSendToEvernoteViewController.xib; sourceTree = "<group>"; };
+		BE2E24E618EDD4A300BD7E6E /* SampleNoteApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleNoteApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BE2E24E818EDD4A300BD7E6E /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		BE2E24ED18EDD4A400BD7E6E /* SampleNoteApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SampleNoteApp-Info.plist"; sourceTree = "<group>"; };
+		BE2E24EF18EDD4A400BD7E6E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		BE2E24F118EDD4A400BD7E6E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		BE2E24F318EDD4A400BD7E6E /* SampleNoteApp-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SampleNoteApp-Prefix.pch"; sourceTree = "<group>"; };
+		BE2E24F418EDD4A400BD7E6E /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		BE2E24F518EDD4A400BD7E6E /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		BE2E24F818EDD4A400BD7E6E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPhone.storyboard; sourceTree = "<group>"; };
+		BE2E24FB18EDD4A400BD7E6E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPad.storyboard; sourceTree = "<group>"; };
+		BE2E24FD18EDD4A400BD7E6E /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		BE2E24FE18EDD4A400BD7E6E /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		BE2E250018EDD4A400BD7E6E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		BE2E250618EDD4A400BD7E6E /* SampleNoteAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SampleNoteAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BE2E250718EDD4A400BD7E6E /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		BE2E250F18EDD4A400BD7E6E /* SampleNoteAppTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SampleNoteAppTests-Info.plist"; sourceTree = "<group>"; };
+		BE2E251118EDD4A400BD7E6E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		BE2E251318EDD4A400BD7E6E /* SampleNoteAppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SampleNoteAppTests.m; sourceTree = "<group>"; };
+		BE2E25B018EDE1C100BD7E6E /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -319,6 +395,30 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BE2E24E318EDD4A300BD7E6E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BE2E25B118EDE1C100BD7E6E /* MobileCoreServices.framework in Frameworks */,
+				BE2E25AF18EDDA7C00BD7E6E /* libxml2.dylib in Frameworks */,
+				BE2E25AE18EDDA7500BD7E6E /* Security.framework in Frameworks */,
+				BE2E25AD18EDDA6D00BD7E6E /* libevernote-sdk-ios.a in Frameworks */,
+				BE2E24E918EDD4A300BD7E6E /* CoreGraphics.framework in Frameworks */,
+				BE2E24EA18EDD4A300BD7E6E /* UIKit.framework in Frameworks */,
+				BE2E24E718EDD4A300BD7E6E /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BE2E250318EDD4A400BD7E6E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BE2E250818EDD4A400BD7E6E /* XCTest.framework in Frameworks */,
+				BE2E250A18EDD4A400BD7E6E /* UIKit.framework in Frameworks */,
+				BE2E250918EDD4A400BD7E6E /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -326,6 +426,8 @@
 			isa = PBXGroup;
 			children = (
 				0BB3D1B21524ED96001C4534 /* evernote-sdk-ios */,
+				BE2E24EB18EDD4A300BD7E6E /* SampleNoteApp */,
+				BE2E250D18EDD4A400BD7E6E /* SampleNoteAppTests */,
 				0BB3D1AF1524ED96001C4534 /* Frameworks */,
 				0BB3D1AE1524ED96001C4534 /* Products */,
 			);
@@ -338,6 +440,8 @@
 			isa = PBXGroup;
 			children = (
 				0BB3D1AD1524ED96001C4534 /* libevernote-sdk-ios.a */,
+				BE2E24E618EDD4A300BD7E6E /* SampleNoteApp.app */,
+				BE2E250618EDD4A400BD7E6E /* SampleNoteAppTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -345,10 +449,13 @@
 		0BB3D1AF1524ED96001C4534 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BE2E25B018EDE1C100BD7E6E /* MobileCoreServices.framework */,
 				A9BE476B1781FAFA00471BF7 /* libxml2.dylib */,
 				0BF0CF84152E2601003D6115 /* Security.framework */,
 				0BB3D1B01524ED96001C4534 /* Foundation.framework */,
 				0BB3D24D1524EEF3001C4534 /* UIKit.framework */,
+				BE2E24E818EDD4A300BD7E6E /* CoreGraphics.framework */,
+				BE2E250718EDD4A400BD7E6E /* XCTest.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -651,6 +758,50 @@
 			path = SendToEvernoteActivity;
 			sourceTree = "<group>";
 		};
+		BE2E24EB18EDD4A300BD7E6E /* SampleNoteApp */ = {
+			isa = PBXGroup;
+			children = (
+				BE2E24F418EDD4A400BD7E6E /* AppDelegate.h */,
+				BE2E24F518EDD4A400BD7E6E /* AppDelegate.m */,
+				BE2E24F718EDD4A400BD7E6E /* Main_iPhone.storyboard */,
+				BE2E24FA18EDD4A400BD7E6E /* Main_iPad.storyboard */,
+				BE2E24FD18EDD4A400BD7E6E /* ViewController.h */,
+				BE2E24FE18EDD4A400BD7E6E /* ViewController.m */,
+				BE2E250018EDD4A400BD7E6E /* Images.xcassets */,
+				BE2E24EC18EDD4A400BD7E6E /* Supporting Files */,
+			);
+			path = SampleNoteApp;
+			sourceTree = "<group>";
+		};
+		BE2E24EC18EDD4A400BD7E6E /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				BE2E24ED18EDD4A400BD7E6E /* SampleNoteApp-Info.plist */,
+				BE2E24EE18EDD4A400BD7E6E /* InfoPlist.strings */,
+				BE2E24F118EDD4A400BD7E6E /* main.m */,
+				BE2E24F318EDD4A400BD7E6E /* SampleNoteApp-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		BE2E250D18EDD4A400BD7E6E /* SampleNoteAppTests */ = {
+			isa = PBXGroup;
+			children = (
+				BE2E251318EDD4A400BD7E6E /* SampleNoteAppTests.m */,
+				BE2E250E18EDD4A400BD7E6E /* Supporting Files */,
+			);
+			path = SampleNoteAppTests;
+			sourceTree = "<group>";
+		};
+		BE2E250E18EDD4A400BD7E6E /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				BE2E250F18EDD4A400BD7E6E /* SampleNoteAppTests-Info.plist */,
+				BE2E251018EDD4A400BD7E6E /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -756,6 +907,41 @@
 			productReference = 0BB3D1AD1524ED96001C4534 /* libevernote-sdk-ios.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		BE2E24E518EDD4A300BD7E6E /* SampleNoteApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BE2E251518EDD4A400BD7E6E /* Build configuration list for PBXNativeTarget "SampleNoteApp" */;
+			buildPhases = (
+				BE2E24E218EDD4A300BD7E6E /* Sources */,
+				BE2E24E318EDD4A300BD7E6E /* Frameworks */,
+				BE2E24E418EDD4A300BD7E6E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SampleNoteApp;
+			productName = SampleNoteApp;
+			productReference = BE2E24E618EDD4A300BD7E6E /* SampleNoteApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+		BE2E250518EDD4A400BD7E6E /* SampleNoteAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BE2E251818EDD4A400BD7E6E /* Build configuration list for PBXNativeTarget "SampleNoteAppTests" */;
+			buildPhases = (
+				BE2E250218EDD4A400BD7E6E /* Sources */,
+				BE2E250318EDD4A400BD7E6E /* Frameworks */,
+				BE2E250418EDD4A400BD7E6E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BE2E250C18EDD4A400BD7E6E /* PBXTargetDependency */,
+			);
+			name = SampleNoteAppTests;
+			productName = SampleNoteAppTests;
+			productReference = BE2E250618EDD4A400BD7E6E /* SampleNoteAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -764,6 +950,11 @@
 			attributes = {
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = n/a;
+				TargetAttributes = {
+					BE2E250518EDD4A400BD7E6E = {
+						TestTargetID = BE2E24E518EDD4A300BD7E6E;
+					};
+				};
 			};
 			buildConfigurationList = 0BB3D1A71524ED96001C4534 /* Build configuration list for PBXProject "evernote-sdk-ios" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -772,6 +963,7 @@
 			knownRegions = (
 				en,
 				"zh-cn",
+				Base,
 			);
 			mainGroup = 0BB3D1A21524ED96001C4534;
 			productRefGroup = 0BB3D1AE1524ED96001C4534 /* Products */;
@@ -779,9 +971,43 @@
 			projectRoot = "";
 			targets = (
 				0BB3D1AC1524ED96001C4534 /* evernote-sdk-ios */,
+				BE2E24E518EDD4A300BD7E6E /* SampleNoteApp */,
+				BE2E250518EDD4A400BD7E6E /* SampleNoteAppTests */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		BE2E24E418EDD4A300BD7E6E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BE2E25C618EF5C3700BD7E6E /* ENSendToEvernoteViewController.xib in Resources */,
+				BE2E25C418EF5C2100BD7E6E /* Main_iPhone.storyboard in Resources */,
+				BE2E25C518EF5C2100BD7E6E /* Main_iPad.storyboard in Resources */,
+				BE2E25BB18EF4D5400BD7E6E /* enml2.dtd in Resources */,
+				BE2E25BC18EF4D5500BD7E6E /* evernote-export.dtd in Resources */,
+				BE2E25BD18EF4D5500BD7E6E /* promotions.dtd in Resources */,
+				BE2E25BE18EF4D5500BD7E6E /* recoIndex.dtd in Resources */,
+				BE2E25BF18EF4D5500BD7E6E /* xhtml-lat1.ent in Resources */,
+				BE2E25C018EF4D5500BD7E6E /* xhtml-special.ent in Resources */,
+				BE2E25C118EF4D5500BD7E6E /* xhtml-symbol.ent in Resources */,
+				BE2E25C218EF4D5500BD7E6E /* xhtml1-strict.dtd in Resources */,
+				BE2E25C318EF4D5500BD7E6E /* xhtml1-transitional.dtd in Resources */,
+				BE2E250118EDD4A400BD7E6E /* Images.xcassets in Resources */,
+				BE2E24F018EDD4A400BD7E6E /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BE2E250418EDD4A400BD7E6E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BE2E251218EDD4A400BD7E6E /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		414BD857983A4B8ABFEAD915 /* Warn for TODO and FIXME comments */ = {
@@ -866,7 +1092,68 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BE2E24E218EDD4A300BD7E6E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BE2E24FF18EDD4A400BD7E6E /* ViewController.m in Sources */,
+				BE2E24F618EDD4A400BD7E6E /* AppDelegate.m in Sources */,
+				BE2E24F218EDD4A400BD7E6E /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BE2E250218EDD4A400BD7E6E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BE2E251418EDD4A400BD7E6E /* SampleNoteAppTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		BE2E250C18EDD4A400BD7E6E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BE2E24E518EDD4A300BD7E6E /* SampleNoteApp */;
+			targetProxy = BE2E250B18EDD4A400BD7E6E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		BE2E24EE18EDD4A400BD7E6E /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BE2E24EF18EDD4A400BD7E6E /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		BE2E24F718EDD4A400BD7E6E /* Main_iPhone.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BE2E24F818EDD4A400BD7E6E /* Base */,
+			);
+			name = Main_iPhone.storyboard;
+			sourceTree = "<group>";
+		};
+		BE2E24FA18EDD4A400BD7E6E /* Main_iPad.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BE2E24FB18EDD4A400BD7E6E /* Base */,
+			);
+			name = Main_iPad.storyboard;
+			sourceTree = "<group>";
+		};
+		BE2E251018EDD4A400BD7E6E /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BE2E251118EDD4A400BD7E6E /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		0BB3D1B81524ED96001C4534 /* Debug */ = {
@@ -980,6 +1267,120 @@
 			};
 			name = Release;
 		};
+		BE2E251618EDD4A400BD7E6E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SampleNoteApp/SampleNoteApp-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "SampleNoteApp/SampleNoteApp-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		BE2E251718EDD4A400BD7E6E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SampleNoteApp/SampleNoteApp-Prefix.pch";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "SampleNoteApp/SampleNoteApp-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		BE2E251918EDD4A400BD7E6E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/SampleNoteApp.app/SampleNoteApp";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SampleNoteApp/SampleNoteApp-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "SampleNoteAppTests/SampleNoteAppTests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		BE2E251A18EDD4A400BD7E6E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/SampleNoteApp.app/SampleNoteApp";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				ENABLE_NS_ASSERTIONS = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SampleNoteApp/SampleNoteApp-Prefix.pch";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "SampleNoteAppTests/SampleNoteAppTests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1000,6 +1401,22 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		BE2E251518EDD4A400BD7E6E /* Build configuration list for PBXNativeTarget "SampleNoteApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BE2E251618EDD4A400BD7E6E /* Debug */,
+				BE2E251718EDD4A400BD7E6E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		BE2E251818EDD4A400BD7E6E /* Build configuration list for PBXNativeTarget "SampleNoteAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BE2E251918EDD4A400BD7E6E /* Debug */,
+				BE2E251A18EDD4A400BD7E6E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};

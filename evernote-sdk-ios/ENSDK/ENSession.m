@@ -89,6 +89,16 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     ConsumerSecret = nil;
 }
 
++ (ENSession *)sharedSession
+{
+    static ENSession * session = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        session = [[ENSession alloc] init];
+    });
+    return session;
+}
+
 + (BOOL)checkSharedSessionSettings
 {
     if (DeveloperToken && NoteStoreUrl) {
@@ -100,18 +110,11 @@ static NSString * DeveloperToken, * NoteStoreUrl;
         return YES;
     }
     
-    ENSDKLogError(@"Cannot create shared Evernote session without either a valid consumer key/secret pair, or a developer token set");
+    NSString * error = @"Cannot create shared Evernote session without either a valid consumer key/secret pair, or a developer token set";
+    // Use NSLog and not the session logger here, or we'll deadlock since we're still creating the session.
+    NSLog(@"%@", error);
+    [NSException raise:NSInvalidArgumentException format:@"%@", error];
     return NO;
-}
-
-+ (ENSession *)sharedSession
-{
-    static ENSession * session = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        session = [[ENSession alloc] init];
-    });
-    return session;
 }
 
 - (id)init
@@ -247,6 +250,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
                     ENCredentials * credentials = [[ENCredentials alloc] initWithHost:[NSString stringWithFormat:@"%@-business", self.sessionHost]
                                                                  authenticationResult:authenticationResult];
                     [self.credentialStore addCredentials:credentials];
+                    [self.credentialStore save];
                     self.businessShardId = authenticationResult.user.shardId;
                     [self completeAuthenticationWithError:nil];
                 } failure:^(NSError * authenticateToBusinessError) {
@@ -313,6 +317,8 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     self.primaryNoteStore = nil;
     self.businessNoteStore = nil;
     self.linkedAuthCache = [[ENAuthCache alloc] init];
+    [self.credentialStore clearAllCredentials];
+    [self.credentialStore save];
     [self removeAllPreferences];
 }
 
@@ -937,6 +943,7 @@ static NSString * PreferencesPath()
 {
     self.isAuthenticated = YES;
     [self.credentialStore addCredentials:credentials];
+    [self.credentialStore save];
     self.sessionHost = credentials.host;
     self.primaryAuthenticationToken = credentials.authenticationToken;
     [self performPostAuthentication];
