@@ -178,6 +178,7 @@
 		BE2E25C418EF5C2100BD7E6E /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BE2E24F718EDD4A400BD7E6E /* Main_iPhone.storyboard */; };
 		BE2E25C518EF5C2100BD7E6E /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BE2E24FA18EDD4A400BD7E6E /* Main_iPad.storyboard */; };
 		BE2E25C618EF5C3700BD7E6E /* ENSendToEvernoteViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE2E245E18EBA5D500BD7E6E /* ENSendToEvernoteViewController.xib */; };
+		BE2E25D018F366BE00BD7E6E /* en-activity-icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE2E25CF18F366BE00BD7E6E /* en-activity-icon@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -383,6 +384,7 @@
 		BE2E251118EDD4A400BD7E6E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		BE2E251318EDD4A400BD7E6E /* SampleNoteAppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SampleNoteAppTests.m; sourceTree = "<group>"; };
 		BE2E25B018EDE1C100BD7E6E /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		BE2E25CF18F366BE00BD7E6E /* en-activity-icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "en-activity-icon@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -754,6 +756,7 @@
 				BE2E245C18EBA5D500BD7E6E /* ENSendToEvernoteViewController.h */,
 				BE2E245D18EBA5D500BD7E6E /* ENSendToEvernoteViewController.m */,
 				BE2E245E18EBA5D500BD7E6E /* ENSendToEvernoteViewController.xib */,
+				BE2E25CF18F366BE00BD7E6E /* en-activity-icon@2x.png */,
 			);
 			path = SendToEvernoteActivity;
 			sourceTree = "<group>";
@@ -989,6 +992,7 @@
 				BE2E25BC18EF4D5500BD7E6E /* evernote-export.dtd in Resources */,
 				BE2E25BD18EF4D5500BD7E6E /* promotions.dtd in Resources */,
 				BE2E25BE18EF4D5500BD7E6E /* recoIndex.dtd in Resources */,
+				BE2E25D018F366BE00BD7E6E /* en-activity-icon@2x.png in Resources */,
 				BE2E25BF18EF4D5500BD7E6E /* xhtml-lat1.ent in Resources */,
 				BE2E25C018EF4D5500BD7E6E /* xhtml-special.ent in Resources */,
 				BE2E25C118EF4D5500BD7E6E /* xhtml-symbol.ent in Resources */,

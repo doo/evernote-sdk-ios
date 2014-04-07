@@ -18,7 +18,7 @@
 @implementation ENSendToEvernoteActivity
 + (UIActivityCategory)activityCategory
 {
-    return UIActivityCategoryAction;
+    return UIActivityCategoryShare;
 }
 
 - (NSString *)activityType
@@ -33,7 +33,7 @@
 
 - (UIImage *)activityImage
 {
-    return nil; //XXX
+    return [UIImage imageNamed:@"en-activity-icon.png"];
 }
 
 - (BOOL)canPerformWithActivityItems:(NSArray *)activityItems
