@@ -14,6 +14,7 @@
 #import "ENUserStoreClient.h"
 #import "ENCredentialStore.h"
 #import "ENOAuthAuthenticator.h"
+#import "ENPreferencesStore.h"
 
 // Strings visible publicly.
 NSString * const ENSessionHostSandbox = @"sandbox.evernote.com";
@@ -23,7 +24,9 @@ static NSString * ENSessionBootstrapServerBaseURLStringCN  = @"app.yinxiang.com"
 static NSString * ENSessionBootstrapServerBaseURLStringUS  = @"www.evernote.com";
 
 static NSString * ENSessionPreferencesFilename = @"com.evernote.evernote-sdk-ios.plist";
-static NSString * ENSessionDefaultNotebookGuid = @"ENSessionDefaultNotebookGuid";
+static NSString * ENSessionPreferencesDefaultNotebookGuid = @"DefaultNotebookGuid";
+static NSString * ENSessionPreferencesCurrentProfileName = @"CurrentProfileName";
+static NSString * ENSessionPreferencesUser = @"User";
 
 @interface ENSessionDefaultLogger : NSObject <ENSDKLogging>
 @end
@@ -56,6 +59,7 @@ static NSString * ENSessionDefaultNotebookGuid = @"ENSessionDefaultNotebookGuid"
 @property (nonatomic, copy) NSString * sessionHost;
 @property (nonatomic, assign) BOOL isAuthenticated;
 @property (nonatomic, strong) EDAMUser * user;
+@property (nonatomic, strong) ENPreferencesStore * preferences;
 @property (nonatomic, strong) ENCredentialStore * credentialStore;
 @property (nonatomic, strong) NSString * primaryAuthenticationToken;
 @property (nonatomic, strong) ENUserStoreClient * userStore;
@@ -140,6 +144,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
 - (void)startup
 {
     self.logger = [[ENSessionDefaultLogger alloc] init];
+    self.preferences = [[ENPreferencesStore alloc] initWithStoreFilename:ENSessionPreferencesFilename];
     self.credentialStore = [ENCredentialStore loadCredentials];
     if (!self.credentialStore) {
         self.credentialStore = [[ENCredentialStore alloc] init];
@@ -181,7 +186,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     ENCredentials * credentials = [self.credentialStore credentialsForHost:self.sessionHost];
     if (!credentials || ![credentials areValid]) {
         self.isAuthenticated = NO;
-        [self removeAllPreferences];
+        [self.preferences removeAllItems];
         return;
     }
     
@@ -191,7 +196,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     // We appear to have valid personal credentials, so populate the user object from cache,
     // and pull up business credentials. Refresh the business credentials if necessary, and the user
     // object always.
-    self.user = [self preferencesObjectForKey:@"user"];
+    self.user = [self.preferences decodedObjectForKey:ENSessionPreferencesUser];
     [self performPostAuthentication];
 }
 
@@ -244,7 +249,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     
     [[self userStore] getUserWithSuccess:^(EDAMUser * user) {
         self.user = user;
-        [self setPreferencesObject:user forKey:@"user"];
+        [self.preferences encodeObject:user forKey:ENSessionPreferencesUser];
         [self completeAuthenticationWithError:nil];
     } failure:^(NSError * getUserError) {
         ENSDKLogError(@"Failed to get user info for user: %@", getUserError);
@@ -281,7 +286,8 @@ static NSString * DeveloperToken, * NoteStoreUrl;
 
 - (NSString *)userDisplayName
 {
-    return self.user.name ?: self.user.username;
+    NSString * name = self.user.name ?: self.user.username;
+    return name ?: @"";
 }
 
 - (NSString *)businessDisplayName
@@ -303,7 +309,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     self.authCache = [[ENAuthCache alloc] init];
     [self.credentialStore clearAllCredentials];
     [self.credentialStore save];
-    [self removeAllPreferences];
+    [self.preferences removeAllItems];
 }
 
 - (BOOL)handleOpenURL:(NSURL *)url
@@ -830,65 +836,19 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     return nil;
 }
 
-static NSString * PreferencesPath()
-{
-    NSArray * paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
-    return [[paths[0] stringByAppendingPathComponent:@"Preferences"] stringByAppendingPathComponent:ENSessionPreferencesFilename];
-}
-
-- (NSMutableDictionary *)preferencesDictionary
-{
-    NSDictionary * prefs = nil;
-    @try {
-        prefs = [NSKeyedUnarchiver unarchiveObjectWithFile:PreferencesPath()];
-    } @catch (id e) {
-        // Delete anything at this path if we couldn't open it. This prevents corrupt files from
-        // wedging the app.
-        [[NSFileManager defaultManager] removeItemAtPath:PreferencesPath() error:NULL];
-    }
-    if (prefs) {
-        return [prefs mutableCopy];
-    } else {
-        return [[NSMutableDictionary alloc] init];
-    }
-}
-
-- (id)preferencesObjectForKey:(NSString *)key
-{
-    return [[self preferencesDictionary] objectForKey:key];
-}
-
-- (void)setPreferencesObject:(id)obj forKey:(NSString *)key
-{
-    NSMutableDictionary * prefs = [self preferencesDictionary];
-    if (obj) {
-        [prefs setObject:obj forKey:key];
-    } else {
-        [prefs removeObjectForKey:key];
-    }
-    if (![NSKeyedArchiver archiveRootObject:prefs toFile:PreferencesPath()]) {
-        ENSDKLogError(@"Failed to write Evernote preferences to disk");
-    }
-}
-
-- (void)removeAllPreferences
-{
-    [[NSFileManager defaultManager] removeItemAtPath:PreferencesPath() error:NULL];
-}
-
 - (NSString *)defaultNotebookGuid
 {
-    return [self preferencesObjectForKey:ENSessionDefaultNotebookGuid];
+    return [self.preferences objectForKey:ENSessionPreferencesDefaultNotebookGuid];
 }
 
 - (void)setDefaultNotebookGuid:(NSString *)guid
 {
-    [self setPreferencesObject:guid forKey:ENSessionDefaultNotebookGuid];
+    [self.preferences setObject:guid forKey:ENSessionPreferencesDefaultNotebookGuid];
 }
 
 - (NSString *)currentProfileName
 {
-    return [self preferencesObjectForKey:@"currentProfileName"];
+    return [self.preferences objectForKey:ENSessionPreferencesCurrentProfileName];
 }
 
 - (void)setCurrentProfileNameFromHost:(NSString *)host
@@ -899,7 +859,7 @@ static NSString * PreferencesPath()
     } else if ([host isEqualToString:ENSessionBootstrapServerBaseURLStringCN]) {
         profileName = ENBootstrapProfileNameChina;
     }
-    [self setPreferencesObject:profileName forKey:@"currentProfileName"];
+    [self.preferences setObject:profileName forKey:ENSessionPreferencesCurrentProfileName];
 }
 
 - (NSString *)userStoreUrl

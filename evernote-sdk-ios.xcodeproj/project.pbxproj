@@ -182,6 +182,8 @@
 		BE2E25DA18F4D6C300BD7E6E /* ENMLConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = BE2E25D818F4D6C200BD7E6E /* ENMLConstants.m */; };
 		BE2E25DB18F4D6C300BD7E6E /* ENMLConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = BE2E25D818F4D6C200BD7E6E /* ENMLConstants.m */; };
 		BE2E25DD18F4DCE600BD7E6E /* ENSDKPrivate.m in Sources */ = {isa = PBXBuildFile; fileRef = BE2E25DC18F4DCE600BD7E6E /* ENSDKPrivate.m */; };
+		BECDD2F018F5C8F3003736EE /* ENPreferencesStore.h in Headers */ = {isa = PBXBuildFile; fileRef = BECDD2EE18F5C8F3003736EE /* ENPreferencesStore.h */; };
+		BECDD2F118F5C8F3003736EE /* ENPreferencesStore.m in Sources */ = {isa = PBXBuildFile; fileRef = BECDD2EF18F5C8F3003736EE /* ENPreferencesStore.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -390,6 +392,8 @@
 		BE2E25D718F4D6C200BD7E6E /* ENMLConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENMLConstants.h; sourceTree = "<group>"; };
 		BE2E25D818F4D6C200BD7E6E /* ENMLConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENMLConstants.m; sourceTree = "<group>"; };
 		BE2E25DC18F4DCE600BD7E6E /* ENSDKPrivate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENSDKPrivate.m; sourceTree = "<group>"; };
+		BECDD2EE18F5C8F3003736EE /* ENPreferencesStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENPreferencesStore.h; sourceTree = "<group>"; };
+		BECDD2EF18F5C8F3003736EE /* ENPreferencesStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENPreferencesStore.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -617,6 +621,8 @@
 				BE2E245518EBA5D500BD7E6E /* NSString+ENScrubbing.h */,
 				BE2E245618EBA5D500BD7E6E /* NSString+ENScrubbing.m */,
 				BE2E245718EBA5D500BD7E6E /* Resources */,
+				BECDD2EE18F5C8F3003736EE /* ENPreferencesStore.h */,
+				BECDD2EF18F5C8F3003736EE /* ENPreferencesStore.m */,
 			);
 			path = Private;
 			sourceTree = "<group>";
@@ -881,6 +887,7 @@
 				BE2E24DC18EBA5D500BD7E6E /* NSString+ENScrubbing.h in Headers */,
 				BE2E248E18EBA5D500BD7E6E /* ENNoteRef.h in Headers */,
 				BE2E247E18EBA5D500BD7E6E /* NSRegularExpression+ENAGRegex.h in Headers */,
+				BECDD2F018F5C8F3003736EE /* ENPreferencesStore.h in Headers */,
 				BE2E247918EBA5D500BD7E6E /* ENXMLDTD.h in Headers */,
 				BE2E25D918F4D6C300BD7E6E /* ENMLConstants.h in Headers */,
 				BE2E248218EBA5D500BD7E6E /* NSData+EvernoteSDK.h in Headers */,
@@ -1054,6 +1061,7 @@
 				BE2E24C018EBA5D500BD7E6E /* TTransportException.m in Sources */,
 				BE2E247F18EBA5D500BD7E6E /* NSRegularExpression+ENAGRegex.m in Sources */,
 				BE2E247218EBA5D500BD7E6E /* ENMLUtility.m in Sources */,
+				BECDD2F118F5C8F3003736EE /* ENPreferencesStore.m in Sources */,
 				BE2E246718EBA5D500BD7E6E /* EDAMTypes.m in Sources */,
 				BE2E24BB18EBA5D500BD7E6E /* THTTPClient.m in Sources */,
 				BE2E248718EBA5D500BD7E6E /* NSDate+EDAMAdditions.m in Sources */,
