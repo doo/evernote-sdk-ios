@@ -33,17 +33,7 @@
 
 // Permanent store of Evernote credentials.
 // Credentials are unique per (host,consumer key) tuple.
-@interface ENCredentialStore : NSObject
-
-// Load the credential store from user defaults.
-+ (ENCredentialStore *)loadCredentials;
-
-// Save the credential store to user defaults.
-- (void)save;
-
-// Delete the credential store from user defaults.
-// Leaves the keychain intact.
-- (void)delete;
+@interface ENCredentialStore : NSObject <NSCoding>
 
 // Add credentials to the store.
 // Also saves the authentication token to the keychain.
@@ -59,4 +49,7 @@
 // Remove all credentials from the store.
 // Also deletes the credentials' auth tokens from the keychain.
 - (void)clearAllCredentials;
+
+// Load the credential store from user defaults.
++ (ENCredentialStore *)loadCredentialsFromAppDefaults;
 @end

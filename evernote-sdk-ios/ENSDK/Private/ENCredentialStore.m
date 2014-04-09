@@ -32,7 +32,7 @@
 
 #define DEFAULTS_CREDENTIAL_STORE_KEY @"EvernoteCredentials"
 
-@interface ENCredentialStore() <NSCoding>
+@interface ENCredentialStore()
 
 @property (nonatomic, strong) NSMutableDictionary *store;
 
@@ -51,42 +51,6 @@
     return self;
 }
 
-+ (ENCredentialStore *)loadCredentials
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSData *data = [defaults objectForKey:DEFAULTS_CREDENTIAL_STORE_KEY];
-    ENCredentialStore *store = nil;
-    if (data) {
-        @try {
-            store = [NSKeyedUnarchiver unarchiveObjectWithData:data];    
-        }
-        @catch (NSException *exception) {
-            // Deal with things like NSInvalidUnarchiveOperationException
-            // just return nil for situations like this, and the caller
-            // can create and save a new credentials store.
-            NSLog(@"Exception unarchiving ENCredentialStore: %@", exception);
-        }
-    }
-    return store;
-}
-
-- (void)save
-{
-    // we use our own archiver, 
-    // since the credentialStore dict contains non-property list objects
-    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self];
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:data forKey:DEFAULTS_CREDENTIAL_STORE_KEY];
-    [defaults synchronize];
-}
-
-- (void)delete
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults removeObjectForKey:DEFAULTS_CREDENTIAL_STORE_KEY];
-    [defaults synchronize];        
-}
-
 - (void)addCredentials:(ENCredentials *)credentials
 {
     // saves auth token to keychain
@@ -94,7 +58,6 @@
     
     // add it to our host => credentials dict
     [self.store setObject:credentials forKey:credentials.host];
-    [self save];
 }
 
 - (ENCredentials *)credentialsForHost:(NSString *)host
@@ -114,8 +77,6 @@
     
     // update user defaults
     [self.store removeObjectForKey:credentials.host];
-    
-    [self save];
 }
 
 - (void)clearAllCredentials
@@ -139,4 +100,24 @@
     return self;
 }
 
+#pragma mark - legacy/migration
+
++ (ENCredentialStore *)loadCredentialsFromAppDefaults
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSData *data = [defaults objectForKey:DEFAULTS_CREDENTIAL_STORE_KEY];
+    ENCredentialStore *store = nil;
+    if (data) {
+        @try {
+            store = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+        }
+        @catch (NSException *exception) {
+            // Deal with things like NSInvalidUnarchiveOperationException
+            // just return nil for situations like this, and the caller
+            // can create and save a new credentials store.
+            NSLog(@"Exception unarchiving ENCredentialStore: %@", exception);
+        }
+    }
+    return store;
+}
 @end

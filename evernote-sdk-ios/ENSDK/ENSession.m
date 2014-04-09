@@ -24,6 +24,7 @@ static NSString * ENSessionBootstrapServerBaseURLStringCN  = @"app.yinxiang.com"
 static NSString * ENSessionBootstrapServerBaseURLStringUS  = @"www.evernote.com";
 
 static NSString * ENSessionPreferencesFilename = @"com.evernote.evernote-sdk-ios.plist";
+static NSString * ENSessionPreferencesCredentialStore = @"CredentialStore";
 static NSString * ENSessionPreferencesDefaultNotebookGuid = @"DefaultNotebookGuid";
 static NSString * ENSessionPreferencesCurrentProfileName = @"CurrentProfileName";
 static NSString * ENSessionPreferencesUser = @"User";
@@ -60,7 +61,6 @@ static NSString * ENSessionPreferencesUser = @"User";
 @property (nonatomic, assign) BOOL isAuthenticated;
 @property (nonatomic, strong) EDAMUser * user;
 @property (nonatomic, strong) ENPreferencesStore * preferences;
-@property (nonatomic, strong) ENCredentialStore * credentialStore;
 @property (nonatomic, strong) NSString * primaryAuthenticationToken;
 @property (nonatomic, strong) ENUserStoreClient * userStore;
 @property (nonatomic, strong) ENNoteStoreClient * primaryNoteStore;
@@ -145,10 +145,6 @@ static NSString * DeveloperToken, * NoteStoreUrl;
 {
     self.logger = [[ENSessionDefaultLogger alloc] init];
     self.preferences = [[ENPreferencesStore alloc] initWithStoreFilename:ENSessionPreferencesFilename];
-    self.credentialStore = [ENCredentialStore loadCredentials];
-    if (!self.credentialStore) {
-        self.credentialStore = [[ENCredentialStore alloc] init];
-    }
 
     // Determine the host to use for this session.
     if (SessionHostOverride.length > 0) {
@@ -183,7 +179,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     
     // We'll restore an existing session if there was one. Check to see if we have valid
     // primary credentials stashed away already.
-    ENCredentials * credentials = [self.credentialStore credentialsForHost:self.sessionHost];
+    ENCredentials * credentials = [self credentialsForHost:self.sessionHost];
     if (!credentials || ![credentials areValid]) {
         self.isAuthenticated = NO;
         [self.preferences removeAllItems];
@@ -307,8 +303,12 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     self.primaryNoteStore = nil;
     self.businessNoteStore = nil;
     self.authCache = [[ENAuthCache alloc] init];
-    [self.credentialStore clearAllCredentials];
-    [self.credentialStore save];
+    
+    // Manually clear credentials. This ensures they're removed from the keychain also.
+    ENCredentialStore * credentialStore = [self credentialStore];
+    [credentialStore clearAllCredentials];
+    [self saveCredentialStore:credentialStore];
+    
     [self.preferences removeAllItems];
 }
 
@@ -744,10 +744,48 @@ static NSString * DeveloperToken, * NoteStoreUrl;
 
 #pragma mark - Private routines
 
+#pragma mark - Credential Store
+
+- (ENCredentialStore *)credentialStore
+{
+    ENCredentialStore * store = [self.preferences decodedObjectForKey:ENSessionPreferencesCredentialStore];
+    if (!store) {
+        // Try loading from the previous location in app'd defaults.
+        store = [ENCredentialStore loadCredentialsFromAppDefaults];
+        if (store) {
+            // Oh, we found it there? OK, put it into our own prefs vault immediately.
+            [self.preferences encodeObject:store forKey:ENSessionPreferencesCredentialStore];
+        }
+    }
+    if (!store) {
+        store = [[ENCredentialStore alloc] init];
+    }
+    return store;
+}
+
+- (ENCredentials *)credentialsForHost:(NSString *)host
+{
+    return [[self credentialStore] credentialsForHost:host];
+}
+
+- (void)addCredentials:(ENCredentials *)credentials
+{
+    ENCredentialStore * store = [self credentialStore];
+    [store addCredentials:credentials];
+    [self saveCredentialStore:store];
+}
+
+- (void)saveCredentialStore:(ENCredentialStore *)credentialStore
+{
+    [self.preferences encodeObject:credentialStore forKey:ENSessionPreferencesCredentialStore];
+}
+
+#pragma mark - Credentials & Auth
+
 - (ENCredentials *)primaryCredentials
 {
     //XXX: Is here a good place to check for no credentials and trigger an unauthed state?
-    return [self.credentialStore credentialsForHost:self.sessionHost];
+    return [self credentialsForHost:self.sessionHost];
 }
 
 - (EDAMAuthenticationResult *)validBusinessAuthenticationResult
@@ -768,6 +806,8 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     }
     return _authCache;
 }
+
+#pragma mark - Store clients
 
 - (ENUserStoreClient *)userStore
 {
@@ -835,6 +875,8 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     }
     return nil;
 }
+
+#pragma mark - Preferences helpers
 
 - (NSString *)defaultNotebookGuid
 {
@@ -920,8 +962,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
 - (void)authenticatorDidAuthenticateWithCredentials:(ENCredentials *)credentials
 {
     self.isAuthenticated = YES;
-    [self.credentialStore addCredentials:credentials];
-    [self.credentialStore save];
+    [self addCredentials:credentials];
     [self setCurrentProfileNameFromHost:credentials.host];
     self.sessionHost = credentials.host;
     self.primaryAuthenticationToken = credentials.authenticationToken;
