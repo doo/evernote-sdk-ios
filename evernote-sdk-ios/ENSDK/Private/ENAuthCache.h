@@ -12,4 +12,6 @@
 @interface ENAuthCache : NSObject
 - (void)setAuthenticationResult:(EDAMAuthenticationResult *)result forLinkedNotebookGuid:(NSString *)guid;
 - (EDAMAuthenticationResult *)authenticationResultForLinkedNotebookGuid:(NSString *)guid;
+- (void)setAuthenticationResultForBusiness:(EDAMAuthenticationResult *)result;
+- (EDAMAuthenticationResult *)authenticationResultForBusiness;
 @end

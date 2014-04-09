@@ -10,6 +10,7 @@
 #import "ENAuthCache.h"
 #import "ENNoteStoreClient.h"
 #import "ENLinkedNoteStoreClient.h"
+#import "ENBusinessNoteStoreClient.h"
 #import "ENUserStoreClient.h"
 #import "ENCredentialStore.h"
 #import "ENOAuthAuthenticator.h"
@@ -45,7 +46,7 @@ static NSString * ENSessionDefaultNotebookGuid = @"ENSessionDefaultNotebookGuid"
 @property (nonatomic, strong) ENSessionUploadNoteCompletionHandler completion;
 @end
 
-@interface ENSession () <ENLinkedNoteStoreClientDelegate, ENOAuthAuthenticatorDelegate>
+@interface ENSession () <ENLinkedNoteStoreClientDelegate, ENBusinessNoteStoreClientDelegate, ENOAuthAuthenticatorDelegate>
 @property (nonatomic, strong) ENOAuthAuthenticator * authenticator;
 @property (nonatomic, strong) ENSessionAuthenticateCompletionHandler authenticationCompletion;
 
@@ -58,7 +59,7 @@ static NSString * ENSessionDefaultNotebookGuid = @"ENSessionDefaultNotebookGuid"
 @property (nonatomic, strong) ENNoteStoreClient * primaryNoteStore;
 @property (nonatomic, strong) ENNoteStoreClient * businessNoteStore;
 @property (nonatomic, strong) NSString * businessShardId;
-@property (nonatomic, strong) ENAuthCache * linkedAuthCache;
+@property (nonatomic, strong) ENAuthCache * authCache;
 @end
 
 @implementation ENSession
@@ -241,27 +242,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     [[self userStore] getUserWithSuccess:^(EDAMUser * user) {
         self.user = user;
         [self setPreferencesObject:user forKey:@"user"];
-        // If this is a business user, check to see whether we already have valid business credentials set.
-        // If we don't have valid credentials for the business, then get them.
-        if (self.user.accounting.businessIdIsSet) {
-            ENCredentials * businessCredentials = [self businessCredentials];
-            if (!businessCredentials) {
-                [[self userStore] authenticateToBusinessWithSuccess:^(EDAMAuthenticationResult *authenticationResult) {
-                    ENCredentials * credentials = [[ENCredentials alloc] initWithHost:[NSString stringWithFormat:@"%@-business", self.sessionHost]
-                                                                 authenticationResult:authenticationResult];
-                    [self.credentialStore addCredentials:credentials];
-                    [self.credentialStore save];
-                    self.businessShardId = authenticationResult.user.shardId;
-                    [self completeAuthenticationWithError:nil];
-                } failure:^(NSError * authenticateToBusinessError) {
-                    ENSDKLogError(@"Failed to authenticate to business for business user: %@", authenticateToBusinessError);
-                    [self completeAuthenticationWithError:(failuresAreFatal ? authenticateToBusinessError : nil)];
-                }];
-            }
-        } else {
-            // Not a business user. OK.
-            [self completeAuthenticationWithError:nil];
-        }
+        [self completeAuthenticationWithError:nil];
     } failure:^(NSError * getUserError) {
         ENSDKLogError(@"Failed to get user info for user: %@", getUserError);
         [self completeAuthenticationWithError:(failuresAreFatal ? getUserError : nil)];
@@ -316,7 +297,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     self.userStore = nil;
     self.primaryNoteStore = nil;
     self.businessNoteStore = nil;
-    self.linkedAuthCache = [[ENAuthCache alloc] init];
+    self.authCache = [[ENAuthCache alloc] init];
     [self.credentialStore clearAllCredentials];
     [self.credentialStore save];
     [self removeAllPreferences];
@@ -760,18 +741,23 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     return [self.credentialStore credentialsForHost:self.sessionHost];
 }
 
-- (ENCredentials *)businessCredentials
+- (EDAMAuthenticationResult *)validBusinessAuthenticationResult
 {
-    //XXX This -business suffix could be something cleaner on the credential store. But for now...
-    return [self.credentialStore credentialsForHost:[NSString stringWithFormat:@"%@-business", self.sessionHost]];
+    NSAssert(![NSThread isMainThread], @"Cannot authenticate to linked notebook on main thread");
+    EDAMAuthenticationResult * auth = [self.authCache authenticationResultForBusiness];
+    if (!auth) {
+        auth = [self.userStore authenticateToBusiness];
+        [self.authCache setAuthenticationResultForBusiness:auth];
+    }
+    return auth;
 }
 
-- (ENAuthCache *)linkedAuthCache
+- (ENAuthCache *)authCache
 {
-    if (!_linkedAuthCache) {
-        _linkedAuthCache = [[ENAuthCache alloc] init];
+    if (!_authCache) {
+        _authCache = [[ENAuthCache alloc] init];
     }
-    return _linkedAuthCache;
+    return _authCache;
 }
 
 - (ENUserStoreClient *)userStore
@@ -799,11 +785,10 @@ static NSString * DeveloperToken, * NoteStoreUrl;
 
 - (ENNoteStoreClient *)businessNoteStore
 {
-    if (!_businessNoteStore) {
-        ENCredentials * credentials = [self businessCredentials];
-        if (credentials) {
-            _businessNoteStore = [ENNoteStoreClient noteStoreClientWithUrl:credentials.noteStoreUrl authenticationToken:credentials.authenticationToken];
-        }
+    if (!_businessNoteStore && [self isBusinessUser]) {
+        ENBusinessNoteStoreClient * client = [ENBusinessNoteStoreClient noteStoreClientForBusiness];
+        client.delegate = self;
+        _businessNoteStore = client;
     }
     return _businessNoteStore;
 }
@@ -913,6 +898,20 @@ static NSString * PreferencesPath()
     return [NSString stringWithFormat:@"%@://%@/edam/user", scheme, self.sessionHost];
 }
 
+#pragma mark - ENBusinessNoteStoreClientDelegate
+
+- (NSString *)authenticationTokenForBusinessStoreClient:(ENBusinessNoteStoreClient *)client
+{
+    EDAMAuthenticationResult * auth = [self validBusinessAuthenticationResult];
+    return auth.authenticationToken;
+}
+
+- (NSString *)noteStoreUrlForBusinessStoreClient:(ENBusinessNoteStoreClient *)client
+{
+    EDAMAuthenticationResult * auth = [self validBusinessAuthenticationResult];
+    return auth.noteStoreUrl;
+}
+
 #pragma mark - ENLinkedNoteStoreClientDelegate
 
 - (NSString *)authenticationTokenForLinkedNotebookRef:(ENLinkedNotebookRef *)linkedNotebookRef
@@ -920,13 +919,13 @@ static NSString * PreferencesPath()
     NSAssert(![NSThread isMainThread], @"Cannot authenticate to linked notebook on main thread");
     
     // See if we have auth data already for this notebook.
-    EDAMAuthenticationResult * auth = [self.linkedAuthCache authenticationResultForLinkedNotebookGuid:linkedNotebookRef.guid];
+    EDAMAuthenticationResult * auth = [self.authCache authenticationResultForLinkedNotebookGuid:linkedNotebookRef.guid];
     if (!auth) {
         // Create a temporary note store client for the linked note store, with our primary auth token,
         // in order to authenticate to the shared notebook.
         ENNoteStoreClient * linkedNoteStore = [ENNoteStoreClient noteStoreClientWithUrl:linkedNotebookRef.noteStoreUrl authenticationToken:self.primaryAuthenticationToken];
         auth = [linkedNoteStore authenticateToSharedNotebookWithShareKey:linkedNotebookRef.shareKey];
-        [self.linkedAuthCache setAuthenticationResult:auth forLinkedNotebookGuid:linkedNotebookRef.guid];
+        [self.authCache setAuthenticationResult:auth forLinkedNotebookGuid:linkedNotebookRef.guid];
     }
     return auth.authenticationToken;
 }

@@ -16,7 +16,7 @@
 @implementation ENLinkedNoteStoreClient
 + (instancetype)noteStoreClientForLinkedNotebookRef:(ENLinkedNotebookRef *)linkedNotebookRef
 {
-    ENLinkedNoteStoreClient * client = [ENLinkedNoteStoreClient noteStoreClientWithUrl:linkedNotebookRef.noteStoreUrl authenticationToken:nil];
+    ENLinkedNoteStoreClient * client = [[ENLinkedNoteStoreClient alloc] init];;
     client.linkedNotebookRef = linkedNotebookRef;
     return client;
 }
@@ -25,5 +25,10 @@
 {
     NSAssert(self.delegate, @"ENLinkedNoteStoreClient delegate not set");
     return [self.delegate authenticationTokenForLinkedNotebookRef:self.linkedNotebookRef];
+}
+
+- (NSString *)noteStoreUrl
+{
+    return self.linkedNotebookRef.noteStoreUrl;
 }
 @end

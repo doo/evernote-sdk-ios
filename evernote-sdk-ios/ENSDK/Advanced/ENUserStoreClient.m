@@ -34,6 +34,13 @@
     return self;
 }
 
+#pragma mark - Private Synchronous Helpers
+
+- (EDAMAuthenticationResult *)authenticateToBusiness
+{
+    return [self.client authenticateToBusiness:self.authenticationToken];
+}
+
 #pragma mark - UserStore methods
 
 - (void)checkVersionWithClientName:(NSString *)clientName

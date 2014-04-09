@@ -13,42 +13,48 @@
 
 @interface ENNoteStoreClient ()
 @property (nonatomic, strong) EDAMNoteStoreClient * client;
+@property (nonatomic, copy) NSString * cachedNoteStoreUrl;
 @property (nonatomic, copy) NSString * cachedAuthenticationToken;
 @end
 
 @implementation ENNoteStoreClient
 + (instancetype)noteStoreClientWithUrl:(NSString *)url authenticationToken:(NSString *)authenticationToken
 {
-    ENNoteStoreClient * client = [[self alloc] initWithNoteStoreUrl:url];
+    ENNoteStoreClient * client = [[self alloc] init];
+    client.cachedNoteStoreUrl = url;
     client.cachedAuthenticationToken = authenticationToken;
     return client;
 }
 
-- (id)initWithNoteStoreUrl:(NSString *)noteStoreUrl
-{
-    self = [super init];
-    if (self) {
-        [self createClientForUrl:noteStoreUrl];
-    }
-    return self;
-}
+#pragma mark - Override points for subclasses
 
-- (void)createClientForUrl:(NSString *)noteStoreUrl
-{
-    NSURL * url = [NSURL URLWithString:noteStoreUrl];
-    THTTPClient * transport = [[THTTPClient alloc] initWithURL:url];
-    TBinaryProtocol * protocol = [[TBinaryProtocol alloc] initWithTransport:transport];
-    self.client = [[EDAMNoteStoreClient alloc] initWithProtocol:protocol];
-}
-
-// Override point for subclasses that handle auth differently. This simple version just
-// returns the cached token.
+// Override points for subclasses that handle auth differently. This simple version just
+// returns the cached token and cached url
 - (NSString *)authenticationToken
 {
     return self.cachedAuthenticationToken;
 }
 
-#pragma mark - EDAM API
+- (NSString *)noteStoreUrl
+{
+    return self.cachedNoteStoreUrl;
+}
+
+#pragma mark - End override points
+
+- (EDAMNoteStoreClient *)client
+{
+    if (!_client) {
+        NSString * noteStoreUrl = [self noteStoreUrl];
+        NSURL * url = [NSURL URLWithString:noteStoreUrl];
+        THTTPClient * transport = [[THTTPClient alloc] initWithURL:url];
+        TBinaryProtocol * protocol = [[TBinaryProtocol alloc] initWithTransport:transport];
+        _client = [[EDAMNoteStoreClient alloc] initWithProtocol:protocol];
+    }
+    return _client;
+}
+
+#pragma mark - Private Synchronous Helpers
 
 - (EDAMAuthenticationResult *)authenticateToSharedNotebookWithShareKey:(NSString *)shareKey
 {

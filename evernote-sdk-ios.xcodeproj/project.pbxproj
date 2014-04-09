@@ -179,6 +179,8 @@
 		BE2E25C518EF5C2100BD7E6E /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BE2E24FA18EDD4A400BD7E6E /* Main_iPad.storyboard */; };
 		BE2E25C618EF5C3700BD7E6E /* ENSendToEvernoteViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BE2E245E18EBA5D500BD7E6E /* ENSendToEvernoteViewController.xib */; };
 		BE2E25D018F366BE00BD7E6E /* en-activity-icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE2E25CF18F366BE00BD7E6E /* en-activity-icon@2x.png */; };
+		BE2E25D318F3745700BD7E6E /* ENBusinessNoteStoreClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BE2E25D118F3745700BD7E6E /* ENBusinessNoteStoreClient.h */; };
+		BE2E25D418F3745700BD7E6E /* ENBusinessNoteStoreClient.m in Sources */ = {isa = PBXBuildFile; fileRef = BE2E25D218F3745700BD7E6E /* ENBusinessNoteStoreClient.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -385,6 +387,8 @@
 		BE2E251318EDD4A400BD7E6E /* SampleNoteAppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SampleNoteAppTests.m; sourceTree = "<group>"; };
 		BE2E25B018EDE1C100BD7E6E /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		BE2E25CF18F366BE00BD7E6E /* en-activity-icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "en-activity-icon@2x.png"; sourceTree = "<group>"; };
+		BE2E25D118F3745700BD7E6E /* ENBusinessNoteStoreClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENBusinessNoteStoreClient.h; sourceTree = "<group>"; };
+		BE2E25D218F3745700BD7E6E /* ENBusinessNoteStoreClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENBusinessNoteStoreClient.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -595,6 +599,8 @@
 				BE2E244518EBA5D500BD7E6E /* ENLinkedNotebookRef.m */,
 				BE2E244618EBA5D500BD7E6E /* ENLinkedNoteStoreClient.h */,
 				BE2E244718EBA5D500BD7E6E /* ENLinkedNoteStoreClient.m */,
+				BE2E25D118F3745700BD7E6E /* ENBusinessNoteStoreClient.h */,
+				BE2E25D218F3745700BD7E6E /* ENBusinessNoteStoreClient.m */,
 				BE2E244818EBA5D500BD7E6E /* ENNotebookChooserViewController.h */,
 				BE2E244918EBA5D500BD7E6E /* ENNotebookChooserViewController.m */,
 				BE2E244A18EBA5D500BD7E6E /* ENNoteRefInternal.h */,
@@ -834,6 +840,7 @@
 				BE2E24AD18EBA5D500BD7E6E /* TProtocolException.h in Headers */,
 				BE2E246E18EBA5D500BD7E6E /* ENSDKAdvanced.h in Headers */,
 				BE2E249418EBA5D500BD7E6E /* ENSession.h in Headers */,
+				BE2E25D318F3745700BD7E6E /* ENBusinessNoteStoreClient.h in Headers */,
 				BE2E248418EBA5D500BD7E6E /* NSDataBase64Additions.h in Headers */,
 				BE2E24B918EBA5D500BD7E6E /* TProcessorFactory.h in Headers */,
 				BE2E24C518EBA5D500BD7E6E /* ENCredentials.h in Headers */,
@@ -1057,6 +1064,7 @@
 				BE2E247018EBA5D500BD7E6E /* ENUserStoreClient.m in Sources */,
 				BE2E247A18EBA5D500BD7E6E /* ENXMLDTD.m in Sources */,
 				BE2E24A118EBA5D500BD7E6E /* KSWriter.m in Sources */,
+				BE2E25D418F3745700BD7E6E /* ENBusinessNoteStoreClient.m in Sources */,
 				BE2E249718EBA5D500BD7E6E /* ENAFURLConnectionOperation.m in Sources */,
 				BE2E24DA18EBA5D500BD7E6E /* ENXMLSaxParser.m in Sources */,
 				BE2E24B518EBA5D500BD7E6E /* TException.m in Sources */,

@@ -9,6 +9,7 @@
 #import "ENStoreClient.h"
 #import "ENError.h"
 #import "EDAMErrors.h"
+#import "ENSDKPrivate.h"
 
 @interface ENStoreClient ()
 @property (nonatomic, strong) dispatch_queue_t queue;
@@ -207,6 +208,7 @@
 - (void)handleException:(NSException *)exception withFailureBlock:(void(^)(NSError *error))failure
 {
     NSError * error = [self errorFromException:exception];
+    ENSDKLogError(@"Error: %@", error);
     if (failure) {
         failure(error);
     }

@@ -42,6 +42,7 @@
 // This accessor is here to provide a declaration of the override point for subclasses that do
 // nontrivial token management.
 @property (nonatomic, readonly) NSString * authenticationToken;
+@property (nonatomic, readonly) NSString * noteStoreUrl;
 
 // This is how you get one of these note store objects.
 + (instancetype)noteStoreClientWithUrl:(NSString *)url authenticationToken:(NSString *)authenticationToken;
@@ -53,6 +54,10 @@
 
 @interface ENUserStoreClient (Private)
 + (instancetype)userStoreClientWithUrl:(NSString *)url authenticationToken:(NSString *)authenticationToken;
+
+// N.B. This method is synchronous and can throw exceptions.
+// Should be called only from within protected code blocks
+- (EDAMAuthenticationResult *)authenticateToBusiness;
 @end
 
 // Logging utility macros.
