@@ -7,7 +7,7 @@
 //
 
 #import "ENOAuthViewController.h"
-#import "ENConstants.h"
+#import "ENSDKPrivate.h"
 
 @interface ENOAuthViewController() <UIWebViewDelegate>
 

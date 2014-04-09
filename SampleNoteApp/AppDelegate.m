@@ -16,7 +16,7 @@
     // Set shared session key information.
     [ENSession setSharedSessionConsumerKey:@"your key"
                             consumerSecret:@"your secret"
-                              optionalHost:nil];
+                              optionalHost:ENSessionHostSandbox];
     
     return YES;
 }

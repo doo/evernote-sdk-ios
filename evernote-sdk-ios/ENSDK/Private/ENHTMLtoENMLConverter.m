@@ -7,7 +7,7 @@
 //
 
 #import "ENHTMLtoENMLConverter.h"
-#import "ENConstants.h"
+#import "ENMLConstants.h"
 
 #define AppLogDebug NSLog
 #define AppLogInfo NSLog

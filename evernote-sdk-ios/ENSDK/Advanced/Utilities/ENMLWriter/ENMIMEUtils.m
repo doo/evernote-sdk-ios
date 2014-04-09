@@ -31,7 +31,7 @@
 #import "ENMIMEUtils.h"
 
 #import "ENSDKAdvanced.h"
-#import "ENConstants.h"
+#import "ENMLConstants.h"
 
 #if TARGET_OS_IPHONE
 # import <MobileCoreServices/MobileCoreServices.h>

@@ -13,6 +13,9 @@
 #import "ENNoteStoreClient.h"
 #import "ENUserStoreClient.h"
 
+FOUNDATION_EXPORT NSString * const ENBootstrapProfileNameInternational;
+FOUNDATION_EXPORT NSString * const ENBootstrapProfileNameChina;
+
 @interface ENNotebook (Private)
 @property (nonatomic, readonly) NSString * guid;
 @property (nonatomic, strong) EDAMLinkedNotebook * linkedNotebook;

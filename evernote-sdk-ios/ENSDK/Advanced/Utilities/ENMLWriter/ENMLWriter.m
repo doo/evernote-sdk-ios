@@ -31,7 +31,7 @@
 
 #import "ENEncryptedContentInfo.h"
 #import "ENMIMEUtils.h"
-#import "ENConstants.h"
+#import "ENMLConstants.h"
 #import "ENMIMEUtils.h"
 
 #import "NSData+EvernoteSDK.h"

@@ -15,7 +15,6 @@
 #import "ENGCOAuth.h"
 
 #import "NSRegularExpression+ENAGRegex.h"
-#import "ENConstants.h"
 #import "EvernoteService.h"
 
 #define OAUTH_PROTOCOL_SCHEME @"https"

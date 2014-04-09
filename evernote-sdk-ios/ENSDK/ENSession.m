@@ -15,11 +15,16 @@
 #import "ENCredentialStore.h"
 #import "ENOAuthAuthenticator.h"
 
-#import "ENConstants.h"
 #import "EvernoteService.h"
 
-static NSString * ENSessionPreferencesFilename = @"com.evernote.evernote-sdk-ios.plist";
+// Strings visible publicly.
+NSString * const ENSessionHostSandbox = @"sandbox.evernote.com";
 
+// Constants valid only in this file.
+static NSString * ENSessionBootstrapServerBaseURLStringCN  = @"app.yinxiang.com";
+static NSString * ENSessionBootstrapServerBaseURLStringUS  = @"www.evernote.com";
+
+static NSString * ENSessionPreferencesFilename = @"com.evernote.evernote-sdk-ios.plist";
 static NSString * ENSessionDefaultNotebookGuid = @"ENSessionDefaultNotebookGuid";
 
 @interface ENSessionDefaultLogger : NSObject <ENSDKLogging>
@@ -152,16 +157,16 @@ static NSString * DeveloperToken, * NoteStoreUrl;
         NSURL * noteStoreUrl = [NSURL URLWithString:NoteStoreUrl];
         self.sessionHost = noteStoreUrl.host;
     } else if ([ENCredentialStore getCurrentProfile] == EVERNOTE_SERVICE_INTERNATIONAL) {
-        self.sessionHost = BootstrapServerBaseURLStringUS;
+        self.sessionHost = ENSessionBootstrapServerBaseURLStringUS;
     } else if ([ENCredentialStore getCurrentProfile] == EVERNOTE_SERVICE_YINXIANG) {
-        self.sessionHost = BootstrapServerBaseURLStringCN;
+        self.sessionHost = ENSessionBootstrapServerBaseURLStringCN;
     } else {
         // Choose the initial host based on locale.
         NSString * locale = [[NSLocale currentLocale] localeIdentifier];
         if ([[locale lowercaseString] hasPrefix:@"zh"]) {
-            self.sessionHost = BootstrapServerBaseURLStringCN;
+            self.sessionHost = ENSessionBootstrapServerBaseURLStringCN;
         } else {
-            self.sessionHost = BootstrapServerBaseURLStringUS;
+            self.sessionHost = ENSessionBootstrapServerBaseURLStringUS;
         }
     }
     

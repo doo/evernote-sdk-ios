@@ -11,6 +11,8 @@
 #import "ENSDK.h"
 #import "ENSDKLogging.h"
 
+FOUNDATION_EXPORT NSString * const ENSessionHostSandbox;
+
 typedef void (^ENSessionAuthenticateCompletionHandler)(NSError * authenticateError);
 typedef void (^ENSessionListNotebooksCompletionHandler)(NSArray * notebooks, NSError * listNotebooksError);
 typedef void (^ENSessionUploadNoteProgressHandler)(CGFloat progress);
