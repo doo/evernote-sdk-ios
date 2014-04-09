@@ -15,8 +15,6 @@
 #import "ENCredentialStore.h"
 #import "ENOAuthAuthenticator.h"
 
-#import "EvernoteService.h"
-
 // Strings visible publicly.
 NSString * const ENSessionHostSandbox = @"sandbox.evernote.com";
 
@@ -156,9 +154,9 @@ static NSString * DeveloperToken, * NoteStoreUrl;
         // If we have a developer key, just get the host from the note store url.
         NSURL * noteStoreUrl = [NSURL URLWithString:NoteStoreUrl];
         self.sessionHost = noteStoreUrl.host;
-    } else if ([ENCredentialStore getCurrentProfile] == EVERNOTE_SERVICE_INTERNATIONAL) {
+    } else if ([[self currentProfileName] isEqualToString:ENBootstrapProfileNameInternational]) {
         self.sessionHost = ENSessionBootstrapServerBaseURLStringUS;
-    } else if ([ENCredentialStore getCurrentProfile] == EVERNOTE_SERVICE_YINXIANG) {
+    } else if ([[self currentProfileName] isEqualToString:ENBootstrapProfileNameChina]) {
         self.sessionHost = ENSessionBootstrapServerBaseURLStringCN;
     } else {
         // Choose the initial host based on locale.
@@ -888,6 +886,22 @@ static NSString * PreferencesPath()
     [self setPreferencesObject:guid forKey:ENSessionDefaultNotebookGuid];
 }
 
+- (NSString *)currentProfileName
+{
+    return [self preferencesObjectForKey:@"currentProfileName"];
+}
+
+- (void)setCurrentProfileNameFromHost:(NSString *)host
+{
+    NSString * profileName = nil;
+    if ([host isEqualToString:ENSessionBootstrapServerBaseURLStringUS]) {
+        profileName = ENBootstrapProfileNameInternational;
+    } else if ([host isEqualToString:ENSessionBootstrapServerBaseURLStringCN]) {
+        profileName = ENBootstrapProfileNameChina;
+    }
+    [self setPreferencesObject:profileName forKey:@"currentProfileName"];
+}
+
 - (NSString *)userStoreUrl
 {
     // If the host string includes an explict port (e.g., foo.bar.com:8080), use http. Otherwise https.
@@ -943,11 +957,12 @@ static NSString * PreferencesPath()
     return [ENUserStoreClient userStoreClientWithUrl:[self userStoreUrl] authenticationToken:nil];
 }
 
-- (void)authenticatorDidAuthenticateWithCredentials:(ENCredentials *)credentials forHost:(NSString *)host
+- (void)authenticatorDidAuthenticateWithCredentials:(ENCredentials *)credentials
 {
     self.isAuthenticated = YES;
     [self.credentialStore addCredentials:credentials];
     [self.credentialStore save];
+    [self setCurrentProfileNameFromHost:credentials.host];
     self.sessionHost = credentials.host;
     self.primaryAuthenticationToken = credentials.authenticationToken;
     [self performPostAuthentication];

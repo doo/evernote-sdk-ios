@@ -12,7 +12,7 @@
 
 @protocol ENOAuthAuthenticatorDelegate <NSObject>
 - (ENUserStoreClient *)userStoreClientForBootstrapping;
-- (void)authenticatorDidAuthenticateWithCredentials:(ENCredentials *)credentials forHost:(NSString *)host;
+- (void)authenticatorDidAuthenticateWithCredentials:(ENCredentials *)credentials;
 - (void)authenticatorDidFailWithError:(NSError *)error;
 @end
 

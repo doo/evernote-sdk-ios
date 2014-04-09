@@ -30,7 +30,6 @@
 #import <UIKit/UIKit.h>
 #import "ENCredentials.h"
 #import "ENSDKAdvanced.h"
-#import "EvernoteService.h"
 
 // Permanent store of Evernote credentials.
 // Credentials are unique per (host,consumer key) tuple.
@@ -60,11 +59,4 @@
 // Remove all credentials from the store.
 // Also deletes the credentials' auth tokens from the keychain.
 - (void)clearAllCredentials;
-
-// Save the current selected boostrap profile.
-+ (void)saveCurrentProfile:(EvernoteService)code;
-
-// Look up the currently selected bootstrap profile
-+ (NSInteger)getCurrentProfile;
-
 @end

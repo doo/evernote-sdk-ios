@@ -78,7 +78,7 @@ Do something like this in your AppDelegate's `application:didFinishLaunchingWith
 	{
 		// Initial development is done on the sandbox service
 		// When you want to connect to production, just pass "nil" for "optionalHost"
-		NSString *SANDBOX_HOST = BootstrapServerBaseURLStringSandbox;
+		NSString *SANDBOX_HOST = ENSessionHostSandbox;
     
 		// Fill in the consumer key and secret with the values that you received from Evernote
 		// To get an API key, visit http://dev.evernote.com/documentation/cloud/

@@ -15,7 +15,6 @@
 #import "ENGCOAuth.h"
 
 #import "NSRegularExpression+ENAGRegex.h"
-#import "EvernoteService.h"
 
 #define OAUTH_PROTOCOL_SCHEME @"https"
 
@@ -431,13 +430,6 @@ typedef NS_ENUM(NSInteger, ENOAuthAuthenticatorState) {
                                                               webApiUrlPrefix:webApiUrlPrefix
                                                           authenticationToken:authenticationToken
                                                                expirationDate:expirationDate];
-            if([self.currentProfile isEqualToString:ENBootstrapProfileNameChina]) {
-                [ENCredentialStore saveCurrentProfile:EVERNOTE_SERVICE_YINXIANG];
-            }
-            else if([self.currentProfile isEqualToString:ENBootstrapProfileNameInternational]) {
-                [ENCredentialStore saveCurrentProfile:EVERNOTE_SERVICE_INTERNATIONAL];
-            }
-
             // call our callback, without error.
             [self completeAuthenticationWithCredentials:credentials];
             // update the auth state
@@ -485,7 +477,7 @@ typedef NS_ENUM(NSInteger, ENOAuthAuthenticatorState) {
 - (void)completeAuthenticationWithCredentials:(ENCredentials *)credentials
 {
     self.viewController = nil;
-    [self.delegate authenticatorDidAuthenticateWithCredentials:credentials forHost:self.host];
+    [self.delegate authenticatorDidAuthenticateWithCredentials:credentials];
 }
 
 - (void)completeAuthenticationWithError:(NSError *)error

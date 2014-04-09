@@ -131,7 +131,6 @@
 		BE2E24D818EBA5D500BD7E6E /* ENStoreClient.m in Sources */ = {isa = PBXBuildFile; fileRef = BE2E245118EBA5D500BD7E6E /* ENStoreClient.m */; };
 		BE2E24D918EBA5D500BD7E6E /* ENXMLSaxParser.h in Headers */ = {isa = PBXBuildFile; fileRef = BE2E245218EBA5D500BD7E6E /* ENXMLSaxParser.h */; };
 		BE2E24DA18EBA5D500BD7E6E /* ENXMLSaxParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BE2E245318EBA5D500BD7E6E /* ENXMLSaxParser.m */; };
-		BE2E24DB18EBA5D500BD7E6E /* EvernoteService.h in Headers */ = {isa = PBXBuildFile; fileRef = BE2E245418EBA5D500BD7E6E /* EvernoteService.h */; };
 		BE2E24DC18EBA5D500BD7E6E /* NSString+ENScrubbing.h in Headers */ = {isa = PBXBuildFile; fileRef = BE2E245518EBA5D500BD7E6E /* NSString+ENScrubbing.h */; };
 		BE2E24DD18EBA5D500BD7E6E /* NSString+ENScrubbing.m in Sources */ = {isa = PBXBuildFile; fileRef = BE2E245618EBA5D500BD7E6E /* NSString+ENScrubbing.m */; };
 		BE2E24DE18EBA5D500BD7E6E /* ENSendToEvernoteActivity.h in Headers */ = {isa = PBXBuildFile; fileRef = BE2E245A18EBA5D500BD7E6E /* ENSendToEvernoteActivity.h */; };
@@ -358,7 +357,6 @@
 		BE2E245118EBA5D500BD7E6E /* ENStoreClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENStoreClient.m; sourceTree = "<group>"; };
 		BE2E245218EBA5D500BD7E6E /* ENXMLSaxParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENXMLSaxParser.h; sourceTree = "<group>"; };
 		BE2E245318EBA5D500BD7E6E /* ENXMLSaxParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENXMLSaxParser.m; sourceTree = "<group>"; };
-		BE2E245418EBA5D500BD7E6E /* EvernoteService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EvernoteService.h; sourceTree = "<group>"; };
 		BE2E245518EBA5D500BD7E6E /* NSString+ENScrubbing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+ENScrubbing.h"; sourceTree = "<group>"; };
 		BE2E245618EBA5D500BD7E6E /* NSString+ENScrubbing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+ENScrubbing.m"; sourceTree = "<group>"; };
 		BE2E245818EBA5D500BD7E6E /* EvernoteSDK.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = EvernoteSDK.strings; sourceTree = "<group>"; };
@@ -616,7 +614,6 @@
 				BE2E245118EBA5D500BD7E6E /* ENStoreClient.m */,
 				BE2E245218EBA5D500BD7E6E /* ENXMLSaxParser.h */,
 				BE2E245318EBA5D500BD7E6E /* ENXMLSaxParser.m */,
-				BE2E245418EBA5D500BD7E6E /* EvernoteService.h */,
 				BE2E245518EBA5D500BD7E6E /* NSString+ENScrubbing.h */,
 				BE2E245618EBA5D500BD7E6E /* NSString+ENScrubbing.m */,
 				BE2E245718EBA5D500BD7E6E /* Resources */,
@@ -825,7 +822,6 @@
 				BE2E249318EBA5D500BD7E6E /* ENSDKLogging.h in Headers */,
 				BE2E249C18EBA5D500BD7E6E /* KSForwardingWriter.h in Headers */,
 				BE2E246218EBA5D500BD7E6E /* EDAMLimits.h in Headers */,
-				BE2E24DB18EBA5D500BD7E6E /* EvernoteService.h in Headers */,
 				BE2E24B818EBA5D500BD7E6E /* TProcessor.h in Headers */,
 				BE2E24D918EBA5D500BD7E6E /* ENXMLSaxParser.h in Headers */,
 				BE2E24B718EBA5D500BD7E6E /* TObjective-C.h in Headers */,
@@ -1427,6 +1423,7 @@
 				BE2E251718EDD4A400BD7E6E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		BE2E251818EDD4A400BD7E6E /* Build configuration list for PBXNativeTarget "SampleNoteAppTests" */ = {
 			isa = XCConfigurationList;
@@ -1435,6 +1432,7 @@
 				BE2E251A18EDD4A400BD7E6E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
