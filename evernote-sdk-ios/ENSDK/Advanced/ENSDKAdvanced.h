@@ -24,3 +24,8 @@
 - (ENNoteStoreClient *)businessNoteStore;
 - (ENNoteStoreClient *)noteStoreForLinkedNotebook:(EDAMLinkedNotebook *)linkedNotebook;
 @end
+
+@interface ENNoteContent (Advanced)
++ (instancetype)noteContentWithENML:(NSString *)enml;
+- (id)initWithENML:(NSString *)enml;
+@end

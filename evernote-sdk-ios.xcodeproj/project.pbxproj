@@ -184,6 +184,12 @@
 		BE2E25DD18F4DCE600BD7E6E /* ENSDKPrivate.m in Sources */ = {isa = PBXBuildFile; fileRef = BE2E25DC18F4DCE600BD7E6E /* ENSDKPrivate.m */; };
 		BECDD2F018F5C8F3003736EE /* ENPreferencesStore.h in Headers */ = {isa = PBXBuildFile; fileRef = BECDD2EE18F5C8F3003736EE /* ENPreferencesStore.h */; };
 		BECDD2F118F5C8F3003736EE /* ENPreferencesStore.m in Sources */ = {isa = PBXBuildFile; fileRef = BECDD2EF18F5C8F3003736EE /* ENPreferencesStore.m */; };
+		BECDD2F418F77BC3003736EE /* ENNoteContent.h in Headers */ = {isa = PBXBuildFile; fileRef = BECDD2F218F77BC3003736EE /* ENNoteContent.h */; };
+		BECDD2F518F77BC3003736EE /* ENNoteContent.m in Sources */ = {isa = PBXBuildFile; fileRef = BECDD2F318F77BC3003736EE /* ENNoteContent.m */; };
+		BECDD2F818F77C0E003736EE /* ENPlaintextNoteContent.h in Headers */ = {isa = PBXBuildFile; fileRef = BECDD2F618F77C0E003736EE /* ENPlaintextNoteContent.h */; };
+		BECDD2F918F77C0E003736EE /* ENPlaintextNoteContent.m in Sources */ = {isa = PBXBuildFile; fileRef = BECDD2F718F77C0E003736EE /* ENPlaintextNoteContent.m */; };
+		BECDD2FC18F78072003736EE /* ENHTMLNoteContent.h in Headers */ = {isa = PBXBuildFile; fileRef = BECDD2FA18F78072003736EE /* ENHTMLNoteContent.h */; };
+		BECDD2FD18F78072003736EE /* ENHTMLNoteContent.m in Sources */ = {isa = PBXBuildFile; fileRef = BECDD2FB18F78072003736EE /* ENHTMLNoteContent.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -394,6 +400,12 @@
 		BE2E25DC18F4DCE600BD7E6E /* ENSDKPrivate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENSDKPrivate.m; sourceTree = "<group>"; };
 		BECDD2EE18F5C8F3003736EE /* ENPreferencesStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENPreferencesStore.h; sourceTree = "<group>"; };
 		BECDD2EF18F5C8F3003736EE /* ENPreferencesStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENPreferencesStore.m; sourceTree = "<group>"; };
+		BECDD2F218F77BC3003736EE /* ENNoteContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENNoteContent.h; sourceTree = "<group>"; };
+		BECDD2F318F77BC3003736EE /* ENNoteContent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENNoteContent.m; sourceTree = "<group>"; };
+		BECDD2F618F77C0E003736EE /* ENPlaintextNoteContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENPlaintextNoteContent.h; sourceTree = "<group>"; };
+		BECDD2F718F77C0E003736EE /* ENPlaintextNoteContent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENPlaintextNoteContent.m; sourceTree = "<group>"; };
+		BECDD2FA18F78072003736EE /* ENHTMLNoteContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENHTMLNoteContent.h; sourceTree = "<group>"; };
+		BECDD2FB18F78072003736EE /* ENHTMLNoteContent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENHTMLNoteContent.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -496,6 +508,8 @@
 				BE2E23F718EBA5D500BD7E6E /* ENSession.m */,
 				BE2E23EC18EBA5D500BD7E6E /* ENNote.h */,
 				BE2E23ED18EBA5D500BD7E6E /* ENNote.m */,
+				BECDD2F218F77BC3003736EE /* ENNoteContent.h */,
+				BECDD2F318F77BC3003736EE /* ENNoteContent.m */,
 				BE2E23EE18EBA5D500BD7E6E /* ENNotebook.h */,
 				BE2E23EF18EBA5D500BD7E6E /* ENNotebook.m */,
 				BE2E23F218EBA5D500BD7E6E /* ENResource.h */,
@@ -623,6 +637,10 @@
 				BE2E245718EBA5D500BD7E6E /* Resources */,
 				BECDD2EE18F5C8F3003736EE /* ENPreferencesStore.h */,
 				BECDD2EF18F5C8F3003736EE /* ENPreferencesStore.m */,
+				BECDD2F618F77C0E003736EE /* ENPlaintextNoteContent.h */,
+				BECDD2F718F77C0E003736EE /* ENPlaintextNoteContent.m */,
+				BECDD2FA18F78072003736EE /* ENHTMLNoteContent.h */,
+				BECDD2FB18F78072003736EE /* ENHTMLNoteContent.m */,
 			);
 			path = Private;
 			sourceTree = "<group>";
@@ -844,6 +862,7 @@
 				BE2E249E18EBA5D500BD7E6E /* KSHTMLWriter.h in Headers */,
 				BE2E24AD18EBA5D500BD7E6E /* TProtocolException.h in Headers */,
 				BE2E246E18EBA5D500BD7E6E /* ENSDKAdvanced.h in Headers */,
+				BECDD2F818F77C0E003736EE /* ENPlaintextNoteContent.h in Headers */,
 				BE2E249418EBA5D500BD7E6E /* ENSession.h in Headers */,
 				BE2E25D318F3745700BD7E6E /* ENBusinessNoteStoreClient.h in Headers */,
 				BE2E248418EBA5D500BD7E6E /* NSDataBase64Additions.h in Headers */,
@@ -877,6 +896,7 @@
 				BE2E247518EBA5D500BD7E6E /* ENMIMEUtils.h in Headers */,
 				BE2E24D118EBA5D500BD7E6E /* ENNoteRefInternal.h in Headers */,
 				BE2E24B218EBA5D500BD7E6E /* TApplicationException.h in Headers */,
+				BECDD2F418F77BC3003736EE /* ENNoteContent.h in Headers */,
 				BE2E24D618EBA5D500BD7E6E /* ENSDKPrivate.h in Headers */,
 				BE2E246F18EBA5D500BD7E6E /* ENUserStoreClient.h in Headers */,
 				BE2E247718EBA5D500BD7E6E /* ENMLWriter.h in Headers */,
@@ -893,6 +913,7 @@
 				BE2E248218EBA5D500BD7E6E /* NSData+EvernoteSDK.h in Headers */,
 				BE2E24BA18EBA5D500BD7E6E /* THTTPClient.h in Headers */,
 				BE2E247C18EBA5D500BD7E6E /* ENXMLWriter.h in Headers */,
+				BECDD2FC18F78072003736EE /* ENHTMLNoteContent.h in Headers */,
 				BE2E249818EBA5D500BD7E6E /* ENGCOAuth.h in Headers */,
 				BE2E24CF18EBA5D500BD7E6E /* ENNotebookChooserViewController.h in Headers */,
 				BE2E24A018EBA5D500BD7E6E /* KSWriter.h in Headers */,
@@ -1079,6 +1100,7 @@
 				BE2E24C418EBA5D500BD7E6E /* ENAuthCache.m in Sources */,
 				BE2E24C618EBA5D500BD7E6E /* ENCredentials.m in Sources */,
 				BE2E24A718EBA5D500BD7E6E /* NSString+XMLAdditions.m in Sources */,
+				BECDD2F518F77BC3003736EE /* ENNoteContent.m in Sources */,
 				BE2E248D18EBA5D500BD7E6E /* ENNotebook.m in Sources */,
 				BE2E248B18EBA5D500BD7E6E /* ENNote.m in Sources */,
 				BE2E24B118EBA5D500BD7E6E /* TProtocolUtil.m in Sources */,
@@ -1087,6 +1109,7 @@
 				BE2E25DA18F4D6C300BD7E6E /* ENMLConstants.m in Sources */,
 				BE2E24AE18EBA5D500BD7E6E /* TProtocolException.m in Sources */,
 				BE2E247818EBA5D500BD7E6E /* ENMLWriter.m in Sources */,
+				BECDD2FD18F78072003736EE /* ENHTMLNoteContent.m in Sources */,
 				BE2E24E118EBA5D500BD7E6E /* ENSendToEvernoteViewController.m in Sources */,
 				BE2E248018EBA5D500BD7E6E /* NSString+EDAMAdditions.m in Sources */,
 				BE2E24CA18EBA5D500BD7E6E /* ENHTMLtoENMLConverter.m in Sources */,
@@ -1101,6 +1124,7 @@
 				BE2E24D018EBA5D500BD7E6E /* ENNotebookChooserViewController.m in Sources */,
 				BE2E249118EBA5D500BD7E6E /* ENResource.m in Sources */,
 				BE2E247418EBA5D500BD7E6E /* ENEncryptedContentInfo.m in Sources */,
+				BECDD2F918F77C0E003736EE /* ENPlaintextNoteContent.m in Sources */,
 				BE2E248918EBA5D500BD7E6E /* ENError.m in Sources */,
 				BE2E246D18EBA5D500BD7E6E /* ENNoteStoreClient.m in Sources */,
 				BE2E24C818EBA5D500BD7E6E /* ENCredentialStore.m in Sources */,

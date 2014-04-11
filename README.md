@@ -136,7 +136,8 @@ Authentication credentials are saved on the device once the user grants access, 
 
 To create a new note with no user interface, you can just do this:
 
-    ENNote * note = [[ENNote alloc] initWithString:@"Hello, Evernote!"];
+    ENNote * note = [[ENNote alloc] init];
+	note.content = [ENNoteContent noteContentWithString:@"Hello, World!"];
 	note.title = @"My First Note";
     [[ENSession sharedSession] uploadNote:note completion:^(ENNoteRef * noteRef, NSError * uploadNoteError) {
 		if (noteRef) {
@@ -153,7 +154,8 @@ This creates a new, plaintext note, with a title, and uploads it to the user's d
 
 Let's say you'd like to create a note with an image that you have. That's easy too. You just need to create an `ENResource` that represents the image data, and attach it to the note before uploading:
 
-	ENNote * note = [[ENNote alloc] initWithString:@"This note has an image in it."];
+	ENNote * note = [[ENNote alloc] init];
+	note.content = [ENNoteContent noteContentWithString:@"Check out this awesome picture!"];
 	note.title = @"My Image Note";
 	ENResource * resource = [[ENResource alloc] initWithImage:myImage]; // myImage is a UIImage object.
 	[note addResource:resource]

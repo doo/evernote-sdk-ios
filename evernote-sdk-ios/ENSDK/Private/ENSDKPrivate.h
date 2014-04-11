@@ -41,6 +41,10 @@ FOUNDATION_EXPORT NSString * const ENBootstrapProfileNameChina;
 - (BOOL)validateForLimits;
 @end
 
+@interface ENNoteContent (Private)
+- (NSString *)enmlWithResources:(NSArray *)resources;
+@end
+
 @interface ENNoteStoreClient (Private)
 // This accessor is here to provide a declaration of the override point for subclasses that do
 // nontrivial token management.

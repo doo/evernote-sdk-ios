@@ -83,7 +83,8 @@
         [content appendString:strings[i]];
     }
     
-    ENNote * note = [[ENNote alloc] initWithString:content];
+    ENNote * note = [[ENNote alloc] init];
+    note.content = [ENNoteContent noteContentWithString:content];
     
     // Add prebaked resources
     for (ENResource * resource in resources) {
