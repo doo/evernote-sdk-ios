@@ -28,7 +28,6 @@ typedef NS_ENUM(NSInteger, ENSessionUploadPolicy) {
 
 @interface ENSession : NSObject
 @property (nonatomic, strong) id<ENSDKLogging> logger;
-@property (nonatomic, copy) NSString * defaultNotebookName;
 @property (nonatomic, copy) NSString * sourceApplication;  
 
 @property (nonatomic, readonly) BOOL isAuthenticated;

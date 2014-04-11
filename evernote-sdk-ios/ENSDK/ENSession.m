@@ -26,7 +26,6 @@ static NSString * ENSessionBootstrapServerBaseURLStringUS  = @"www.evernote.com"
 
 static NSString * ENSessionPreferencesFilename = @"com.evernote.evernote-sdk-ios.plist";
 static NSString * ENSessionPreferencesCredentialStore = @"CredentialStore";
-static NSString * ENSessionPreferencesDefaultNotebookGuid = @"DefaultNotebookGuid";
 static NSString * ENSessionPreferencesCurrentProfileName = @"CurrentProfileName";
 static NSString * ENSessionPreferencesUser = @"User";
 
@@ -49,8 +48,6 @@ static NSString * ENSessionPreferencesUser = @"User";
 @property (nonatomic, strong) ENNoteRef * refToReplace;
 @property (nonatomic, strong) ENNotebook * notebook;
 @property (nonatomic, assign) ENSessionUploadPolicy policy;
-@property (nonatomic, assign) BOOL destinedForDefaultNotebook;
-@property (nonatomic, strong) NSString * defaultNotebookName;
 @property (nonatomic, strong) ENSessionUploadNoteCompletionHandler completion;
 @end
 
@@ -588,7 +585,6 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     context.notebook = note.notebook;
     context.policy = policy;
     context.completion = completion;
-    context.defaultNotebookName = self.defaultNotebookName;
     
     if (progress) {
 //        [context.destinationNoteStore setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
@@ -602,58 +598,8 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     if (noteToReplace) {
         [self uploadNote_updateWithContext:context];
     } else {
-        if (!context.notebook) {
-            // Caller has not specified an explicit notebook. Is there a default notebook set?
-            if (self.defaultNotebookName) {
-                context.destinedForDefaultNotebook = YES;
-                // Check to see if we already know about a notebook GUID.
-                NSString * notebookGuid = [self defaultNotebookGuid];
-                if (notebookGuid) {
-                    context.note.notebookGuid = notebookGuid;
-                } else {
-                    // We need to create/find the notebook that corresponds to this.
-                    // Need to do a lookup.
-                    [self uploadNote_findDefaultNotebookWithContext:context];
-                    return;
-                }
-            }
-        }
         [self uploadNote_createWithContext:context];
     }
-}
-
-- (void)uploadNote_findDefaultNotebookWithContext:(ENSessionUploadNoteContext *)context
-{
-    [self.primaryNoteStore listNotebooksWithSuccess:^(NSArray * notebooks) {
-        // Walk the notebooks to see if any of them match the default that we're looking for.
-        for (EDAMNotebook * notebook in notebooks) {
-            if ([notebook.name caseInsensitiveCompare:context.defaultNotebookName] == NSOrderedSame) {
-                [self setDefaultNotebookGuid:notebook.guid];
-                context.note.guid = notebook.guid;
-                [self uploadNote_createWithContext:context];
-                return;
-            }
-        }
-        // None matched. Create it.
-        [self uploadNote_createNotebookWithContext:context];
-    } failure:^(NSError * error) {
-        ENSDKLogError(@"Failed to listNotebooks for uploadNote: %@", error);
-        [self uploadNote_completeWithContext:context resultingNoteRef:nil error:error];
-    }];
-}
-
-- (void)uploadNote_createNotebookWithContext:(ENSessionUploadNoteContext *)context
-{
-    EDAMNotebook * notebook = [[EDAMNotebook alloc] init];
-    notebook.name = context.defaultNotebookName;
-    [self.primaryNoteStore createNotebook:notebook success:^(EDAMNotebook * resultNotebook) {
-        [self setDefaultNotebookGuid:resultNotebook.guid];
-        context.note.notebookGuid = resultNotebook.guid;
-        [self uploadNote_createWithContext:context];
-    } failure:^(NSError * error) {
-        ENSDKLogError(@"Failed to createNotebook for uploadNote: %@", error);
-        [self uploadNote_completeWithContext:context resultingNoteRef:nil error:error];
-    }];
 }
 
 - (void)uploadNote_updateWithContext:(ENSessionUploadNoteContext *)context
@@ -709,14 +655,6 @@ static NSString * DeveloperToken, * NoteStoreUrl;
         finalNoteRef.guid = resultNote.guid;
         [self uploadNote_completeWithContext:context resultingNoteRef:finalNoteRef error:nil];
     } failure:^(NSError * error) {
-        if ([error.userInfo[@"parameter"] isEqualToString:@"Note.notebookGuid"] &&
-            context.destinedForDefaultNotebook) {
-            // We tried to get the default notebook but we failed to get it. Remove our cached guid and
-            // try again.
-            [self setDefaultNotebookGuid:nil];
-            [self uploadNote_findDefaultNotebookWithContext:context];
-            return;
-        }
         ENSDKLogError(@"Failed to createNote for uploadNote: %@", error);
         [self uploadNote_completeWithContext:context resultingNoteRef:nil error:error];
     }];
@@ -917,16 +855,6 @@ static NSString * DeveloperToken, * NoteStoreUrl;
 }
 
 #pragma mark - Preferences helpers
-
-- (NSString *)defaultNotebookGuid
-{
-    return [self.preferences objectForKey:ENSessionPreferencesDefaultNotebookGuid];
-}
-
-- (void)setDefaultNotebookGuid:(NSString *)guid
-{
-    [self.preferences setObject:guid forKey:ENSessionPreferencesDefaultNotebookGuid];
-}
 
 - (NSString *)currentProfileName
 {
