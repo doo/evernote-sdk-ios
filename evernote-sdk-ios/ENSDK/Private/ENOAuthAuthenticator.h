@@ -21,6 +21,7 @@
 @property (nonatomic, copy) NSString * consumerKey;
 @property (nonatomic, copy) NSString * consumerSecret;
 @property (nonatomic, copy) NSString * host;
+@property (nonatomic, assign) BOOL supportLinkedSandbox;
 
 - (void)authenticateWithViewController:(UIViewController *)viewController;
 

@@ -12,7 +12,7 @@
 @property (nonatomic, strong) EDAMNotebook * notebook;
 @property (nonatomic, strong) EDAMLinkedNotebook * linkedNotebook;
 @property (nonatomic, strong) EDAMSharedNotebook * sharedNotebook;
-@property (nonatomic, assign) BOOL isApplicationDefaultNotebook;
+@property (nonatomic, assign) BOOL isDefaultNotebookOverride;
 @end
 
 @implementation ENNotebook
@@ -50,7 +50,7 @@
         self.notebook = [decoder decodeObjectForKey:@"notebook"];
         self.linkedNotebook = [decoder decodeObjectForKey:@"linkedNotebook"];
         self.sharedNotebook = [decoder decodeObjectForKey:@"sharedNotebook"];
-        self.isApplicationDefaultNotebook = [decoder decodeBoolForKey:@"isApplicationDefaultNotebook"];
+        self.isDefaultNotebookOverride = [decoder decodeBoolForKey:@"isDefaultNotebookOverride"];
         if (!self.notebook && !self.linkedNotebook && !self.sharedNotebook) {
             return nil;
         }
@@ -63,7 +63,7 @@
     [encoder encodeObject:self.notebook forKey:@"notebook"];
     [encoder encodeObject:self.linkedNotebook forKey:@"linkedNotebook"];
     [encoder encodeObject:self.sharedNotebook forKey:@"sharedNotebook"];
-    [encoder encodeBool:self.isApplicationDefaultNotebook forKey:@"isApplicationDefaultNotebook"];
+    [encoder encodeBool:self.isDefaultNotebookOverride forKey:@"isDefaultNotebookOverride"];
 }
 
 - (NSString *)name
@@ -104,7 +104,9 @@
 
 - (BOOL)isDefaultNotebook
 {
-    if (self.notebook) {
+    if (self.isDefaultNotebookOverride) {
+        return YES;
+    } else if (self.notebook) {
         return self.notebook.defaultNotebook;
     }
     return NO;

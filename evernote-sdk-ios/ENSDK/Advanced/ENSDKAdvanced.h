@@ -13,6 +13,13 @@
 @class ENNoteStoreClient;
 
 @interface ENSession (Advanced)
+// Indicates if your app is capable of supporting linked/business notebooks as single-notebook sandbox destinations.
+// Defaults to YES, as the non-advanced interface on ENSession will handle these transparently. If you're
+// using the note store clients directly, either set this to NO, or be sure you test using a shared notebook as
+// an app notebook.
+@property (nonatomic, assign) BOOL supportLinkedSandbox;
+
+// Retrive an appropriate note store client to perform API operations with.
 - (ENNoteStoreClient *)primaryNoteStore;
 - (ENNoteStoreClient *)businessNoteStore;
 - (ENNoteStoreClient *)noteStoreForLinkedNotebook:(EDAMLinkedNotebook *)linkedNotebook;

@@ -170,10 +170,14 @@ typedef NS_ENUM(NSInteger, ENOAuthAuthenticatorState) {
         deviceID = [NSString string];
     }
     NSString* deviceDescription = [[self class] deviceDescription];
-    NSDictionary *authParameters = @{ @"oauth_token":[tokenParameters objectForKey:@"oauth_token"],
-                                      @"inapp":@"ios",
-                                      @"deviceDescription":deviceDescription,
-                                      @"deviceIdentifier":deviceID};
+    NSMutableDictionary *authParameters =
+        [NSMutableDictionary dictionaryWithDictionary:@{ @"oauth_token":[tokenParameters objectForKey:@"oauth_token"],
+                                                         @"inapp":@"ios",
+                                                         @"deviceDescription":deviceDescription,
+                                                         @"deviceIdentifier":deviceID }];
+    if (self.supportLinkedSandbox) {
+        [authParameters setObject:@"true" forKey:@"supportLinkedSandbox"];
+    }
     NSString *queryString = [[self class] queryStringFromParameters:authParameters];
     return [NSString stringWithFormat:@"%@://%@/OAuth.action?%@", OAUTH_PROTOCOL_SCHEME, self.host, queryString];
 }

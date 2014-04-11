@@ -13,6 +13,5 @@
 @property (nonatomic, readonly) BOOL allowsWriting;
 @property (nonatomic, readonly) BOOL isLinked;
 @property (nonatomic, readonly) BOOL isBusinessNotebook;
-@property (nonatomic, readonly) BOOL isApplicationDefaultNotebook;
 @property (nonatomic, readonly) BOOL isDefaultNotebook;
 @end

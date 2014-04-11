@@ -208,7 +208,6 @@
 - (void)handleException:(NSException *)exception withFailureBlock:(void(^)(NSError *error))failure
 {
     NSError * error = [self errorFromException:exception];
-    ENSDKLogError(@"Error: %@", error);
     if (failure) {
         failure(error);
     }

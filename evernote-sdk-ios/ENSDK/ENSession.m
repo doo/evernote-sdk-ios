@@ -7,6 +7,7 @@
 //
 
 #import "ENSDKPrivate.h"
+#import "ENSDKAdvanced.h"
 #import "ENAuthCache.h"
 #import "ENNoteStoreClient.h"
 #import "ENLinkedNoteStoreClient.h"
@@ -54,6 +55,7 @@ static NSString * ENSessionPreferencesUser = @"User";
 @end
 
 @interface ENSession () <ENLinkedNoteStoreClientDelegate, ENBusinessNoteStoreClientDelegate, ENOAuthAuthenticatorDelegate>
+@property (nonatomic, assign) BOOL supportLinkedSandbox;
 @property (nonatomic, strong) ENOAuthAuthenticator * authenticator;
 @property (nonatomic, strong) ENSessionAuthenticateCompletionHandler authenticationCompletion;
 
@@ -135,7 +137,9 @@ static NSString * DeveloperToken, * NoteStoreUrl;
         if (![[self class] checkSharedSessionSettings]) {
             return nil;
         }
-        
+        // Default to supporting linked notebooks for single-notebook auth. Developer can toggle this off
+        // if they're using advanced features and don't want to deal with the added complexity.
+        self.supportLinkedSandbox = YES;
         [self startup];
     }
     return self;
@@ -233,6 +237,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     self.authenticator.consumerKey = ConsumerKey;
     self.authenticator.consumerSecret = ConsumerSecret;
     self.authenticator.host = self.sessionHost;
+    self.authenticator.supportLinkedSandbox = self.supportLinkedSandbox;
     [self.authenticator authenticateWithViewController:viewController];
 }
 
@@ -362,6 +367,11 @@ static NSString * DeveloperToken, * NoteStoreUrl;
         // Now get any linked notebooks.
         [self listNotebooks_listLinkedNotebooksWithContext:context];
     } failure:^(NSError * error) {
+        if ([self isErrorDueToRestrictedAuth:error]) {
+            // App has a single notebook auth token, so try getting linked notebooks.
+            [self listNotebooks_listLinkedNotebooksWithContext:context];
+            return;
+        }
         ENSDKLogError(@"Error from listNotebooks in user's store: %@", error);
         [self listNotebooks_completeWithContext:context error:error];
     }];
@@ -381,6 +391,11 @@ static NSString * DeveloperToken, * NoteStoreUrl;
             }
         }
     } failure:^(NSError *error) {
+        if ([self isErrorDueToRestrictedAuth:error]) {
+            // App has a single notebook auth token, so skip to the end.
+            [self listNotebooks_prepareResultsWithContext:context];
+            return;
+        }
         ENSDKLogError(@"Error from listLinkedNotebooks in user's store: %@", error);
         [self listNotebooks_completeWithContext:context error:error];
     }];
@@ -495,13 +510,19 @@ static NSString * DeveloperToken, * NoteStoreUrl;
 
 - (void)listNotebooks_prepareResultsWithContext:(ENSessionListNotebooksContext *)context
 {
-    // Mark the application's default notebook.
-    NSString * defaultGuid = [self defaultNotebookGuid];
-    for (ENNotebook * notebook in context.resultNotebooks) {
-        notebook.isApplicationDefaultNotebook = [defaultGuid isEqualToString:notebook.guid];
+    // If there's only one notebook, and it's not flagged as the default notebook for the account, then
+    // we must be in a single-notebook auth scenario. In this case, simply override the flag so to a caller it
+    // will appear to be the default anyway. Note that we only do this if it's not already the default. If a single
+    // notebook result is already marked default, then it *could* be that there really is one notebook, and we don't
+    // want to have the caller persist an override flag that might be inapplicable later.
+    if (context.resultNotebooks.count == 1) {
+        ENNotebook * soleNotebook = context.resultNotebooks[0];
+        if (!soleNotebook.isDefaultNotebook) {
+            soleNotebook.isDefaultNotebookOverride = YES;
+        }
     }
     
-    // Sort them by name. This is just an convenience for the caller in case they don't bother to sort them themselves.
+    // Sort them by name. This is just a convenience for the caller in case they don't bother to sort them themselves.
     [context.resultNotebooks sortUsingComparator:^NSComparisonResult(ENNotebook * obj1, ENNotebook * obj2) {
         return [obj1.name compare:obj2.name options:NSCaseInsensitiveSearch];
     }];
@@ -639,6 +660,13 @@ static NSString * DeveloperToken, * NoteStoreUrl;
 {
     context.note.guid = context.refToReplace.guid;
     context.note.active = YES;
+    if (context.note.notebookGuidIsSet) {
+        // Allowing arbitrary update of notebook that the note is in would require a ton of logic that would require deleting and re-creating
+        // if it moves across shard (share/business) boundaries. We punt on that whole problem here by simply disallowing notebook change
+        // as part of an update flow.
+        ENSDKLogInfo(@"Cannot replace a note and change its notebook; location will be preserved.");
+        context.note.notebookGuid = nil;
+    }
     ENNoteStoreClient * noteStore = [self noteStoreForNoteRef:context.refToReplace];
     [noteStore updateNote:context.note success:^(EDAMNote * resultNote) {
         [self uploadNote_completeWithContext:context resultingNoteRef:context.refToReplace error:nil];
@@ -743,6 +771,18 @@ static NSString * DeveloperToken, * NoteStoreUrl;
 }
 
 #pragma mark - Private routines
+
+#pragma mark - API helpers
+
+- (BOOL)isErrorDueToRestrictedAuth:(NSError *)error
+{
+    int edamError = [error.userInfo[@"EDAMErrorCode"] intValue];
+    NSString * parameter = error.userInfo[@"parameter"];
+    if (edamError == EDAMErrorCode_PERMISSION_DENIED && [parameter isEqualToString:@"authenticationToken"]) {
+        return YES;
+    }
+    return NO;
+}
 
 #pragma mark - Credential Store
 
