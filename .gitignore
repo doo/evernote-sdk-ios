@@ -24,3 +24,5 @@ build/
 Pods
 Podfile.lock
 evernote-sdk-ios.xcodeproj/project.xcworkspace/xcshareddata/evernote-sdk-ios.xccheckout
+
+/Products/
