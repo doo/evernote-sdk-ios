@@ -120,6 +120,8 @@
 		860DF4A318FDDFDB002B4793 /* ENHTMLNoteContent.m in Sources */ = {isa = PBXBuildFile; fileRef = BECDD2FB18F78072003736EE /* ENHTMLNoteContent.m */; };
 		860DF4A418FDE14F002B4793 /* NSString+XMLAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = BE2E241018EBA5D500BD7E6E /* NSString+XMLAdditions.m */; };
 		865C383D18F8BA2400ECB2BA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 865C383B18F8BA2400ECB2BA /* InfoPlist.strings */; };
+		86CB760A18FF1F97002F267E /* en-activity-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 86CB760918FF1F97002F267E /* en-activity-icon.png */; };
+		86CB760B18FF1F97002F267E /* en-activity-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 86CB760918FF1F97002F267E /* en-activity-icon.png */; };
 		BE2E245F18EBA5D500BD7E6E /* EDAM.h in Headers */ = {isa = PBXBuildFile; fileRef = BE2E23BF18EBA5D400BD7E6E /* EDAM.h */; };
 		BE2E246018EBA5D500BD7E6E /* EDAMErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = BE2E23C018EBA5D400BD7E6E /* EDAMErrors.h */; };
 		BE2E246118EBA5D500BD7E6E /* EDAMErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = BE2E23C118EBA5D400BD7E6E /* EDAMErrors.m */; };
@@ -347,6 +349,7 @@
 		865C383718F8BA2400ECB2BA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		865C383A18F8BA2400ECB2BA /* ENSDK-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ENSDK-Info.plist"; sourceTree = "<group>"; };
 		865C383C18F8BA2400ECB2BA /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		86CB760918FF1F97002F267E /* en-activity-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "en-activity-icon.png"; sourceTree = "<group>"; };
 		A9BE476B1781FAFA00471BF7 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		BE2E23BF18EBA5D400BD7E6E /* EDAM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EDAM.h; sourceTree = "<group>"; };
 		BE2E23C018EBA5D400BD7E6E /* EDAMErrors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EDAMErrors.h; sourceTree = "<group>"; };
@@ -943,6 +946,7 @@
 				BE2E245C18EBA5D500BD7E6E /* ENSendToEvernoteViewController.h */,
 				BE2E245D18EBA5D500BD7E6E /* ENSendToEvernoteViewController.m */,
 				BE2E245E18EBA5D500BD7E6E /* ENSendToEvernoteViewController.xib */,
+				86CB760918FF1F97002F267E /* en-activity-icon.png */,
 				BE2E25CF18F366BE00BD7E6E /* en-activity-icon@2x.png */,
 			);
 			path = SendToEvernoteActivity;
@@ -1235,6 +1239,7 @@
 			files = (
 				860DF46818FCD072002B4793 /* ENSendToEvernoteViewController.xib in Resources */,
 				860DF46918FCD072002B4793 /* en-activity-icon@2x.png in Resources */,
+				86CB760B18FF1F97002F267E /* en-activity-icon.png in Resources */,
 				865C383D18F8BA2400ECB2BA /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1253,6 +1258,7 @@
 				BE2E25D018F366BE00BD7E6E /* en-activity-icon@2x.png in Resources */,
 				BE2E25BF18EF4D5500BD7E6E /* xhtml-lat1.ent in Resources */,
 				BE2E25C018EF4D5500BD7E6E /* xhtml-special.ent in Resources */,
+				86CB760A18FF1F97002F267E /* en-activity-icon.png in Resources */,
 				BE2E25C118EF4D5500BD7E6E /* xhtml-symbol.ent in Resources */,
 				BE2E25C218EF4D5500BD7E6E /* xhtml1-strict.dtd in Resources */,
 				BE2E25C318EF4D5500BD7E6E /* xhtml1-transitional.dtd in Resources */,
