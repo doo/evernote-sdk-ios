@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ENSendToEvernoteActivity : UIActivity
+@interface ENSaveToEvernoteActivity : UIActivity
 @property (nonatomic, copy) NSString * noteTitle;
 @end
