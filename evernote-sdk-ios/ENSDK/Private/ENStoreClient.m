@@ -190,7 +190,7 @@
         } else if ([exception isKindOfClass:[EDAMNotFoundException class]]) {
             EDAMNotFoundException * notFound = (EDAMNotFoundException *)exception;
             userInfo[@"parameter"] = notFound.identifier;
-            sanitizedErrorCode = ENErrorCodeInvalidData;
+            sanitizedErrorCode = ENErrorCodeNotFound;
         }
         
         if ([exception respondsToSelector:@selector(parameter)]) {

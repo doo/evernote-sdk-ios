@@ -29,6 +29,8 @@ typedef NS_ENUM(NSInteger, ENOAuthAuthenticatorState) {
     ENOAuthAuthenticatorStateAuthenticated
 };
 
+NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked = @"ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked";
+
 @interface NSString (ENURLEncoding)
 - (NSString *)en_stringByUrlEncoding;
 - (NSString *)en_stringByUrlDecoding;
@@ -46,10 +48,11 @@ typedef NS_ENUM(NSInteger, ENOAuthAuthenticatorState) {
 
 @property (nonatomic, strong) ENCredentialStore * credentialStore;
 
-@property (nonatomic, strong) NSDate * oauthStartDate;
 @property (nonatomic, copy) NSString * tokenSecret;
 @property (nonatomic, assign) BOOL isMultitaskLoginDisabled;
 @property (nonatomic, assign) BOOL isSwitchingInProgress;
+
+@property (nonatomic, assign) BOOL userSelectedLinkedAppNotebook;
 
 @property (nonatomic, strong) ENOAuthViewController * oauthViewController;
 
@@ -132,7 +135,6 @@ typedef NS_ENUM(NSInteger, ENOAuthAuthenticatorState) {
                                                       accessToken:nil
                                                       tokenSecret:nil];
     
-    self.oauthStartDate = [NSDate date];
     NSURLConnection * connection = [NSURLConnection connectionWithRequest:tempTokenRequest delegate:self];
     if (!connection) {
         // can't make connection, so immediately fail.
@@ -175,7 +177,7 @@ typedef NS_ENUM(NSInteger, ENOAuthAuthenticatorState) {
                                                          @"inapp":@"ios",
                                                          @"deviceDescription":deviceDescription,
                                                          @"deviceIdentifier":deviceID }];
-    if (self.supportLinkedSandbox) {
+    if (self.supportsLinkedAppNotebook) {
         [authParameters setObject:@"true" forKey:@"supportLinkedSandbox"];
     }
     NSString *queryString = [[self class] queryStringFromParameters:authParameters];
@@ -288,7 +290,6 @@ typedef NS_ENUM(NSInteger, ENOAuthAuthenticatorState) {
                                                           accessToken:oauthToken
                                                           tokenSecret:self.tokenSecret];
         
-        self.oauthStartDate = [NSDate date];
         NSURLConnection * connection = [NSURLConnection connectionWithRequest:authTokenRequest delegate:self];
         if (!connection) {
             // can't make connection, so immediately fail.
@@ -373,8 +374,6 @@ typedef NS_ENUM(NSInteger, ENOAuthAuthenticatorState) {
         // Save the token secret, for later use in OAuth step 3.
         self.tokenSecret = [parameters objectForKey:@"oauth_token_secret"];
         
-        NSLog(@"OAuth Step 1 - Time Running is: %f",[self.oauthStartDate timeIntervalSinceNow] * - 1);
-        
         // If the device supports multitasking,
         // try to get the OAuth token from the Evernote app
         // on the device.
@@ -416,7 +415,6 @@ typedef NS_ENUM(NSInteger, ENOAuthAuthenticatorState) {
         NSString *expiration = [parameters objectForKey:@"edam_expires"];
         NSDate *expirationDate = [NSDate dateWithTimeIntervalSince1970:([expiration doubleValue] / 1000.0f)];
         
-        NSLog(@"OAuth Step 3 - Time Running is: %f",[self.oauthStartDate timeIntervalSinceNow] * -1);
         // Evernote doesn't use the token secret, so we can ignore it.
         // NSString *oauthTokenSecret = [parameters objectForKey:@"oauth_token_secret"];
         
@@ -435,7 +433,7 @@ typedef NS_ENUM(NSInteger, ENOAuthAuthenticatorState) {
                                                           authenticationToken:authenticationToken
                                                                expirationDate:expirationDate];
             // call our callback, without error.
-            [self completeAuthenticationWithCredentials:credentials];
+            [self completeAuthenticationWithCredentials:credentials usesLinkedAppNotebook:self.userSelectedLinkedAppNotebook];
             // update the auth state
             self.state = ENOAuthAuthenticatorStateAuthenticated;
         }
@@ -478,10 +476,14 @@ typedef NS_ENUM(NSInteger, ENOAuthAuthenticatorState) {
     }
 }
 
-- (void)completeAuthenticationWithCredentials:(ENCredentials *)credentials
+- (void)completeAuthenticationWithCredentials:(ENCredentials *)credentials usesLinkedAppNotebook:(BOOL)linkedAppNotebook
 {
     self.viewController = nil;
-    [self.delegate authenticatorDidAuthenticateWithCredentials:credentials];
+    NSMutableDictionary * authInfo = [[NSMutableDictionary alloc] init];
+    if (linkedAppNotebook) {
+        [authInfo setObject:@YES forKey:ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked];
+    }
+    [self.delegate authenticatorDidAuthenticateWithCredentials:credentials authInfo:authInfo];
 }
 
 - (void)completeAuthenticationWithError:(NSError *)error
@@ -660,6 +662,7 @@ typedef NS_ENUM(NSInteger, ENOAuthAuthenticatorState) {
     NSDictionary *parameters = [[self class] parametersFromQueryString:url.query];
     NSString *oauthToken = [parameters objectForKey:@"oauth_token"];
     NSString *oauthVerifier = [parameters objectForKey:@"oauth_verifier"];
+    self.userSelectedLinkedAppNotebook = [[parameters objectForKey:@"sandbox_lnb"] boolValue];
     NSURLRequest *authTokenRequest = [ENGCOAuth URLRequestForPath:@"/oauth"
                                                     GETParameters:[NSDictionary dictionaryWithObjectsAndKeys:
                                                                    oauthVerifier, @"oauth_verifier", nil]
@@ -669,7 +672,6 @@ typedef NS_ENUM(NSInteger, ENOAuthAuthenticatorState) {
                                                    consumerSecret:self.consumerSecret
                                                       accessToken:oauthToken
                                                       tokenSecret:self.tokenSecret];
-    self.oauthStartDate = [NSDate date];
     NSURLConnection * connection = [NSURLConnection connectionWithRequest:authTokenRequest delegate:self];
     if (!connection) {
         // can't make connection, so immediately fail.
@@ -683,7 +685,6 @@ typedef NS_ENUM(NSInteger, ENOAuthAuthenticatorState) {
 {
     return [[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"en://"]];
 }
-
 @end
 
 @implementation NSString (ENURLEncoding)

@@ -10,9 +10,11 @@
 #import "ENUserStoreClient.h"
 #import "ENCredentials.h"
 
+extern NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked;
+
 @protocol ENOAuthAuthenticatorDelegate <NSObject>
 - (ENUserStoreClient *)userStoreClientForBootstrapping;
-- (void)authenticatorDidAuthenticateWithCredentials:(ENCredentials *)credentials;
+- (void)authenticatorDidAuthenticateWithCredentials:(ENCredentials *)credentials authInfo:(NSDictionary *)authInfo;
 - (void)authenticatorDidFailWithError:(NSError *)error;
 @end
 
@@ -21,7 +23,7 @@
 @property (nonatomic, copy) NSString * consumerKey;
 @property (nonatomic, copy) NSString * consumerSecret;
 @property (nonatomic, copy) NSString * host;
-@property (nonatomic, assign) BOOL supportLinkedSandbox;
+@property (nonatomic, assign) BOOL supportsLinkedAppNotebook;
 
 - (void)authenticateWithViewController:(UIViewController *)viewController;
 
