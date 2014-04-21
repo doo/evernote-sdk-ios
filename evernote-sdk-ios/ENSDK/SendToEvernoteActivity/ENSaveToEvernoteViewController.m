@@ -8,12 +8,15 @@
 
 #import "ENSaveToEvernoteViewController.h"
 #import "ENNotebookChooserViewController.h"
+#import "ENNotebookPickerButton.h"
 #import "ENSDK.h"
 #import "ENTheme.h"
 
 #define kTitleViewHeight        50.0
 #define kTagsViewHeight         38.0
 #define kNotebookViewHeight     50.0
+#define kDividerColor           [UIColor colorWithRed:210.0/255.0 green:210.0/255.0 blue:210.0/255.0 alpha:1]
+#define kTextLeftPadd           20
 
 @interface ENSaveToEvernoteActivity (Private)
 - (ENNote *)preparedNote;
@@ -22,8 +25,9 @@
 @interface ENSaveToEvernoteViewController () <ENNotebookChooserViewControllerDelegate, UITextFieldDelegate>
 @property (nonatomic, strong) UIBarButtonItem * saveButtonItem;
 @property (nonatomic, strong) UITextField * titleField;
-@property (nonatomic, strong) IBOutlet UITextField * notebookField;
-@property (nonatomic, strong) IBOutlet UITextField * tagsField;
+@property (nonatomic, strong) UITextField * notebookField;
+@property (nonatomic, strong) ENNotebookPickerButton * notebookButton;
+@property (nonatomic, strong) UITextField * tagsField;
 
 @property (nonatomic, strong) NSArray * notebookList;
 @property (nonatomic, strong) ENNotebook * currentNotebook;
@@ -35,9 +39,6 @@ CGFloat OnePxHeight() {
     return 1.0/[UIScreen mainScreen].scale;
 }
 
-#define kDividerColor [UIColor colorWithRed:210.0/255.0 green:210.0/255.0 blue:210.0/255.0 alpha:1]
-#define kPaddingWidth 20
-
 - (void)loadView {
     [super loadView];
     [self setEdgesForExtendedLayout:UIRectEdgeNone];
@@ -46,9 +47,9 @@ CGFloat OnePxHeight() {
     
     UITextField *titleField = [[UITextField alloc] initWithFrame:CGRectZero];
     titleField.translatesAutoresizingMaskIntoConstraints = NO;
-    [titleField setFont:[UIFont systemFontOfSize:18.0]];
+    [titleField setFont:[UIFont fontWithName:@"HelveticaNeue-Regular" size:18.0]];
     [titleField setTextColor:[UIColor colorWithRed:0.51 green:0.51 blue:0.51 alpha:1]];
-    UIView *paddingView1 = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kPaddingWidth, 0)];
+    UIView *paddingView1 = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kTextLeftPadd, 0)];
     titleField.leftView = paddingView1;
     titleField.leftViewMode = UITextFieldViewModeAlways;
     [self.view addSubview:titleField];
@@ -61,7 +62,7 @@ CGFloat OnePxHeight() {
     
     UITextField *tagsField = [[UITextField alloc] initWithFrame:CGRectZero];
     tagsField.translatesAutoresizingMaskIntoConstraints = NO;
-    UIView *paddingView2 = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kPaddingWidth, 0)];
+    UIView *paddingView2 = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kTextLeftPadd, 0)];
     tagsField.leftView = paddingView2;
     tagsField.leftViewMode = UITextFieldViewModeAlways;
     [self.view addSubview:tagsField];
@@ -73,10 +74,20 @@ CGFloat OnePxHeight() {
     [self.view addSubview:divider2];
     
     UITextField *notebookField = [[UITextField alloc] initWithFrame:CGRectZero];
+    [notebookField setText:NSLocalizedString(@"Notebook", @"Notebook")];
+    [notebookField setFont:[UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0]];
     notebookField.translatesAutoresizingMaskIntoConstraints = NO;
-    UIView *paddingView3 = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kPaddingWidth, 0)];
+    UIView *paddingView3 = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kTextLeftPadd, 0)];
     notebookField.leftView = paddingView3;
     notebookField.leftViewMode = UITextFieldViewModeAlways;
+    
+    ENNotebookPickerButton *notebookButton = [[ENNotebookPickerButton alloc] init];
+    [notebookButton setTitleColor:[ENTheme defaultTintColor] forState:UIControlStateNormal];
+    [notebookButton.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue-Medium" size:15.0]];
+    [notebookButton addTarget:self action:@selector(pickNotebook:) forControlEvents:UIControlEventTouchUpInside];
+    self.notebookButton = notebookButton;
+    notebookField.rightView = notebookButton;
+    notebookField.rightViewMode = UITextFieldViewModeAlways;
     [self.view addSubview:notebookField];
     self.notebookField = notebookField;
     
@@ -133,10 +144,9 @@ CGFloat OnePxHeight() {
 - (void)updateCurrentNotebookDisplay
 {
     NSString * displayName = self.currentNotebook.name;
-    if (self.currentNotebook.isBusinessNotebook) {
-        displayName = [displayName stringByAppendingString:@" (B)"];
-    }
-    self.notebookField.text = displayName;
+    [self.notebookButton setIsBusinessNotebook:(self.currentNotebook.isBusinessNotebook)];
+    [self.notebookButton setTitle:displayName forState:UIControlStateNormal];
+    [self.notebookButton sizeToFit];
 }
 
 - (void)showNotebookChooser
@@ -184,6 +194,10 @@ CGFloat OnePxHeight() {
 - (void)cancel:(id)sender
 {
     [self.delegate viewController:self didFinishWithSuccess:NO];
+}
+
+- (void)pickNotebook:(id)sender{
+    [self textFieldShouldBeginEditing:self.notebookField];
 }
 
 #pragma mark - ENNotebookChooserViewControllerDelegate

@@ -117,6 +117,18 @@
 		860DF4A318FDDFDB002B4793 /* ENHTMLNoteContent.m in Sources */ = {isa = PBXBuildFile; fileRef = BECDD2FB18F78072003736EE /* ENHTMLNoteContent.m */; };
 		860DF4A418FDE14F002B4793 /* NSString+XMLAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = BE2E241018EBA5D500BD7E6E /* NSString+XMLAdditions.m */; };
 		865C383D18F8BA2400ECB2BA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 865C383B18F8BA2400ECB2BA /* InfoPlist.strings */; };
+		86B198511901CB36008F606A /* UITableNext.png in Resources */ = {isa = PBXBuildFile; fileRef = 86B1984F1901CB36008F606A /* UITableNext.png */; };
+		86B198521901CB36008F606A /* UITableNext@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 86B198501901CB36008F606A /* UITableNext@2x.png */; };
+		86B198531901D92F008F606A /* UITableNext.png in Resources */ = {isa = PBXBuildFile; fileRef = 86B1984F1901CB36008F606A /* UITableNext.png */; };
+		86B198541901D92F008F606A /* UITableNext@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 86B198501901CB36008F606A /* UITableNext@2x.png */; };
+		86B198571901DB0A008F606A /* ENNotebookPickerButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 86B198551901DB0A008F606A /* ENNotebookPickerButton.h */; };
+		86B198581901DB0A008F606A /* ENNotebookPickerButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 86B198551901DB0A008F606A /* ENNotebookPickerButton.h */; };
+		86B198591901DB0A008F606A /* ENNotebookPickerButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B198561901DB0A008F606A /* ENNotebookPickerButton.m */; };
+		86B1985A1901DB0A008F606A /* ENNotebookPickerButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B198561901DB0A008F606A /* ENNotebookPickerButton.m */; };
+		86B1985D1901E978008F606A /* Business_icon_filled.png in Resources */ = {isa = PBXBuildFile; fileRef = 86B1985B1901E978008F606A /* Business_icon_filled.png */; };
+		86B1985E1901E978008F606A /* Business_icon_filled.png in Resources */ = {isa = PBXBuildFile; fileRef = 86B1985B1901E978008F606A /* Business_icon_filled.png */; };
+		86B1985F1901E978008F606A /* Business_icon_filled@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 86B1985C1901E978008F606A /* Business_icon_filled@2x.png */; };
+		86B198601901E978008F606A /* Business_icon_filled@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 86B1985C1901E978008F606A /* Business_icon_filled@2x.png */; };
 		86CB760A18FF1F97002F267E /* en-activity-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 86CB760918FF1F97002F267E /* en-activity-icon.png */; };
 		86CB760B18FF1F97002F267E /* en-activity-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 86CB760918FF1F97002F267E /* en-activity-icon.png */; };
 		86CB761418FF33D4002F267E /* ENSaveToEvernoteViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 86CB761218FF33D4002F267E /* ENSaveToEvernoteViewController.h */; };
@@ -351,6 +363,12 @@
 		865C383718F8BA2400ECB2BA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		865C383A18F8BA2400ECB2BA /* ENSDK-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ENSDK-Info.plist"; sourceTree = "<group>"; };
 		865C383C18F8BA2400ECB2BA /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		86B1984F1901CB36008F606A /* UITableNext.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = UITableNext.png; sourceTree = "<group>"; };
+		86B198501901CB36008F606A /* UITableNext@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "UITableNext@2x.png"; sourceTree = "<group>"; };
+		86B198551901DB0A008F606A /* ENNotebookPickerButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENNotebookPickerButton.h; sourceTree = "<group>"; };
+		86B198561901DB0A008F606A /* ENNotebookPickerButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENNotebookPickerButton.m; sourceTree = "<group>"; };
+		86B1985B1901E978008F606A /* Business_icon_filled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Business_icon_filled.png; sourceTree = "<group>"; };
+		86B1985C1901E978008F606A /* Business_icon_filled@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Business_icon_filled@2x.png"; sourceTree = "<group>"; };
 		86CB760918FF1F97002F267E /* en-activity-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "en-activity-icon.png"; sourceTree = "<group>"; };
 		86CB761218FF33D4002F267E /* ENSaveToEvernoteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ENSaveToEvernoteViewController.h; sourceTree = "<group>"; };
 		86CB761318FF33D4002F267E /* ENSaveToEvernoteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ENSaveToEvernoteViewController.m; sourceTree = "<group>"; };
@@ -665,6 +683,10 @@
 		86CB761F18FF45D9002F267E /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				86B1985B1901E978008F606A /* Business_icon_filled.png */,
+				86B1985C1901E978008F606A /* Business_icon_filled@2x.png */,
+				86B1984F1901CB36008F606A /* UITableNext.png */,
+				86B198501901CB36008F606A /* UITableNext@2x.png */,
 				86CB760918FF1F97002F267E /* en-activity-icon.png */,
 				BE2E25CF18F366BE00BD7E6E /* en-activity-icon@2x.png */,
 			);
@@ -960,6 +982,8 @@
 				BE2E245B18EBA5D500BD7E6E /* ENSaveToEvernoteActivity.m */,
 				86CB761218FF33D4002F267E /* ENSaveToEvernoteViewController.h */,
 				86CB761318FF33D4002F267E /* ENSaveToEvernoteViewController.m */,
+				86B198551901DB0A008F606A /* ENNotebookPickerButton.h */,
+				86B198561901DB0A008F606A /* ENNotebookPickerButton.m */,
 			);
 			path = SendToEvernoteActivity;
 			sourceTree = "<group>";
@@ -1083,6 +1107,7 @@
 				BECDD2F018F5C8F3003736EE /* ENPreferencesStore.h in Headers */,
 				BE2E247918EBA5D500BD7E6E /* ENXMLDTD.h in Headers */,
 				BE2E25D918F4D6C300BD7E6E /* ENMLConstants.h in Headers */,
+				86B198571901DB0A008F606A /* ENNotebookPickerButton.h in Headers */,
 				BE2E248218EBA5D500BD7E6E /* NSData+EvernoteSDK.h in Headers */,
 				BE2E24BA18EBA5D500BD7E6E /* THTTPClient.h in Headers */,
 				BE2E247C18EBA5D500BD7E6E /* ENXMLWriter.h in Headers */,
@@ -1128,6 +1153,7 @@
 				860DF42818FCCF06002B4793 /* ENXMLSaxParser.h in Headers */,
 				860DF42918FCCF06002B4793 /* NSString+ENScrubbing.h in Headers */,
 				86CB761C18FF4554002F267E /* ENTheme.h in Headers */,
+				86B198581901DB0A008F606A /* ENNotebookPickerButton.h in Headers */,
 				860DF42A18FCCF06002B4793 /* ENPreferencesStore.h in Headers */,
 				860DF42B18FCCF06002B4793 /* ENPlaintextNoteContent.h in Headers */,
 				860DF42C18FCCF06002B4793 /* ENHTMLNoteContent.h in Headers */,
@@ -1251,9 +1277,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				86B1985E1901E978008F606A /* Business_icon_filled.png in Resources */,
+				86B198521901CB36008F606A /* UITableNext@2x.png in Resources */,
 				860DF46918FCD072002B4793 /* en-activity-icon@2x.png in Resources */,
+				86B198601901E978008F606A /* Business_icon_filled@2x.png in Resources */,
 				86CB760B18FF1F97002F267E /* en-activity-icon.png in Resources */,
 				865C383D18F8BA2400ECB2BA /* InfoPlist.strings in Resources */,
+				86B198511901CB36008F606A /* UITableNext.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1267,14 +1297,18 @@
 				BE2E25BC18EF4D5500BD7E6E /* evernote-export.dtd in Resources */,
 				BE2E25BD18EF4D5500BD7E6E /* promotions.dtd in Resources */,
 				BE2E25BE18EF4D5500BD7E6E /* recoIndex.dtd in Resources */,
+				86B1985D1901E978008F606A /* Business_icon_filled.png in Resources */,
 				BE2E25D018F366BE00BD7E6E /* en-activity-icon@2x.png in Resources */,
+				86B198531901D92F008F606A /* UITableNext.png in Resources */,
 				BE2E25BF18EF4D5500BD7E6E /* xhtml-lat1.ent in Resources */,
 				BE2E25C018EF4D5500BD7E6E /* xhtml-special.ent in Resources */,
 				86CB760A18FF1F97002F267E /* en-activity-icon.png in Resources */,
+				86B198541901D92F008F606A /* UITableNext@2x.png in Resources */,
 				BE2E25C118EF4D5500BD7E6E /* xhtml-symbol.ent in Resources */,
 				BE2E25C218EF4D5500BD7E6E /* xhtml1-strict.dtd in Resources */,
 				BE2E25C318EF4D5500BD7E6E /* xhtml1-transitional.dtd in Resources */,
 				BE2E250118EDD4A400BD7E6E /* Images.xcassets in Resources */,
+				86B1985F1901E978008F606A /* Business_icon_filled@2x.png in Resources */,
 				BE2E24F018EDD4A400BD7E6E /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1351,6 +1385,7 @@
 				86CB761D18FF4554002F267E /* ENTheme.m in Sources */,
 				BE2E249718EBA5D500BD7E6E /* ENAFURLConnectionOperation.m in Sources */,
 				BE2E24DA18EBA5D500BD7E6E /* ENXMLSaxParser.m in Sources */,
+				86B198591901DB0A008F606A /* ENNotebookPickerButton.m in Sources */,
 				BE2E24B518EBA5D500BD7E6E /* TException.m in Sources */,
 				BE2E24C418EBA5D500BD7E6E /* ENAuthCache.m in Sources */,
 				86CB761618FF33D4002F267E /* ENSaveToEvernoteViewController.m in Sources */,
@@ -1423,6 +1458,7 @@
 				86CB761E18FF4554002F267E /* ENTheme.m in Sources */,
 				860DF48518FDDDC4002B4793 /* KSForwardingWriter.m in Sources */,
 				860DF48618FDDDC4002B4793 /* KSHTMLWriter.m in Sources */,
+				86B1985A1901DB0A008F606A /* ENNotebookPickerButton.m in Sources */,
 				860DF48718FDDDC4002B4793 /* KSWriter.m in Sources */,
 				860DF48818FDDDC4002B4793 /* KSXMLAttributes.m in Sources */,
 				86CB761718FF33D4002F267E /* ENSaveToEvernoteViewController.m in Sources */,
