@@ -31,6 +31,8 @@ static NSString * ENSessionPreferencesUser = @"User";
 static NSString * ENSessionPreferencesAppNotebookIsLinked = @"AppNotebookIsLinked";
 static NSString * ENSessionPreferencesLinkedAppNotebook = @"LinkedAppNotebook";
 
+static NSUInteger ENSessionNotebooksCacheValidity = (5 * 60);   // 5 minutes
+
 @interface ENSessionDefaultLogger : NSObject <ENSDKLogging>
 @end
 
@@ -70,6 +72,8 @@ static NSString * ENSessionPreferencesLinkedAppNotebook = @"LinkedAppNotebook";
 @property (nonatomic, strong) ENNoteStoreClient * businessNoteStore;
 @property (nonatomic, strong) NSString * businessShardId;
 @property (nonatomic, strong) ENAuthCache * authCache;
+@property (nonatomic, strong) NSArray * notebooksCache;
+@property (nonatomic, strong) NSDate * notebooksCacheDate;
 @end
 
 @implementation ENSession
@@ -300,6 +304,11 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     return nil;
 }
 
+- (BOOL)appNotebookIsLinked
+{
+    return [[self.preferences objectForKey:ENSessionPreferencesAppNotebookIsLinked] boolValue];
+}
+
 - (void)unauthenticate
 {
     self.isAuthenticated = NO;
@@ -351,6 +360,16 @@ static NSString * DeveloperToken, * NoteStoreUrl;
         completion(nil, [NSError errorWithDomain:ENErrorDomain code:ENErrorCodeAuthExpired userInfo:nil]);
         return;
     }
+    
+    // Do we have a cached result that is unexpired?
+    if (self.notebooksCache && ([self.notebooksCacheDate timeIntervalSinceNow] * -1.0) < ENSessionNotebooksCacheValidity) {
+        completion(self.notebooksCache, nil);
+        return;
+    }
+    
+    self.notebooksCache = nil;
+    self.notebooksCacheDate = nil;
+    
     ENSessionListNotebooksContext * context = [[ENSessionListNotebooksContext alloc] init];
     context.completion = completion;
     context.resultNotebooks = [[NSMutableArray alloc] init];
@@ -534,6 +553,9 @@ static NSString * DeveloperToken, * NoteStoreUrl;
 - (void)listNotebooks_completeWithContext:(ENSessionListNotebooksContext *)context
                                     error:(NSError *)error
 {
+    self.notebooksCache = context.resultNotebooks;
+    self.notebooksCacheDate = [NSDate date];
+    
     context.completion(context.resultNotebooks, error);
 }
 
@@ -646,7 +668,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     // choosing the right note store (personal or linked). We default to personal, but if we know the
     // user chose a linked notebook, then we'll need to use its shard info to talk to it.
     if (!context.notebook) {
-        if ([[self.preferences objectForKey:ENSessionPreferencesAppNotebookIsLinked] boolValue]) {
+        if ([self appNotebookIsLinked]) {
             // Do we have a cached linked notebook record to use as a destination?
             EDAMLinkedNotebook * linkedNotebook = [self.preferences decodedObjectForKey:ENSessionPreferencesLinkedAppNotebook];
             if (linkedNotebook) {
