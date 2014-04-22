@@ -207,9 +207,11 @@
 
 - (void)handleException:(NSException *)exception withFailureBlock:(void(^)(NSError *error))failure
 {
-    NSError * error = [self errorFromException:exception];
     if (failure) {
-        failure(error);
+        NSError * error = [self errorFromException:exception];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            failure(error);
+        });
     }
 }
 @end
