@@ -24,6 +24,8 @@
 int32_t VERSION_1 = 0x80010000;
 int32_t VERSION_MASK = 0xffff0000;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wshorten-64-to-32"
 
 static TBinaryProtocolFactory * gSharedFactory = nil;
 
@@ -476,3 +478,5 @@ static TBinaryProtocolFactory * gSharedFactory = nil;
 }
 
 @end
+
+#pragma clang diagnostic pop

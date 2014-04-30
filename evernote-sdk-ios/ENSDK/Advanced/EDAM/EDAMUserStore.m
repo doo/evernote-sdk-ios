@@ -1822,7 +1822,8 @@ static int16_t EDAMEDAM_VERSION_MINOR = 25;
   }
   [inProtocol readStructEnd];
 }
-
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wshorten-64-to-32"
 - (void) write: (id <TProtocol>) outProtocol {
   [outProtocol writeStructBeginWithName: @"BootstrapInfo"];
   if (__profiles_isset) {
@@ -1843,6 +1844,7 @@ static int16_t EDAMEDAM_VERSION_MINOR = 25;
   [outProtocol writeFieldStop];
   [outProtocol writeStructEnd];
 }
+#pragma clang diagnostic pop
 
 - (NSString *) description {
   NSMutableString * ms = [NSMutableString stringWithString: @"BootstrapInfo("];

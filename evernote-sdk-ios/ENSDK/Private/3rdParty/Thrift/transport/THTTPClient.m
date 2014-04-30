@@ -165,11 +165,14 @@
   }
 
   NSHTTPURLResponse * httpResponse = (NSHTTPURLResponse *) response;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wformat"
   if ([httpResponse statusCode] != 200) {
     @throw [TTransportException exceptionWithName: @"TTransportException"
                                            reason: [NSString stringWithFormat: @"Bad response from HTTP server: %d",
                                                     [httpResponse statusCode]]];
   }
+#pragma clang diagnostic pop
   if([[httpResponse allHeaderFields] objectForKey:@"Content-Type"]) {
       if([[[httpResponse allHeaderFields] objectForKey:@"Content-Type"] isEqualToString:@"application/x-thrift"] == NO) {
           @throw [TTransportException exceptionWithName: @"TTransportException"

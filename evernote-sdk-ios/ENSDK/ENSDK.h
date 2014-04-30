@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 n/a. All rights reserved.
 //
 
+#warning ENSDK has unresolved Xcode warnings.
+
 #import "ENNotebook.h"
 #import "ENNoteRef.h"
 #import "ENNoteContent.h"
