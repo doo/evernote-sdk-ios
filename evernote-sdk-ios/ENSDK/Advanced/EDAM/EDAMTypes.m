@@ -23,6 +23,8 @@ static NSString * EDAMEDAM_NOTE_SOURCE_WEB_CLIP = @"web.clip";
 static NSString * EDAMEDAM_NOTE_SOURCE_MAIL_CLIP = @"mail.clip";
 static NSString * EDAMEDAM_NOTE_SOURCE_MAIL_SMTP_GATEWAY = @"mail.smtp";
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wshorten-64-to-32"
 @implementation EDAMTypesConstants
 + (void) initialize {
 }
@@ -12493,3 +12495,4 @@ static NSString * EDAMEDAM_NOTE_SOURCE_MAIL_SMTP_GATEWAY = @"mail.smtp";
 
 @end
 
+#pragma clang diagnostic pop
