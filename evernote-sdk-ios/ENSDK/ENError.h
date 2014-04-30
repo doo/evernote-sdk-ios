@@ -15,6 +15,7 @@ typedef NS_ENUM(NSInteger, ENErrorCode) {
     ENErrorCodeConnectionFailed,
     ENErrorCodeAuthExpired,
     ENErrorCodeInvalidData,
+    ENErrorCodeNotFound,
     ENErrorCodePermissionDenied,
     ENErrorCodeLimitReached,
     ENErrorCodeQuotaReached,

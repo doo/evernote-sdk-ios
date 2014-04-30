@@ -190,7 +190,7 @@
         } else if ([exception isKindOfClass:[EDAMNotFoundException class]]) {
             EDAMNotFoundException * notFound = (EDAMNotFoundException *)exception;
             userInfo[@"parameter"] = notFound.identifier;
-            sanitizedErrorCode = ENErrorCodeInvalidData;
+            sanitizedErrorCode = ENErrorCodeNotFound;
         }
         
         if ([exception respondsToSelector:@selector(parameter)]) {
@@ -207,9 +207,11 @@
 
 - (void)handleException:(NSException *)exception withFailureBlock:(void(^)(NSError *error))failure
 {
-    NSError * error = [self errorFromException:exception];
     if (failure) {
-        failure(error);
+        NSError * error = [self errorFromException:exception];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            failure(error);
+        });
     }
 }
 @end

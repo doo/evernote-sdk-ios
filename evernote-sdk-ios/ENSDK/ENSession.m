@@ -28,6 +28,10 @@ static NSString * ENSessionPreferencesFilename = @"com.evernote.evernote-sdk-ios
 static NSString * ENSessionPreferencesCredentialStore = @"CredentialStore";
 static NSString * ENSessionPreferencesCurrentProfileName = @"CurrentProfileName";
 static NSString * ENSessionPreferencesUser = @"User";
+static NSString * ENSessionPreferencesAppNotebookIsLinked = @"AppNotebookIsLinked";
+static NSString * ENSessionPreferencesLinkedAppNotebook = @"LinkedAppNotebook";
+
+static NSUInteger ENSessionNotebooksCacheValidity = (5 * 60);   // 5 minutes
 
 @interface ENSessionDefaultLogger : NSObject <ENSDKLogging>
 @end
@@ -49,10 +53,12 @@ static NSString * ENSessionPreferencesUser = @"User";
 @property (nonatomic, strong) ENNotebook * notebook;
 @property (nonatomic, assign) ENSessionUploadPolicy policy;
 @property (nonatomic, strong) ENSessionUploadNoteCompletionHandler completion;
+@property (nonatomic, strong) ENNoteStoreClient * noteStore;
+@property (nonatomic, strong) ENNoteRef * noteRef;
 @end
 
 @interface ENSession () <ENLinkedNoteStoreClientDelegate, ENBusinessNoteStoreClientDelegate, ENOAuthAuthenticatorDelegate>
-@property (nonatomic, assign) BOOL supportLinkedSandbox;
+@property (nonatomic, assign) BOOL supportsLinkedAppNotebook;
 @property (nonatomic, strong) ENOAuthAuthenticator * authenticator;
 @property (nonatomic, strong) ENSessionAuthenticateCompletionHandler authenticationCompletion;
 
@@ -66,6 +72,8 @@ static NSString * ENSessionPreferencesUser = @"User";
 @property (nonatomic, strong) ENNoteStoreClient * businessNoteStore;
 @property (nonatomic, strong) NSString * businessShardId;
 @property (nonatomic, strong) ENAuthCache * authCache;
+@property (nonatomic, strong) NSArray * notebooksCache;
+@property (nonatomic, strong) NSDate * notebooksCacheDate;
 @end
 
 @implementation ENSession
@@ -134,9 +142,9 @@ static NSString * DeveloperToken, * NoteStoreUrl;
         if (![[self class] checkSharedSessionSettings]) {
             return nil;
         }
-        // Default to supporting linked notebooks for single-notebook auth. Developer can toggle this off
+        // Default to supporting linked notebooks for app notebook. Developer can toggle this off
         // if they're using advanced features and don't want to deal with the added complexity.
-        self.supportLinkedSandbox = YES;
+        self.supportsLinkedAppNotebook = YES;
         [self startup];
     }
     return self;
@@ -234,7 +242,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     self.authenticator.consumerKey = ConsumerKey;
     self.authenticator.consumerSecret = ConsumerSecret;
     self.authenticator.host = self.sessionHost;
-    self.authenticator.supportLinkedSandbox = self.supportLinkedSandbox;
+    self.authenticator.supportsLinkedAppNotebook = self.supportsLinkedAppNotebook;
     [self.authenticator authenticateWithViewController:viewController];
 }
 
@@ -296,6 +304,11 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     return nil;
 }
 
+- (BOOL)appNotebookIsLinked
+{
+    return [[self.preferences objectForKey:ENSessionPreferencesAppNotebookIsLinked] boolValue];
+}
+
 - (void)unauthenticate
 {
     self.isAuthenticated = NO;
@@ -347,6 +360,16 @@ static NSString * DeveloperToken, * NoteStoreUrl;
         completion(nil, [NSError errorWithDomain:ENErrorDomain code:ENErrorCodeAuthExpired userInfo:nil]);
         return;
     }
+    
+    // Do we have a cached result that is unexpired?
+    if (self.notebooksCache && ([self.notebooksCacheDate timeIntervalSinceNow] * -1.0) < ENSessionNotebooksCacheValidity) {
+        completion(self.notebooksCache, nil);
+        return;
+    }
+    
+    self.notebooksCache = nil;
+    self.notebooksCacheDate = nil;
+    
     ENSessionListNotebooksContext * context = [[ENSessionListNotebooksContext alloc] init];
     context.completion = completion;
     context.resultNotebooks = [[NSMutableArray alloc] init];
@@ -530,6 +553,9 @@ static NSString * DeveloperToken, * NoteStoreUrl;
 - (void)listNotebooks_completeWithContext:(ENSessionListNotebooksContext *)context
                                     error:(NSError *)error
 {
+    self.notebooksCache = context.resultNotebooks;
+    self.notebooksCacheDate = [NSDate date];
+    
     context.completion(context.resultNotebooks, error);
 }
 
@@ -598,7 +624,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     if (noteToReplace) {
         [self uploadNote_updateWithContext:context];
     } else {
-        [self uploadNote_createWithContext:context];
+        [self uploadNote_determineDestinationWithContext:context];
     }
 }
 
@@ -615,7 +641,7 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     }
     ENNoteStoreClient * noteStore = [self noteStoreForNoteRef:context.refToReplace];
     [noteStore updateNote:context.note success:^(EDAMNote * resultNote) {
-        [self uploadNote_completeWithContext:context resultingNoteRef:context.refToReplace error:nil];
+        [self uploadNote_completeWithContext:context error:nil];
     } failure:^(NSError *error) {
         if ([error.userInfo[@"parameter"] isEqualToString:@"Note.guid"]) {
             // We tried to replace a note that isn't there anymore. Now we look at the replacement policy.
@@ -629,44 +655,102 @@ static NSString * DeveloperToken, * NoteStoreUrl;
             }
         }
         ENSDKLogError(@"Failed to updateNote for uploadNote: %@", error);
-        [self uploadNote_completeWithContext:context resultingNoteRef:nil error:error];
+        [self uploadNote_completeWithContext:context error:error];
+    }];
+}
+
+- (void)uploadNote_determineDestinationWithContext:(ENSessionUploadNoteContext *)context
+{
+    // Begin prepping a resulting note ref.
+    context.noteRef = [[ENNoteRef alloc] init];
+    
+    // If the destination is not specified, and this app uses app notebook, we are responsible for
+    // choosing the right note store (personal or linked). We default to personal, but if we know the
+    // user chose a linked notebook, then we'll need to use its shard info to talk to it.
+    if (!context.notebook) {
+        if ([self appNotebookIsLinked]) {
+            // Do we have a cached linked notebook record to use as a destination?
+            EDAMLinkedNotebook * linkedNotebook = [self.preferences decodedObjectForKey:ENSessionPreferencesLinkedAppNotebook];
+            if (linkedNotebook) {
+                context.noteStore = [self noteStoreForLinkedNotebook:linkedNotebook];
+                context.noteRef.type = ENNoteRefTypeShared;
+                context.noteRef.linkedNotebook = [ENLinkedNotebookRef linkedNotebookRefFromLinkedNotebook:linkedNotebook];
+            } else {
+                // We don't have a linked notebook record to use. We need to go find one.
+                [self uploadNote_findLinkedAppNotebookWithContext:context];
+                return;
+            }
+        } else {
+            // Either the app doesn't use app notebook, or it does and the single notebook is a personal one.
+            // (We'll fall into the catch-all else case below and end up on the personal note store.)
+        }
+    }
+    
+    if (!context.noteStore) {
+        if (context.notebook.isBusinessNotebook) {
+            context.noteStore = [self businessNoteStore];
+            context.noteRef.type = ENNoteRefTypeBusiness;
+        } else if (context.notebook.isLinked) {
+            context.noteStore = [self noteStoreForLinkedNotebook:context.notebook.linkedNotebook];
+            context.noteRef.type = ENNoteRefTypeShared;
+            context.noteRef.linkedNotebook = [ENLinkedNotebookRef linkedNotebookRefFromLinkedNotebook:context.notebook.linkedNotebook];
+        } else {
+            // This is the normal case. Either the app has not specified a destination notebook, or the
+            // notebook is personal.
+            context.noteStore = [self primaryNoteStore];
+            context.noteRef.type = ENNoteRefTypePersonal;
+        }
+    }
+    
+    [self uploadNote_createWithContext:context];
+}
+
+- (void)uploadNote_findLinkedAppNotebookWithContext:(ENSessionUploadNoteContext *)context
+{
+    // We know the app notebook is linked. List linked notebooks; we expect to find a single result.
+    [self.primaryNoteStore listLinkedNotebooksWithSuccess:^(NSArray * linkedNotebooks) {
+        if (linkedNotebooks.count < 1) {
+            ENSDKLogInfo(@"Cannot find linked app notebook. Perhaps user deleted it?");
+            // Uh-oh; there's no destination to use. We have to fail the request.
+            NSError * error = [NSError errorWithDomain:ENErrorDomain code:ENErrorCodeNotFound userInfo:nil];
+            [self uploadNote_completeWithContext:context error:error];
+            return;
+        }
+        if (linkedNotebooks.count > 1) {
+            ENSDKLogInfo(@"Expected to find single linked notebook, found %lu", (unsigned long)linkedNotebooks.count);
+        }
+        // Take this notebook, and cache it.
+        EDAMLinkedNotebook * linkedNotebook = linkedNotebooks[0];
+        [self.preferences encodeObject:linkedNotebook forKey:ENSessionPreferencesLinkedAppNotebook];
+        
+        // Go back and redetermine the destination.
+        [self uploadNote_determineDestinationWithContext:context];
+    } failure:^(NSError * error) {
+        ENSDKLogInfo(@"Failed to listLinkedNotebooks for uploadNote; turning into NotFound: %@", error);
+        // Uh-oh; there's no destination to use. We have to fail the request.
+        error = [NSError errorWithDomain:ENErrorDomain code:ENErrorCodeNotFound userInfo:nil];
+        [self uploadNote_completeWithContext:context error:error];
     }];
 }
 
 - (void)uploadNote_createWithContext:(ENSessionUploadNoteContext *)context
 {
-    // Create a note store for wherever we're going to put this note. Also begin to construct the final note ref,
-    // which will vary based on location of note.
-    ENNoteStoreClient * noteStore = nil;
-    ENNoteRef * finalNoteRef = [[ENNoteRef alloc] init];
-    if (context.notebook.isBusinessNotebook) {
-        noteStore = [self businessNoteStore];
-        finalNoteRef.type = ENNoteRefTypeBusiness;
-    } else if (context.notebook.isLinked) {
-        noteStore = [self noteStoreForLinkedNotebook:context.notebook.linkedNotebook];
-        finalNoteRef.type = ENNoteRefTypeShared;
-        finalNoteRef.linkedNotebook = [ENLinkedNotebookRef linkedNotebookRefFromLinkedNotebook:context.notebook.linkedNotebook];
-    } else {
-        noteStore = [self primaryNoteStore];
-        finalNoteRef.type = ENNoteRefTypePersonal;
-    }
-    
-    [noteStore createNote:context.note success:^(EDAMNote * resultNote) {
-        finalNoteRef.guid = resultNote.guid;
-        [self uploadNote_completeWithContext:context resultingNoteRef:finalNoteRef error:nil];
+    [context.noteStore createNote:context.note success:^(EDAMNote * resultNote) {
+        context.noteRef.guid = resultNote.guid;
+        [self uploadNote_completeWithContext:context error:nil];
     } failure:^(NSError * error) {
+        context.noteRef = nil;
         ENSDKLogError(@"Failed to createNote for uploadNote: %@", error);
-        [self uploadNote_completeWithContext:context resultingNoteRef:nil error:error];
+        [self uploadNote_completeWithContext:context error:error];
     }];
 }
 
 - (void)uploadNote_completeWithContext:(ENSessionUploadNoteContext *)context
-                      resultingNoteRef:(ENNoteRef *)noteRef
                                  error:(NSError *)error
 {
 //    [context.destinationNoteStore setUploadProgressBlock:nil];
     if (context.completion) {
-        context.completion(noteRef, error);
+        context.completion(error ? nil : context.noteRef, error);
     }
 }
 
@@ -927,13 +1011,17 @@ static NSString * DeveloperToken, * NoteStoreUrl;
     return [ENUserStoreClient userStoreClientWithUrl:[self userStoreUrl] authenticationToken:nil];
 }
 
-- (void)authenticatorDidAuthenticateWithCredentials:(ENCredentials *)credentials
+- (void)authenticatorDidAuthenticateWithCredentials:(ENCredentials *)credentials authInfo:(NSDictionary *)authInfo
 {
     self.isAuthenticated = YES;
     [self addCredentials:credentials];
     [self setCurrentProfileNameFromHost:credentials.host];
     self.sessionHost = credentials.host;
     self.primaryAuthenticationToken = credentials.authenticationToken;
+    BOOL appNotebookIsLinked = [[authInfo objectForKey:ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked] boolValue];
+    if (appNotebookIsLinked) {
+        [self.preferences setObject:@YES forKey:ENSessionPreferencesAppNotebookIsLinked];
+    }
     [self performPostAuthentication];
 }
 

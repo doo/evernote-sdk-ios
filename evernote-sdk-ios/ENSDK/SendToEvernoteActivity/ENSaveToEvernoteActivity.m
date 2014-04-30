@@ -6,16 +6,16 @@
 //  Copyright (c) 2014 n/a. All rights reserved.
 //
 
-#import "ENSendToEvernoteActivity.h"
-#import "ENSendToEvernoteViewController.h"
+#import "ENSaveToEvernoteActivity.h"
+#import "ENSaveToEvernoteViewController.h"
 #import "ENSDK.h"
 
-@interface ENSendToEvernoteActivity () <ENSendToEvernoteViewControllerDelegate>
+@interface ENSaveToEvernoteActivity () <ENSendToEvernoteViewControllerDelegate>
 @property (nonatomic, strong) ENNote * preparedNote;
 @property (nonatomic, strong) NSArray * notebooks;
 @end
 
-@implementation ENSendToEvernoteActivity
+@implementation ENSaveToEvernoteActivity
 + (UIActivityCategory)activityCategory
 {
     return UIActivityCategoryShare;
@@ -28,7 +28,7 @@
 
 - (NSString *)activityTitle
 {
-    return @"Send to Evernote";
+    return NSLocalizedString(@"Save to Evernote", @"Save to Evernote");
 }
 
 - (UIImage *)activityImage
@@ -102,7 +102,7 @@
 
 - (UIViewController *)activityViewController
 {
-    ENSendToEvernoteViewController * s2a = [[ENSendToEvernoteViewController alloc] initWithNibName:@"ENSendToEvernoteViewController" bundle:nil];
+    ENSaveToEvernoteViewController * s2a = [[ENSaveToEvernoteViewController alloc] init];
     s2a.delegate = self;
     UINavigationController * nav = [[UINavigationController alloc] initWithRootViewController:s2a];
     return nav;
@@ -110,17 +110,17 @@
 
 #pragma mark - ENSendToEvernoteViewControllerDelegate
 
-- (ENNote *)noteForViewController:(ENSendToEvernoteViewController *)viewController
+- (ENNote *)noteForViewController:(ENSaveToEvernoteViewController *)viewController
 {
     return self.preparedNote;
 }
 
-- (NSString *)defaultNoteTitleForViewController:(ENSendToEvernoteViewController *)viewController
+- (NSString *)defaultNoteTitleForViewController:(ENSaveToEvernoteViewController *)viewController
 {
     return self.noteTitle;
 }
 
-- (void)viewController:(ENSendToEvernoteViewController *)viewController didFinishWithSuccess:(BOOL)success
+- (void)viewController:(ENSaveToEvernoteViewController *)viewController didFinishWithSuccess:(BOOL)success
 {
     [self activityDidFinish:success];
 }

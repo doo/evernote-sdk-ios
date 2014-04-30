@@ -99,7 +99,7 @@
 
 - (IBAction)save:(id)sender
 {
-    ENSendToEvernoteActivity * sendActivity = [[ENSendToEvernoteActivity alloc] init];
+    ENSaveToEvernoteActivity * sendActivity = [[ENSaveToEvernoteActivity alloc] init];
     NSMutableArray * items = [NSMutableArray array];
     if (self.textView.text) {
         [items addObject:self.textView.text];
