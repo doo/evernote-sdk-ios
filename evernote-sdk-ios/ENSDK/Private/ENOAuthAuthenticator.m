@@ -77,6 +77,9 @@ NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked = @"ENOAuthAuthentica
 
 - (void)emptyCookieJar
 {
+    if (!self.host) {
+        return;
+    }
     NSHTTPCookieStorage *cookieJar = [NSHTTPCookieStorage sharedHTTPCookieStorage];
     for (NSHTTPCookie *cookie in [cookieJar cookies]) {
         if ([[cookie domain] hasSuffix: self.host]) {
@@ -618,7 +621,7 @@ NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked = @"ENOAuthAuthentica
         canHandle = YES;
         NSString* oAuthPrefix = [NSString stringWithFormat:@"en-%@://oauth/", self.consumerKey];
         NSString *callback = [url.absoluteString stringByReplacingOccurrencesOfString:oAuthPrefix withString:@""];
-        [[self class] gotCallbackURL:callback];
+        [self gotCallbackURL:callback];
     }
     // Check if the login was cancelled
     else if ([hostName isEqualToString:[url scheme]] == YES
