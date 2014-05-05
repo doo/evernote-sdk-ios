@@ -77,6 +77,9 @@ NSString * ENOAuthAuthenticatorAuthInfoAppNotebookIsLinked = @"ENOAuthAuthentica
 
 - (void)emptyCookieJar
 {
+    if (!self.host) {
+        return;
+    }
     NSHTTPCookieStorage *cookieJar = [NSHTTPCookieStorage sharedHTTPCookieStorage];
     for (NSHTTPCookie *cookie in [cookieJar cookies]) {
         if ([[cookie domain] hasSuffix: self.host]) {
